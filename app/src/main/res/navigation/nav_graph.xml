@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/wordsFragment">
+
+    <fragment
+        android:id="@+id/wordsFragment"
+        android:name="com.example.wordnotes.ui.words.WordsFragment"
+        android:label="WordsFragment"
+        tools:layout="@layout/fragment_words">
+        <action
+            android:id="@+id/action_wordsFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.wordnotes.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_wordsFragment"
+            app:destination="@id/wordsFragment" />
+    </fragment>
+</navigation>
