@@ -3,24 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/wordsFragment">
+    app:startDestination="@id/words_fragment">
 
     <fragment
-        android:id="@+id/wordsFragment"
+        android:id="@+id/words_fragment"
         android:name="com.example.wordnotes.ui.words.WordsFragment"
         android:label="WordsFragment"
         tools:layout="@layout/fragment_words">
         <action
             android:id="@+id/action_wordsFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settings_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/settingsFragment"
+        android:id="@+id/settings_fragment"
         android:name="com.example.wordnotes.ui.settings.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_settingsFragment_to_wordsFragment"
-            app:destination="@id/wordsFragment" />
+            app:destination="@id/words_fragment" />
     </fragment>
 </navigation>
