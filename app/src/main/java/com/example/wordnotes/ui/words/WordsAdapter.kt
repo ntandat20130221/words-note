@@ -1,0 +1,30 @@
+package com.example.wordnotes.ui.words
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.wordnotes.data.Word
+import com.example.wordnotes.databinding.WordItemBinding
+
+class WordsAdapter(private val words: List<Word>) : Adapter<WordsViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        WordsViewHolder(WordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    override fun getItemCount() = words.size
+
+    override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
+        holder.bind(words[position])
+    }
+}
+
+class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
+    fun bind(word: Word) {
+        binding.apply {
+            textAvatar.text = word.word[0].toString()
+            textWord.text = word.word
+            textIpa.text = word.ipa
+        }
+    }
+}
