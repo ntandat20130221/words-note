@@ -1,4 +1,4 @@
-package com.example.wordnotes.data
+package com.example.wordnotes.data.model
 
 data class Word(
     val id: String,
