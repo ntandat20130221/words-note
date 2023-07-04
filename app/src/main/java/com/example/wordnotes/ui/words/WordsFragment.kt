@@ -6,14 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wordnotes.R
+import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
 
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
 
-    private val wordsViewModel: WordsViewModel by viewModels()
+    private val wordsViewModel by viewModels<WordsViewModel> { WordViewModelFactory }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordsBinding.inflate(inflater, container, false)
@@ -23,6 +26,7 @@ class WordsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpWordsRecyclerView()
+        setUpFab()
     }
 
     private fun setUpWordsRecyclerView() {
@@ -30,6 +34,16 @@ class WordsFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = WordsAdapter(wordsViewModel.words)
         }
+    }
+
+    private fun setUpFab() {
+        binding.fabAddWords.setOnClickListener {
+            navigateToAddNewWords()
+        }
+    }
+
+    private fun navigateToAddNewWords() {
+        findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(null))
     }
 
     override fun onDestroyView() {

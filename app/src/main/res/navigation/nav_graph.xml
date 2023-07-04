@@ -11,8 +11,11 @@
         android:label="WordsFragment"
         tools:layout="@layout/fragment_words">
         <action
-            android:id="@+id/action_wordsFragment_to_settingsFragment"
+            android:id="@+id/action_show_settings_fragment"
             app:destination="@id/settings_fragment" />
+        <action
+            android:id="@+id/action_show_add_edit_word_fragment"
+            app:destination="@id/add_edit_word_fragment" />
     </fragment>
     <fragment
         android:id="@+id/settings_fragment"
@@ -20,7 +23,18 @@
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings">
         <action
-            android:id="@+id/action_settingsFragment_to_wordsFragment"
+            android:id="@+id/action_show_words_fragment"
             app:destination="@id/words_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_edit_word_fragment"
+        android:name="com.example.wordnotes.ui.addeditword.AddEditWordFragment"
+        android:label="AddEditWordFragment"
+        tools:layout="@layout/fragment_add_edit_word">
+        <argument
+            android:name="wordId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

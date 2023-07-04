@@ -4,4 +4,6 @@
     <string name="settings">Settings</string>
     <string name="search">Search</string>
     <string name="words">Words</string>
+    <string name="ipa">IPA</string>
+    <string name="meaning">Meaning</string>
 </resources>

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.wordnotes.data.Word
+import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.WordItemBinding
 
 class WordsAdapter(private val words: List<Word>) : Adapter<WordsViewHolder>() {
