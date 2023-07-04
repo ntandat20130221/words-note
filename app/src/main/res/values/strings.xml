@@ -6,4 +6,6 @@
     <string name="words">Words</string>
     <string name="ipa">IPA</string>
     <string name="meaning">Meaning</string>
+    <string name="add_new_word_successfully">Add new word successfully!</string>
+    <string name="update_word_successfully">Update word successfully!</string>
 </resources>

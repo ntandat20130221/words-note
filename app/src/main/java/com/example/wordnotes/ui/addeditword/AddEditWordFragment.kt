@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class AddEditWordFragment : Fragment() {
@@ -35,19 +37,25 @@ class AddEditWordFragment : Fragment() {
 
         binding.apply {
             inputWords.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.updateWord { currentWord ->
+                addEditWordViewModel.onUpdateWord { currentWord ->
                     currentWord.copy(word = text.toString())
                 }
             }
 
+            inputPos.doOnTextChanged { text, _, _, _ ->
+                addEditWordViewModel.onUpdateWord { currentWord ->
+                    currentWord.copy(pos = text.toString())
+                }
+            }
+
             inputIpa.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.updateWord { currentWord ->
+                addEditWordViewModel.onUpdateWord { currentWord ->
                     currentWord.copy(ipa = text.toString())
                 }
             }
 
             inputMeaning.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.updateWord { currentWord ->
+                addEditWordViewModel.onUpdateWord { currentWord ->
                     currentWord.copy(meaning = text.toString())
                 }
             }
@@ -57,18 +65,30 @@ class AddEditWordFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                addEditWordViewModel.word.collect {
-                    updateUi(it)
+                launch {
+                    addEditWordViewModel.word.collect { updateUi(it) }
+                }
+                launch {
+                    addEditWordViewModel.snackBarMessage.collect { messageResId ->
+                        if (messageResId != 0) {
+                            showSnackBar(messageResId)
+                        }
+                    }
                 }
             }
         }
     }
 
+    private fun showSnackBar(@StringRes messageResId: Int) {
+        Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
+    }
+
     private fun updateUi(word: Word) {
         binding.apply {
-            inputWords.setText(word.word)
-            inputIpa.setText(word.ipa)
-            inputMeaning.setText(word.meaning)
+            if (word.word != inputWords.text.toString()) inputWords.setText(word.word)
+            if (word.pos != inputPos.text.toString()) inputPos.setText(word.pos)
+            if (word.ipa != inputIpa.text.toString()) inputIpa.setText(word.ipa)
+            if (word.meaning != inputMeaning.text.toString()) inputMeaning.setText(word.meaning)
         }
     }
 

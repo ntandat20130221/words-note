@@ -22,4 +22,8 @@ class WordsLocalDataSource internal constructor(
     suspend fun saveWord(word: Word) = withContext(ioDispatcher) {
         wordsDao.insertWord(word)
     }
+
+    suspend fun updateWord(word: Word) = withContext(ioDispatcher) {
+        wordsDao.updateWord(word)
+    }
 }

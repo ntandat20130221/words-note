@@ -1,37 +1,23 @@
 package com.example.wordnotes.ui.words
 
 import androidx.lifecycle.ViewModel
-import com.example.wordnotes.data.repositories.WordRepository
+import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.data.model.Word
-import java.util.UUID
+import com.example.wordnotes.data.repositories.WordRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
+    private val _words: MutableStateFlow<List<Word>> = MutableStateFlow(emptyList())
+    val words: StateFlow<List<Word>> = _words.asStateFlow()
 
-    val words: List<Word> = listOf(
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-        Word(UUID.randomUUID().toString(), "contemptuous", "adjective", "/kənˈtemptʃuəs/", "khinh khỉnh", 0L),
-    )
+    init {
+        viewModelScope.launch {
+            wordRepository.observeWords().collect {
+                _words.value = it
+            }
+        }
+    }
 }

@@ -22,6 +22,12 @@ class WordRepository private constructor(private val wordsLocalDataSource: Words
         }
     }
 
+    suspend fun updateWord(word: Word) {
+        coroutineScope {
+            launch { wordsLocalDataSource.updateWord(word) }
+        }
+    }
+
     companion object {
         private var INSTANCE: WordRepository? = null
 
