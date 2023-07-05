@@ -8,4 +8,5 @@
     <string name="meaning">Meaning</string>
     <string name="add_new_word_successfully">Add new word successfully!</string>
     <string name="update_word_successfully">Update word successfully!</string>
+    <string name="word_and_meaning_must_not_be_empty">Word and meaning must not be empty</string>
 </resources>

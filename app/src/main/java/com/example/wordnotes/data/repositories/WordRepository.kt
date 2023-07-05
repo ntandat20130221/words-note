@@ -2,6 +2,7 @@ package com.example.wordnotes.data.repositories
 
 import android.content.Context
 import androidx.room.Room
+import com.example.wordnotes.data.local.MIGRATION_1_2
 import com.example.wordnotes.data.local.WordDatabase
 import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
@@ -33,7 +34,9 @@ class WordRepository private constructor(private val wordsLocalDataSource: Words
 
         fun initialize(context: Context) {
             if (INSTANCE == null) {
-                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, "words.db").build()
+                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, "words.db")
+                    .addMigrations(MIGRATION_1_2)
+                    .build()
                 val wordsLocalDataSource = WordsLocalDataSource(wordDatabase.wordDao())
                 INSTANCE = WordRepository(wordsLocalDataSource)
             }

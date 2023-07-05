@@ -1,5 +1,6 @@
 package com.example.wordnotes.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
@@ -11,5 +12,6 @@ data class Word(
     val pos: String = "",
     val ipa: String = "",
     val meaning: String = "",
+    @ColumnInfo(name = "learning") val isLearning: Boolean = false,
     val timestamp: Long = 0
 )

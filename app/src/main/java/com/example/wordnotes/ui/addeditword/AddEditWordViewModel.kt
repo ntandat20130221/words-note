@@ -38,18 +38,23 @@ class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewMod
     }
 
     fun saveWord() {
-        if (word.value.isValid) {
-            if (isForAddingWord) {
-                createWord(word.value)
-                _snackBarMessage.value = R.string.add_new_word_successfully
-            } else {
-                updateWord(word.value)
-                _snackBarMessage.value = R.string.update_word_successfully
-            }
-        }
+        if (word.value.isValid)
+            onInputValid()
+        else
+            _snackBarMessage.value = R.string.word_and_meaning_must_not_be_empty
     }
 
     private val Word.isValid get() = word.isNotEmpty() and meaning.isNotEmpty()
+
+    private fun onInputValid() {
+        if (isForAddingWord) {
+            createWord(word.value)
+            _snackBarMessage.value = R.string.add_new_word_successfully
+        } else {
+            updateWord(word.value)
+            _snackBarMessage.value = R.string.update_word_successfully
+        }
+    }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
         wordRepository.saveWord(newWord)
