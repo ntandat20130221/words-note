@@ -1,7 +1,10 @@
 package com.example.wordnotes.ui.addeditword
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wordnotes.Event
 import com.example.wordnotes.R
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.repositories.WordRepository
@@ -12,11 +15,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewModel() {
-    private val _word: MutableStateFlow<Word> = MutableStateFlow(Word())
+    private val _word = MutableStateFlow(Word())
     val word: StateFlow<Word> = _word.asStateFlow()
 
-    private val _snackBarMessage: MutableStateFlow<Int> = MutableStateFlow(0)
+    private val _snackBarMessage = MutableStateFlow(0)
     val snackBarMessage: StateFlow<Int> = _snackBarMessage.asStateFlow()
+
+    private val _taskUpdatedEvent = MutableLiveData<Event<Unit>>()
+    val taskUpdatedEvent: LiveData<Event<Unit>> = _taskUpdatedEvent
 
     private var isForAddingWord = false
 
@@ -58,6 +64,7 @@ class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewMod
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
         wordRepository.saveWord(newWord)
+        _taskUpdatedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) {
@@ -65,6 +72,7 @@ class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewMod
 
         viewModelScope.launch {
             wordRepository.updateWord(word)
+            _taskUpdatedEvent.value = Event(Unit)
         }
     }
 }

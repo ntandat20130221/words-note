@@ -22,11 +22,14 @@ class MainActivity : AppCompatActivity() {
     private fun setUpNavigation() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
+
         findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
             setupWithNavController(navController)
             setOnItemSelectedListener { item ->
+                if (item.itemId == R.id.words_fragment && navController.currentDestination?.id == R.id.add_edit_word_fragment)
+                    navController.popBackStack()
                 NavigationUI.onNavDestinationSelected(item, navController)
-                return@setOnItemSelectedListener true
+                true
             }
         }
     }

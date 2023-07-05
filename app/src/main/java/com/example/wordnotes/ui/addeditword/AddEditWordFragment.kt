@@ -11,7 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.wordnotes.EventObserver
+import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
@@ -83,6 +87,21 @@ class AddEditWordFragment : Fragment() {
                 }
             }
         }
+
+        addEditWordViewModel.taskUpdatedEvent.observe(viewLifecycleOwner,
+            EventObserver {
+                navigateToWordsFragment()
+            }
+        )
+    }
+
+    private fun navigateToWordsFragment() {
+        findNavController().navigate(
+            AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment(),
+            NavOptions.Builder()
+                .setPopUpTo(R.id.words_fragment, true)
+                .build()
+        )
     }
 
     private fun showSnackBar(@StringRes messageResId: Int) {
