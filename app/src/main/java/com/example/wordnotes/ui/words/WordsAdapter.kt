@@ -9,7 +9,10 @@ import com.example.wordnotes.R
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.WordItemBinding
 
-class WordsAdapter(private val words: List<Word>) : Adapter<WordsViewHolder>() {
+class WordsAdapter(
+    private val words: List<Word>,
+    private val onItemClicked: (String) -> Unit
+) : Adapter<WordsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         WordsViewHolder(WordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -17,12 +20,12 @@ class WordsAdapter(private val words: List<Word>) : Adapter<WordsViewHolder>() {
     override fun getItemCount() = words.size
 
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
-        holder.bind(words[position])
+        holder.bind(words[position], onItemClicked)
     }
 }
 
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
-    fun bind(word: Word) {
+    fun bind(word: Word, onItemClicked: (String) -> Unit) {
         binding.apply {
             textAvatar.text = word.word[0].toString()
             textWord.text = word.word
@@ -33,6 +36,8 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
                 if (word.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
+
+            root.setOnClickListener { onItemClicked(word.id) }
         }
     }
 }

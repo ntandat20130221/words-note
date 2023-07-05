@@ -43,8 +43,12 @@ class WordsFragment : Fragment() {
 
     private fun updateUi(words: List<Word>) {
         binding.apply {
-            wordsRecyclerView.adapter = WordsAdapter(words)
+            wordsRecyclerView.adapter = WordsAdapter(words) { handledOnWordItemClicked(it) }
         }
+    }
+
+    private fun handledOnWordItemClicked(wordId: String) {
+        navigateToEditWord(wordId)
     }
 
     private fun setUpWordsRecyclerView() {
@@ -55,12 +59,16 @@ class WordsFragment : Fragment() {
 
     private fun setUpFab() {
         binding.fabAddWords.setOnClickListener {
-            navigateToAddNewWords()
+            navigateToAddNewWord()
         }
     }
 
-    private fun navigateToAddNewWords() {
+    private fun navigateToAddNewWord() {
         findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(null))
+    }
+
+    private fun navigateToEditWord(wordId: String) {
+        findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(wordId))
     }
 
     override fun onDestroyView() {

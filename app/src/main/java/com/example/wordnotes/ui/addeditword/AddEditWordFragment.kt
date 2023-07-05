@@ -114,6 +114,10 @@ class AddEditWordFragment : Fragment() {
             if (word.pos != inputPos.text.toString()) inputPos.setText(word.pos)
             if (word.ipa != inputIpa.text.toString()) inputIpa.setText(word.ipa)
             if (word.meaning != inputMeaning.text.toString()) inputMeaning.setText(word.meaning)
+            checkLearning.apply {
+                isChecked = word.isLearning
+                jumpDrawablesToCurrentState()
+            }
         }
     }
 
