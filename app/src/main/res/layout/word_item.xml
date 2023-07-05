@@ -12,8 +12,8 @@
         android:layout_height="48dp"
         android:background="@drawable/bg_avatar"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textColor="?colorOnPrimary"
+        android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="A" />
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textColor="@color/black"
+        android:textColor="?colorOnSurface"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/text_avatar"
         app:layout_constraintTop_toTopOf="@+id/text_avatar"
@@ -33,7 +33,37 @@
         android:id="@+id/text_ipa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="?colorOnSurfaceVariant"
         app:layout_constraintStart_toStartOf="@+id/text_word"
         app:layout_constraintTop_toBottomOf="@+id/text_word"
         tools:text="/kənˈtemptʃuəs/" />
+
+    <TextView
+        android:id="@+id/text_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?colorOnSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2m" />
+
+    <TextView
+        android:id="@+id/text_meaning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="?colorOnSurface"
+        app:layout_constraintStart_toStartOf="@+id/text_word"
+        app:layout_constraintTop_toBottomOf="@+id/text_ipa"
+        tools:text="Khinh khỉnh" />
+
+    <ImageView
+        android:id="@+id/image_star"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_timestamp"
+        app:srcCompat="@drawable/star" />
 </androidx.constraintlayout.widget.ConstraintLayout>

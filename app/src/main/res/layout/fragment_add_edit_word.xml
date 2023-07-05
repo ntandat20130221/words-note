@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorSurface">
@@ -10,10 +9,10 @@
         android:id="@+id/input_words"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:imeOptions="flagNoExtractUi"
         android:layout_marginStart="85dp"
         android:ems="10"
         android:hint="@string/words"
+        android:imeOptions="flagNoExtractUi"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/input_pos"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,8 +26,8 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Part of Speech"
-        android:inputType="text"
         android:imeOptions="flagNoExtractUi"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/input_ipa"
         app:layout_constraintEnd_toEndOf="@+id/input_words"
         app:layout_constraintStart_toStartOf="@+id/input_words"
@@ -39,9 +38,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:imeOptions="flagNoExtractUi"
         android:ems="10"
         android:hint="@string/ipa"
+        android:imeOptions="flagNoExtractUi"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/input_meaning"
         app:layout_constraintEnd_toEndOf="@+id/input_pos"
@@ -54,8 +53,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:imeOptions="flagNoExtractUi"
         android:hint="@string/meaning"
+        android:imeOptions="flagNoExtractUi"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/button_save"
         app:layout_constraintEnd_toEndOf="@+id/input_ipa"
@@ -71,4 +70,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/check_learning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mark as learning"
+        app:layout_constraintStart_toStartOf="@+id/input_meaning"
+        app:layout_constraintTop_toBottomOf="@+id/input_meaning" />
 </androidx.constraintlayout.widget.ConstraintLayout>

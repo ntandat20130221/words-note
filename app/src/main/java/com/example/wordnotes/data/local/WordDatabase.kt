@@ -6,13 +6,13 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.wordnotes.data.model.Word
 
-@Database(entities = [Word::class], version = 1)
+@Database(entities = [Word::class], version = 2)
 abstract class WordDatabase : RoomDatabase() {
     abstract fun wordDao(): WordsDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE words ADD learning INTEGER")
+        database.execSQL("ALTER TABLE words ADD COLUMN learning INTEGER NOT NULL DEFAULT 0")
     }
 }

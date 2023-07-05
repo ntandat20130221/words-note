@@ -13,5 +13,5 @@ data class Word(
     val ipa: String = "",
     val meaning: String = "",
     @ColumnInfo(name = "learning") val isLearning: Boolean = false,
-    val timestamp: Long = 0
+    val timestamp: Long = System.currentTimeMillis()
 )

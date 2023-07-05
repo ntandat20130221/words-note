@@ -9,7 +9,9 @@ import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-class WordRepository private constructor(private val wordsLocalDataSource: WordsLocalDataSource) {
+class WordRepository private constructor(
+    private val wordsLocalDataSource: WordsLocalDataSource
+) {
 
     fun observeWords() = wordsLocalDataSource.observeWords()
 

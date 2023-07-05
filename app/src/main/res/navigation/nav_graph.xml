@@ -4,15 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/words_fragment">
-
     <fragment
         android:id="@+id/words_fragment"
         android:name="com.example.wordnotes.ui.words.WordsFragment"
         android:label="WordsFragment"
         tools:layout="@layout/fragment_words">
-        <action
-            android:id="@+id/action_show_settings_fragment"
-            app:destination="@id/settings_fragment" />
         <action
             android:id="@+id/action_show_add_edit_word_fragment"
             app:destination="@id/add_edit_word_fragment" />
@@ -21,11 +17,7 @@
         android:id="@+id/settings_fragment"
         android:name="com.example.wordnotes.ui.settings.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings">
-        <action
-            android:id="@+id/action_show_words_fragment"
-            app:destination="@id/words_fragment" />
-    </fragment>
+        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/add_edit_word_fragment"
         android:name="com.example.wordnotes.ui.addeditword.AddEditWordFragment"

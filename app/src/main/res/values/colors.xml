@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="neutral_90">#E6E0E9</color>
+    <color name="neutral_10">#1D1B20</color>
+    <color name="neutral_variant_80">#CAC4D0</color>
     <color name="neutral_98">#FEF7FF</color>
+    <color name="neutral_variant_30">#49454F</color>
 </resources>

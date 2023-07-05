@@ -60,6 +60,12 @@ class AddEditWordFragment : Fragment() {
                 }
             }
 
+            checkLearning.setOnCheckedChangeListener { _, isChecked ->
+                addEditWordViewModel.onUpdateWord { currentWord ->
+                    currentWord.copy(isLearning = isChecked)
+                }
+            }
+
             buttonSave.setOnClickListener { addEditWordViewModel.saveWord() }
         }
 

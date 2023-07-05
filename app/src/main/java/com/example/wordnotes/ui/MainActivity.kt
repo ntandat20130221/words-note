@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,6 +22,12 @@ class MainActivity : AppCompatActivity() {
     private fun setUpNavigation() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
-        findViewById<BottomNavigationView>(R.id.bottom_nav).setupWithNavController(navController)
+        findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
+            setupWithNavController(navController)
+            setOnItemSelectedListener { item ->
+                NavigationUI.onNavDestinationSelected(item, navController)
+                return@setOnItemSelectedListener true
+            }
+        }
     }
 }

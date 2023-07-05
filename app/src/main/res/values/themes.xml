@@ -1,19 +1,23 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme.WordNotes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+
+    <style name="Base.AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
+        <!-- Secondary brand color -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
+        <!-- Surface color -->
+        <item name="colorSurface">@color/neutral_98</item>
+        <item name="colorOnSurface">@color/neutral_10</item>
+        <item name="colorOnSurfaceVariant">@color/neutral_variant_30</item>
+        <item name="colorOutlineVariant">@color/neutral_variant_80</item>
+    </style>
+
+    <style name="Theme.WordNotes" parent="Base.AppTheme">
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">true</item>
-        <!-- Customize your theme here. -->
-        <item name="colorSurface">@color/neutral_98</item>
-        <item name="colorOutlineVariant">@color/neutral_90</item>
     </style>
 </resources>
