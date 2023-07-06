@@ -2,6 +2,7 @@ package com.example.wordnotes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.wordnotes.data.repositories.WordRepository
 import com.example.wordnotes.ui.addeditword.AddEditWordViewModel
@@ -14,7 +15,7 @@ val WordViewModelFactory = object : ViewModelProvider.Factory {
             val wordRepository = WordRepository.get()
             when {
                 isAssignableFrom(WordsViewModel::class.java) -> WordsViewModel(wordRepository)
-                isAssignableFrom(AddEditWordViewModel::class.java) -> AddEditWordViewModel(wordRepository)
+                isAssignableFrom(AddEditWordViewModel::class.java) -> AddEditWordViewModel(wordRepository, extras.createSavedStateHandle())
                 else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
         } as T

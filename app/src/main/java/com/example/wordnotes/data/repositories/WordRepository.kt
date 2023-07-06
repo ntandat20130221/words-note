@@ -7,28 +7,25 @@ import com.example.wordnotes.data.local.WordDatabase
 import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class WordRepository private constructor(
     private val wordsLocalDataSource: WordsLocalDataSource
 ) {
 
-    fun observeWords() = wordsLocalDataSource.observeWords()
+    fun observeWords(): Flow<List<Word>> = wordsLocalDataSource.observeWords()
 
-    fun observeWord(wordId: String) = wordsLocalDataSource.observeWord(wordId)
+    fun observeWord(wordId: String): Flow<Word> = wordsLocalDataSource.observeWord(wordId)
 
-    suspend fun getWord(wordId: String) = wordsLocalDataSource.getWord(wordId)
+    suspend fun getWord(wordId: String): Word = wordsLocalDataSource.getWord(wordId)
 
-    suspend fun saveWord(word: Word) {
-        coroutineScope {
-            launch { wordsLocalDataSource.saveWord(word) }
-        }
+    suspend fun saveWord(word: Word) = coroutineScope {
+        launch { wordsLocalDataSource.saveWord(word) }
     }
 
-    suspend fun updateWord(word: Word) {
-        coroutineScope {
-            launch { wordsLocalDataSource.updateWord(word) }
-        }
+    suspend fun updateWord(word: Word) = coroutineScope {
+        launch { wordsLocalDataSource.updateWord(word) }
     }
 
     companion object {

@@ -2,6 +2,7 @@ package com.example.wordnotes.ui.addeditword
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.Event
@@ -14,7 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewModel() {
+class AddEditWordViewModel(
+    private val wordRepository: WordRepository,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
     private val _word = MutableStateFlow(Word())
     val word: StateFlow<Word> = _word.asStateFlow()
 
@@ -33,13 +37,15 @@ class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewMod
         }
 
         viewModelScope.launch {
-            wordRepository.getWord(wordId).also { _word.value = it }
+            _word.value = savedStateHandle[WORDS_SAVED_STATE_KEY] ?: wordRepository.getWord(wordId).also { _word.value = it }
         }
     }
 
-    fun onUpdateWord(onUpdate: (Word) -> Word) {
+    fun onUserUpdatesWord(onUpdate: (Word) -> Word) {
         _word.update { currentWord ->
-            onUpdate(currentWord)
+            onUpdate(currentWord).also {
+                savedStateHandle[WORDS_SAVED_STATE_KEY] = it
+            }
         }
     }
 
@@ -76,3 +82,5 @@ class AddEditWordViewModel(private val wordRepository: WordRepository) : ViewMod
         }
     }
 }
+
+const val WORDS_SAVED_STATE_KEY = "WORDS_SAVED_STATE_KEY"

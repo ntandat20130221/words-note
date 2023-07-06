@@ -29,9 +29,24 @@ class WordsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpWordsRecyclerView()
+        setUpRecyclerView()
         setUpFab()
+        observeData()
+    }
 
+    private fun setUpRecyclerView() {
+        binding.wordsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun setUpFab() {
+        binding.fabAddWord.setOnClickListener {
+            navigateToAddNewWord()
+        }
+    }
+
+    private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.words.collect {
@@ -43,24 +58,12 @@ class WordsFragment : Fragment() {
 
     private fun updateUi(words: List<Word>) {
         binding.apply {
-            wordsRecyclerView.adapter = WordsAdapter(words) { handledOnWordItemClicked(it) }
+            wordsRecyclerView.adapter = WordsAdapter(words) { handleOnWordItemClicked(it) }
         }
     }
 
-    private fun handledOnWordItemClicked(wordId: String) {
+    private fun handleOnWordItemClicked(wordId: String) {
         navigateToEditWord(wordId)
-    }
-
-    private fun setUpWordsRecyclerView() {
-        binding.wordsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-        }
-    }
-
-    private fun setUpFab() {
-        binding.fabAddWords.setOnClickListener {
-            navigateToAddNewWord()
-        }
     }
 
     private fun navigateToAddNewWord() {
