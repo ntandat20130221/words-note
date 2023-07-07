@@ -14,6 +14,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.EventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
@@ -38,6 +40,7 @@ class AddEditWordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         addEditWordViewModel.initializeWithWordId(args.wordId)
+        setUpNavigation()
         setViewListeners()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -60,6 +63,12 @@ class AddEditWordFragment : Fragment() {
                 navigateToWordsFragment()
             }
         )
+    }
+
+    private fun setUpNavigation() {
+        val navController = findNavController()
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
     private fun setViewListeners() {
