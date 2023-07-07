@@ -10,13 +10,12 @@ import com.example.wordnotes.ui.words.WordsViewModel
 
 @Suppress("UNCHECKED_CAST")
 val WordViewModelFactory = object : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
-        with(modelClass) {
-            val wordRepository = WordRepository.get()
-            when {
-                isAssignableFrom(WordsViewModel::class.java) -> WordsViewModel(wordRepository)
-                isAssignableFrom(AddEditWordViewModel::class.java) -> AddEditWordViewModel(wordRepository, extras.createSavedStateHandle())
-                else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
-            }
-        } as T
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T = with(modelClass) {
+        val wordRepository = WordRepository.get()
+        when {
+            isAssignableFrom(WordsViewModel::class.java) -> WordsViewModel(wordRepository)
+            isAssignableFrom(AddEditWordViewModel::class.java) -> AddEditWordViewModel(wordRepository, extras.createSavedStateHandle())
+            else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    } as T
 }

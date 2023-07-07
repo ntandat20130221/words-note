@@ -38,7 +38,31 @@ class AddEditWordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         addEditWordViewModel.initializeWithWordId(args.wordId)
+        setViewListeners()
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    addEditWordViewModel.word.collect { updateUi(it) }
+                }
+                launch {
+                    addEditWordViewModel.snackBarMessage.collect { messageResId ->
+                        if (messageResId != 0) {
+                            showSnackBar(messageResId)
+                        }
+                    }
+                }
+            }
+        }
+
+        addEditWordViewModel.taskUpdatedEvent.observe(viewLifecycleOwner,
+            EventObserver {
+                navigateToWordsFragment()
+            }
+        )
+    }
+
+    private fun setViewListeners() {
         binding.apply {
             inputWords.doOnTextChanged { text, _, _, _ ->
                 addEditWordViewModel.onUserUpdatesWord { currentWord ->
@@ -72,40 +96,6 @@ class AddEditWordFragment : Fragment() {
 
             buttonSave.setOnClickListener { addEditWordViewModel.saveWord() }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    addEditWordViewModel.word.collect { updateUi(it) }
-                }
-                launch {
-                    addEditWordViewModel.snackBarMessage.collect { messageResId ->
-                        if (messageResId != 0) {
-                            showSnackBar(messageResId)
-                        }
-                    }
-                }
-            }
-        }
-
-        addEditWordViewModel.taskUpdatedEvent.observe(viewLifecycleOwner,
-            EventObserver {
-                navigateToWordsFragment()
-            }
-        )
-    }
-
-    private fun navigateToWordsFragment() {
-        findNavController().navigate(
-            AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment(),
-            NavOptions.Builder()
-                .setPopUpTo(R.id.words_fragment, true)
-                .build()
-        )
-    }
-
-    private fun showSnackBar(@StringRes messageResId: Int) {
-        Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun updateUi(word: Word) {
@@ -140,6 +130,19 @@ class AddEditWordFragment : Fragment() {
                 // TODO("Make jumpDrawablesToCurrentState() only when the first population")
             }
         }
+    }
+
+    private fun showSnackBar(@StringRes messageResId: Int) {
+        Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun navigateToWordsFragment() {
+        findNavController().navigate(
+            AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment(),
+            NavOptions.Builder()
+                .setPopUpTo(R.id.words_fragment, true)
+                .build()
+        )
     }
 
     override fun onDestroyView() {

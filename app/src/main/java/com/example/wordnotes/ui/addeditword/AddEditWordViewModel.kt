@@ -19,6 +19,7 @@ class AddEditWordViewModel(
     private val wordRepository: WordRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val _word = MutableStateFlow(Word())
     val word: StateFlow<Word> = _word.asStateFlow()
 
@@ -31,11 +32,17 @@ class AddEditWordViewModel(
     private var isForAddingWord = false
 
     fun initializeWithWordId(wordId: String?) {
-        if (wordId == null) {
-            isForAddingWord = true
-            return
-        }
+        if (wordId == null)
+            prepareForAddingNewWord()
+        else
+            prepareForLoadingWord(wordId)
+    }
 
+    private fun prepareForAddingNewWord() {
+        isForAddingWord = true
+    }
+
+    private fun prepareForLoadingWord(wordId: String) {
         viewModelScope.launch {
             _word.value = savedStateHandle[WORDS_SAVED_STATE_KEY] ?: wordRepository.getWord(wordId).also { _word.value = it }
         }
@@ -73,13 +80,11 @@ class AddEditWordViewModel(
         _taskUpdatedEvent.value = Event(Unit)
     }
 
-    private fun updateWord(word: Word) {
+    private fun updateWord(word: Word) = viewModelScope.launch {
         if (isForAddingWord) throw IllegalStateException("updateWord(word: Word) was called but word is new")
 
-        viewModelScope.launch {
-            wordRepository.updateWord(word)
-            _taskUpdatedEvent.value = Event(Unit)
-        }
+        wordRepository.updateWord(word)
+        _taskUpdatedEvent.value = Event(Unit)
     }
 }
 
