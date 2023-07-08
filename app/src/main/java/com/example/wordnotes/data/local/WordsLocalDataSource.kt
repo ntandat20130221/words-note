@@ -15,6 +15,10 @@ class WordsLocalDataSource internal constructor(
 
     fun observeWord(wordId: String): Flow<Word> = wordsDao.observeWord(wordId)
 
+    suspend fun getWords(): List<Word> = withContext(ioDispatcher) {
+        wordsDao.getWords()
+    }
+
     suspend fun getWord(wordId: String): Word = withContext(ioDispatcher) {
         wordsDao.getWord(wordId)
     }

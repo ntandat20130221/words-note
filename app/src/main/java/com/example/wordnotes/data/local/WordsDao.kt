@@ -17,6 +17,9 @@ interface WordsDao {
     @Query("SELECT * FROM words WHERE id = :wordId")
     fun observeWord(wordId: String): Flow<Word>
 
+    @Query("SELECT * FROM words")
+    suspend fun getWords(): List<Word>
+
     @Query("SELECT * FROM words WHERE id = :wordId")
     suspend fun getWord(wordId: String): Word
 

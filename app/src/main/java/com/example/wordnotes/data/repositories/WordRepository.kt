@@ -18,6 +18,8 @@ class WordRepository private constructor(
 
     fun observeWord(wordId: String): Flow<Word> = wordsLocalDataSource.observeWord(wordId)
 
+    suspend fun getWords(): List<Word> = wordsLocalDataSource.getWords()
+
     suspend fun getWord(wordId: String): Word = wordsLocalDataSource.getWord(wordId)
 
     suspend fun saveWord(word: Word) = coroutineScope {
