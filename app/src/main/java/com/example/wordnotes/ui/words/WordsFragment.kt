@@ -21,6 +21,7 @@ class WordsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val wordsViewModel by viewModels<WordsViewModel> { WordViewModelFactory }
+    private lateinit var wordsAdapter: WordsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordsBinding.inflate(inflater, container, false)
@@ -37,6 +38,7 @@ class WordsFragment : Fragment() {
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
+            wordsAdapter = WordsAdapter { handleOnWordItemClicked(it) }.also { adapter = it }
         }
     }
 
@@ -57,9 +59,7 @@ class WordsFragment : Fragment() {
     }
 
     private fun updateUi(words: List<Word>) {
-        binding.apply {
-            wordsRecyclerView.adapter = WordsAdapter(words) { handleOnWordItemClicked(it) }
-        }
+        wordsAdapter.setData(words)
     }
 
     private fun handleOnWordItemClicked(wordId: String) {
