@@ -1,6 +1,5 @@
 package com.example.wordnotes.ui.words
 
-import android.os.Build.VERSION_CODES.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat

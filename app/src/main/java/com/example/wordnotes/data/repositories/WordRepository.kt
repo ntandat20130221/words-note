@@ -2,7 +2,8 @@ package com.example.wordnotes.data.repositories
 
 import android.content.Context
 import androidx.room.Room
-import com.example.wordnotes.data.local.MIGRATION_1_2
+import com.example.wordnotes.data.Result
+import com.example.wordnotes.data.local.DATABASE_NAME
 import com.example.wordnotes.data.local.WordDatabase
 import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
@@ -14,13 +15,13 @@ class WordRepository private constructor(
     private val wordsLocalDataSource: WordsLocalDataSource
 ) {
 
-    fun observeWords(): Flow<List<Word>> = wordsLocalDataSource.observeWords()
+    fun observeWords(): Flow<Result<List<Word>>> = wordsLocalDataSource.observeWords()
 
-    fun observeWord(wordId: String): Flow<Word> = wordsLocalDataSource.observeWord(wordId)
+    fun observeWord(wordId: String): Flow<Result<Word>> = wordsLocalDataSource.observeWord(wordId)
 
-    suspend fun getWords(): List<Word> = wordsLocalDataSource.getWords()
+    suspend fun getWords(): Result<List<Word>> = wordsLocalDataSource.getWords()
 
-    suspend fun getWord(wordId: String): Word = wordsLocalDataSource.getWord(wordId)
+    suspend fun getWord(wordId: String): Result<Word> = wordsLocalDataSource.getWord(wordId)
 
     suspend fun saveWord(word: Word) = coroutineScope {
         launch { wordsLocalDataSource.saveWord(word) }
@@ -35,9 +36,7 @@ class WordRepository private constructor(
 
         fun initialize(context: Context) {
             if (INSTANCE == null) {
-                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, "words.db")
-                    .addMigrations(MIGRATION_1_2)
-                    .build()
+                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, DATABASE_NAME).build()
                 val wordsLocalDataSource = WordsLocalDataSource(wordDatabase.wordDao())
                 INSTANCE = WordRepository(wordsLocalDataSource)
             }

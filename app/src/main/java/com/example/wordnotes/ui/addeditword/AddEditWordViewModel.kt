@@ -8,6 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.Event
 import com.example.wordnotes.R
 import com.example.wordnotes.data.model.Word
+import com.example.wordnotes.data.onError
+import com.example.wordnotes.data.onLoading
+import com.example.wordnotes.data.onSuccess
 import com.example.wordnotes.data.repositories.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +47,21 @@ class AddEditWordViewModel(
 
     private fun prepareForLoadingWord(wordId: String) {
         viewModelScope.launch {
-            _word.value = savedStateHandle[WORDS_SAVED_STATE_KEY] ?: wordRepository.getWord(wordId).also { _word.value = it }
+            val savedWord: Word? = savedStateHandle[WORDS_SAVED_STATE_KEY]
+            if (savedWord != null) {
+                _word.value = savedWord
+            } else {
+                val result = wordRepository.getWord(wordId)
+                result.onSuccess { data ->
+                    _word.value = data
+                }
+                result.onError {
+                    // TODO("Show error message")
+                }
+                result.onLoading {
+                    // TODO("Show ProgressBar")
+                }
+            }
         }
     }
 
