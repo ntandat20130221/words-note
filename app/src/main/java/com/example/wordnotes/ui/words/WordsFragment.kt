@@ -38,7 +38,10 @@ class WordsFragment : Fragment() {
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            wordsAdapter = WordsAdapter { handleOnWordItemClicked(it) }.also { adapter = it }
+            wordsAdapter = WordsAdapter(
+                onItemClicked = { handleOnWordItemClicked(wordId = it) },
+                onItemLongClicked = { handleOnWordItemLongClicked(wordId = it) }
+            ).also { adapter = it }
         }
     }
 
@@ -64,6 +67,11 @@ class WordsFragment : Fragment() {
 
     private fun handleOnWordItemClicked(wordId: String) {
         navigateToEditWord(wordId)
+    }
+
+    private fun handleOnWordItemLongClicked(wordId: String): Boolean {
+        findNavController().navigate(WordsFragmentDirections.actionShowWordsBottomSheet())
+        return true
     }
 
     private fun navigateToAddNewWord() {

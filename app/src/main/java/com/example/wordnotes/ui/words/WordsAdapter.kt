@@ -10,7 +10,11 @@ import com.example.wordnotes.R
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.WordItemBinding
 
-class WordsAdapter(words: List<Word> = emptyList(), private val onItemClicked: (String) -> Unit) : Adapter<WordsViewHolder>() {
+class WordsAdapter(
+    words: List<Word> = emptyList(),
+    private val onItemClicked: (String) -> Unit,
+    private val onItemLongClicked: (String) -> Boolean
+) : Adapter<WordsViewHolder>() {
     private val words: MutableList<Word> = words.toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -19,7 +23,7 @@ class WordsAdapter(words: List<Word> = emptyList(), private val onItemClicked: (
     override fun getItemCount() = words.size
 
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
-        holder.bind(words[position], onItemClicked)
+        holder.bind(words[position], onItemClicked, onItemLongClicked)
     }
 
     fun setData(words: List<Word>) {
@@ -33,7 +37,7 @@ class WordsAdapter(words: List<Word> = emptyList(), private val onItemClicked: (
 }
 
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
-    fun bind(word: Word, onItemClicked: (String) -> Unit) {
+    fun bind(word: Word, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
         binding.apply {
             textAvatar.text = word.word[0].toString()
             textWord.text = word.word
@@ -46,6 +50,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             )
 
             root.setOnClickListener { onItemClicked(word.id) }
+            root.setOnLongClickListener { onItemLongClicked(word.id) }
         }
     }
 }

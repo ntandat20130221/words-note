@@ -8,7 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="neutral_10">#1D1B20</color>
-    <color name="neutral_variant_80">#CAC4D0</color>
+    <color name="neutral_96">#F7F2FA</color>
     <color name="neutral_98">#FEF7FF</color>
     <color name="neutral_variant_30">#49454F</color>
+    <color name="neutral_variant_80">#CAC4D0</color>
 </resources>
