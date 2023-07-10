@@ -12,9 +12,6 @@
         <action
             android:id="@+id/action_show_add_edit_word_fragment"
             app:destination="@id/add_edit_word_fragment" />
-        <action
-            android:id="@+id/action_show_words_bottom_sheet"
-            app:destination="@id/words_bottom_sheet_fragment" />
     </fragment>
     <fragment
         android:id="@+id/settings_fragment"
@@ -35,9 +32,4 @@
             android:id="@+id/action_add_edit_word_fragment_to_words_fragment"
             app:destination="@id/words_fragment" />
     </fragment>
-    <dialog
-        android:id="@+id/words_bottom_sheet_fragment"
-        android:name="com.example.wordnotes.ui.words.WordsBottomSheetFragment"
-        android:label="WordsBottomSheetFragment"
-        tools:layout="@layout/fragment_words_bottom_sheet" />
 </navigation>

@@ -11,4 +11,5 @@
     <string name="word_and_meaning_must_not_be_empty">Word and meaning must not be empty</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="select_all">Select all</string>
 </resources>
