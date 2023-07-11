@@ -15,9 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
-import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.FragmentWordsBinding
 import kotlinx.coroutines.launch
 
@@ -27,6 +27,29 @@ class WordsFragment : Fragment() {
 
     private val wordsViewModel by activityViewModels<WordsViewModel> { WordViewModelFactory }
     private lateinit var wordsAdapter: WordsAdapter
+    private var actionMode: ActionMode? = null
+
+    inner class WordsActionModeCallback : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            mode.menuInflater.inflate(R.menu.words_action_mode, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+            return false
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            if (item.itemId == android.R.id.closeButton) {
+                return true
+            }
+            return false
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode) {
+            wordsViewModel.destroyActionMode()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordsBinding.inflate(inflater, container, false)
@@ -40,74 +63,44 @@ class WordsFragment : Fragment() {
         observeData()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             wordsAdapter = WordsAdapter(
-                onItemClicked = { handleOnWordItemClicked(wordId = it) },
-                onItemLongClicked = { handleOnWordItemLongClicked(wordId = it) }
+                onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
+                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) }
             ).also { adapter = it }
         }
     }
 
     private fun setUpFab() {
         binding.fabAddWord.setOnClickListener {
-            navigateToAddNewWord()
+            findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(null))
         }
     }
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                wordsViewModel.words.collect {
-                    updateUi(it)
+                wordsViewModel.uiState.collect { uiState ->
+                    wordsAdapter.setData(uiState.words)
+                    if (uiState.isActionMode) {
+                        actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
+                        actionMode?.title = "${uiState.selectedWordsCount} selected"
+                    }
                 }
             }
         }
-    }
 
-    private fun updateUi(words: List<Word>) {
-        wordsAdapter.setData(words)
-    }
-
-    private fun handleOnWordItemClicked(wordId: String) {
-        navigateToEditWord(wordId)
-    }
-
-    private fun handleOnWordItemLongClicked(wordId: String): Boolean {
-        (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
-        return true
-    }
-
-    private fun navigateToAddNewWord() {
-        findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(null))
-    }
-
-    private fun navigateToEditWord(wordId: String) {
-        findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(wordId))
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-}
-
-class WordsActionModeCallback : ActionMode.Callback {
-    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-        mode.menuInflater.inflate(R.menu.words_action_mode, menu)
-        return true
-    }
-
-    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-        return false
-    }
-
-    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-        return false
-    }
-
-    override fun onDestroyActionMode(mode: ActionMode) {
-
+        wordsViewModel.clickItemEvent.observe(viewLifecycleOwner,
+            OneTimeEventObserver { wordId ->
+                findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(wordId))
+            }
+        )
     }
 }

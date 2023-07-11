@@ -16,7 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/words_toolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/words" />
+        app:title="@string/words"
+        app:titleTextColor="?colorOnSurfaceVariant" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/words_recycler_view"

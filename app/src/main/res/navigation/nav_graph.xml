@@ -29,7 +29,7 @@
             app:argType="string"
             app:nullable="true" />
         <action
-            android:id="@+id/action_add_edit_word_fragment_to_words_fragment"
+            android:id="@+id/showWordsFragment"
             app:destination="@id/words_fragment" />
     </fragment>
 </navigation>

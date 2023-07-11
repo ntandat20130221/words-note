@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.example.wordnotes.EventObserver
+import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.data.model.Word
@@ -38,16 +38,21 @@ class AddEditWordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         addEditWordViewModel.initializeWithWordId(args.wordId)
         setUpNavigation()
         setViewListeners()
+        observeData()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    addEditWordViewModel.word.collect { updateUi(it) }
-                }
+                launch { addEditWordViewModel.word.collect { updateUi(it) } }
                 launch {
                     addEditWordViewModel.snackBarMessage.collect { messageResId ->
                         if (messageResId != 0) {
@@ -59,8 +64,11 @@ class AddEditWordFragment : Fragment() {
         }
 
         addEditWordViewModel.taskUpdatedEvent.observe(viewLifecycleOwner,
-            EventObserver {
-                navigateToWordsFragment()
+            OneTimeEventObserver {
+                findNavController().navigate(
+                    AddEditWordFragmentDirections.showWordsFragment(),
+                    NavOptions.Builder().setPopUpTo(R.id.words_fragment, true).build()
+                )
             }
         )
     }
@@ -143,19 +151,5 @@ class AddEditWordFragment : Fragment() {
 
     private fun showSnackBar(@StringRes messageResId: Int) {
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
-    }
-
-    private fun navigateToWordsFragment() {
-        findNavController().navigate(
-            AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment(),
-            NavOptions.Builder()
-                .setPopUpTo(R.id.words_fragment, true)
-                .build()
-        )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
