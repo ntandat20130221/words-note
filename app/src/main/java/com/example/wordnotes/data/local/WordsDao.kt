@@ -1,6 +1,7 @@
 package com.example.wordnotes.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -28,4 +29,7 @@ interface WordsDao {
 
     @Update
     suspend fun updateWord(word: Word)
+
+    @Query("DELETE FROM words WHERE id IN (:id)")
+    suspend fun deleteWords(id: List<String>)
 }

@@ -48,4 +48,8 @@ class WordsLocalDataSource internal constructor(
     suspend fun updateWord(word: Word) = withContext(ioDispatcher) {
         wordsDao.updateWord(word)
     }
+
+    suspend fun deleteWords(id: List<String>) = withContext(ioDispatcher) {
+        wordsDao.deleteWords(id)
+    }
 }

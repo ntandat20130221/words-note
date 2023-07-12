@@ -10,11 +10,10 @@ import com.example.wordnotes.R
 import com.example.wordnotes.databinding.WordItemBinding
 
 class WordsAdapter(
-    words: List<WordUiState> = emptyList(),
+    private val words: MutableList<WordUiState> = mutableListOf(),
     private val onItemClicked: (String) -> Unit,
     private val onItemLongClicked: (String) -> Boolean
 ) : Adapter<WordsViewHolder>() {
-    private val words: MutableList<WordUiState> = words.toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         WordsViewHolder(WordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -23,6 +22,11 @@ class WordsAdapter(
 
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
         holder.bind(words[position], onItemClicked, onItemLongClicked)
+    }
+
+    override fun onBindViewHolder(holder: WordsViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
+        else holder.bind(words[position].copy(isSelected = payloads[0] as Boolean), onItemClicked, onItemLongClicked)
     }
 
     fun setData(words: List<WordUiState>) {
@@ -41,16 +45,14 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             textAvatar.text = wordUiState.word[0].toString()
             textWord.text = wordUiState.word
             textIpa.text = wordUiState.ipa
-            textTimestamp.text = "2m"
+            textTimestamp.text = wordUiState.timestamp.toString()
             textMeaning.text = wordUiState.meaning
             imageStar.setImageDrawable(
                 if (wordUiState.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
             root.apply {
-                if (wordUiState.isSelected) {
-                    setBackgroundColor(context.getColor(R.color.purple_200))
-                }
+                setBackgroundColor(if (wordUiState.isSelected) context.getColor(R.color.purple_200) else context.getColor(R.color.neutral_98))
                 setOnClickListener { onItemClicked(wordUiState.id) }
                 setOnLongClickListener { onItemLongClicked(wordUiState.id) }
             }
@@ -61,6 +63,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
 class WordDiffUtilCallback(private val oldList: List<WordUiState>, private val newList: List<WordUiState>) : DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition].id == newList[newItemPosition].id
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition] == newList[newItemPosition]
+    override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition].id == newList[newPosition].id
+    override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
+    override fun getChangePayload(oldPosition: Int, newPosition: Int) = newList[newPosition].isSelected
 }

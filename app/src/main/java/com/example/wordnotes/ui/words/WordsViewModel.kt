@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+enum class ActionModeState { STARTED, STOPPED }
+
 data class WordUiState(
     val id: String = UUID.randomUUID().toString(),
     val word: String = "",
@@ -30,17 +32,18 @@ data class WordUiState(
 data class WordsUiState(
     val words: List<WordUiState> = emptyList(),
     val isActionMode: Boolean = false,
-    val selectedWordsCount: Int = 0
+    val selectedCount: Int = 0
 )
 
 class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
     private val _uiState: MutableStateFlow<WordsUiState> = MutableStateFlow(WordsUiState())
     val uiState: StateFlow<WordsUiState> = _uiState.asStateFlow()
 
-    private val _clickItemEvent: MutableLiveData<Event<String>> = MutableLiveData()
-    val clickItemEvent: LiveData<Event<String>> = _clickItemEvent
+    private val _clickItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
+    val clickItemEvent: LiveData<Event<String?>> = _clickItemEvent
 
-    private val selectedWordIds = mutableListOf<String>()
+    private val _actionModeEvent: MutableLiveData<Event<ActionModeState>> = MutableLiveData()
+    val actionModeEvent: LiveData<Event<ActionModeState>> = _actionModeEvent
 
     init {
         viewModelScope.launch {
@@ -58,22 +61,56 @@ class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
     fun itemClicked(wordId: String) {
         if (!_uiState.value.isActionMode) {
             _clickItemEvent.value = Event(wordId)
-
+            return
         }
+        selectItem(wordId)
     }
 
     fun itemLongClicked(wordId: String): Boolean {
         if (!_uiState.value.isActionMode) {
-            val updatedWords = _uiState.value.words.map { wordUiState -> wordUiState.copy(isSelected = wordUiState.id == wordId) }
-            _uiState.update { it.copy(words = updatedWords, isActionMode = true, selectedWordsCount = it.selectedWordsCount + 1) }
-            selectedWordIds.add(wordId)
+            _actionModeEvent.value = Event(ActionModeState.STARTED)
         }
+        selectItem(wordId)
         return true
     }
 
-    fun destroyActionMode() {
-        _uiState.update {
-            it.copy(words = it.words.map { wordUiState -> wordUiState.copy(isSelected = false) }, isActionMode = false, selectedWordsCount = 0)
+    private fun selectItem(wordId: String) {
+        val updatedWords = _uiState.value.words.map { word -> if (word.id == wordId) word.copy(isSelected = !word.isSelected) else word }
+        val selectedCount = updatedWords.count { it.isSelected }
+
+        if (selectedCount == 0) {
+            destroyActionMode()
+            return
         }
+
+        _uiState.update { it.copy(words = updatedWords, isActionMode = true, selectedCount = selectedCount) }
+    }
+
+    fun onActionModeMenuEdit() {
+        if (_uiState.value.isActionMode) {
+            val selectedWord = _uiState.value.words.find { it.isSelected }
+            _clickItemEvent.value = Event(selectedWord?.id)
+            destroyActionMode()
+        }
+    }
+
+    fun onActionModeMenuDelete() {
+        if (_uiState.value.isActionMode) {
+            val selectedWords = _uiState.value.words.filter { it.isSelected }
+            viewModelScope.launch {
+                wordRepository.deleteWords(selectedWords.map { it.id })
+                destroyActionMode()
+            }
+        }
+    }
+
+    fun onActionModeMenuSelectAll() {
+        val updatedWords = _uiState.value.words.map { word -> word.copy(isSelected = true) }
+        _uiState.update { it.copy(words = updatedWords, isActionMode = true, selectedCount = updatedWords.size) }
+    }
+
+    fun destroyActionMode() {
+        _actionModeEvent.value = Event(ActionModeState.STOPPED)
+        _uiState.update { it.copy(words = it.words.map { word -> word.copy(isSelected = false) }, isActionMode = false, selectedCount = 0) }
     }
 }

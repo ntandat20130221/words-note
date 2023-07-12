@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wordnotes.EventObserver
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
@@ -28,28 +29,7 @@ class WordsFragment : Fragment() {
     private val wordsViewModel by activityViewModels<WordsViewModel> { WordViewModelFactory }
     private lateinit var wordsAdapter: WordsAdapter
     private var actionMode: ActionMode? = null
-
-    inner class WordsActionModeCallback : ActionMode.Callback {
-        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            mode.menuInflater.inflate(R.menu.words_action_mode, menu)
-            return true
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-            return false
-        }
-
-        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-            if (item.itemId == android.R.id.closeButton) {
-                return true
-            }
-            return false
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode) {
-            wordsViewModel.destroyActionMode()
-        }
-    }
+    private var selectedCount = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordsBinding.inflate(inflater, container, false)
@@ -89,10 +69,8 @@ class WordsFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.uiState.collect { uiState ->
                     wordsAdapter.setData(uiState.words)
-                    if (uiState.isActionMode) {
-                        actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
-                        actionMode?.title = "${uiState.selectedWordsCount} selected"
-                    }
+                    selectedCount = uiState.selectedCount
+                    actionMode?.invalidate()
                 }
             }
         }
@@ -102,5 +80,71 @@ class WordsFragment : Fragment() {
                 findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(wordId))
             }
         )
+
+        wordsViewModel.actionModeEvent.observe(viewLifecycleOwner,
+            EventObserver { actionModeState ->
+                when (actionModeState) {
+                    ActionModeState.STARTED -> {
+                        startActionMode()
+                        binding.fabAddWord.hide()
+                    }
+
+                    ActionModeState.STOPPED -> {
+                        actionMode?.finish()
+                        binding.fabAddWord.show()
+                    }
+                }
+            }
+        )
+
+        findNavController().addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id != R.id.words_fragment) {
+                wordsViewModel.destroyActionMode()
+            }
+        }
+    }
+
+    private fun startActionMode() {
+        actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
+    }
+
+    inner class WordsActionModeCallback : ActionMode.Callback {
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            mode.menuInflater.inflate(R.menu.words_action_mode, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+            // Can only edit one item at a time.
+            menu.findItem(R.id.menu_edit)?.isVisible = selectedCount < 2
+            mode.title = getString(R.string.selected_template, selectedCount)
+            return true
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.menu_edit -> {
+                    wordsViewModel.onActionModeMenuEdit()
+                    return true
+                }
+
+                R.id.menu_delete -> {
+                    wordsViewModel.onActionModeMenuDelete()
+                    return true
+                }
+
+                R.id.menu_select_all -> {
+                    wordsViewModel.onActionModeMenuSelectAll()
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode) {
+            actionMode = null
+            wordsViewModel.destroyActionMode()
+        }
     }
 }

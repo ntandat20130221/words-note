@@ -31,6 +31,10 @@ class WordRepository private constructor(
         launch { wordsLocalDataSource.updateWord(word) }
     }
 
+    suspend fun deleteWords(id: List<String>) = coroutineScope {
+        launch { wordsLocalDataSource.deleteWords(id) }
+    }
+
     companion object {
         private var INSTANCE: WordRepository? = null
 
