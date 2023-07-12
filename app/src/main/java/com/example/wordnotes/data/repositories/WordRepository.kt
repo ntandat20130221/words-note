@@ -1,51 +1,22 @@
 package com.example.wordnotes.data.repositories
 
-import android.content.Context
-import androidx.room.Room
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.local.DATABASE_NAME
-import com.example.wordnotes.data.local.WordDatabase
-import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
-class WordRepository private constructor(
-    private val wordsLocalDataSource: WordsLocalDataSource
-) {
+interface WordRepository {
 
-    fun observeWords(): Flow<Result<List<Word>>> = wordsLocalDataSource.observeWords()
+    fun observeWords(): Flow<Result<List<Word>>>
 
-    fun observeWord(wordId: String): Flow<Result<Word>> = wordsLocalDataSource.observeWord(wordId)
+    fun observeWord(wordId: String): Flow<Result<Word>>
 
-    suspend fun getWords(): Result<List<Word>> = wordsLocalDataSource.getWords()
+    suspend fun getWords(): Result<List<Word>>
 
-    suspend fun getWord(wordId: String): Result<Word> = wordsLocalDataSource.getWord(wordId)
+    suspend fun getWord(wordId: String): Result<Word>
 
-    suspend fun saveWord(word: Word) = coroutineScope {
-        launch { wordsLocalDataSource.saveWord(word) }
-    }
+    suspend fun saveWord(word: Word)
 
-    suspend fun updateWord(word: Word) = coroutineScope {
-        launch { wordsLocalDataSource.updateWord(word) }
-    }
+    suspend fun updateWord(word: Word)
 
-    suspend fun deleteWords(id: List<String>) = coroutineScope {
-        launch { wordsLocalDataSource.deleteWords(id) }
-    }
-
-    companion object {
-        private var INSTANCE: WordRepository? = null
-
-        fun initialize(context: Context) {
-            if (INSTANCE == null) {
-                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, DATABASE_NAME).build()
-                val wordsLocalDataSource = WordsLocalDataSource(wordDatabase.wordDao())
-                INSTANCE = WordRepository(wordsLocalDataSource)
-            }
-        }
-
-        fun get() = INSTANCE ?: throw IllegalStateException("WordRepository must be initialized")
-    }
+    suspend fun deleteWords(id: List<String>)
 }

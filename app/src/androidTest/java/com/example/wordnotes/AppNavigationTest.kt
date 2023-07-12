@@ -21,11 +21,16 @@ class AppNavigationTest {
     @Test
     fun clickFabShouldOpenAddEditWordFragment() {
         val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
-        val wordsFragmentScenario = launchFragmentInContainer<WordsFragment>(themeResId = R.style.Theme_WordNotes)
 
-        wordsFragmentScenario.onFragment { fragment ->
-            navController.setGraph(R.navigation.nav_graph)
-            Navigation.setViewNavController(fragment.requireView(), navController)
+        launchFragmentInContainer(themeResId = R.style.Theme_WordNotes) {
+            WordsFragment().also { fragment ->
+                fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
+                    if (viewLifecycleOwner != null) {
+                        navController.setGraph(R.navigation.nav_graph)
+                        Navigation.setViewNavController(fragment.requireView(), navController)
+                    }
+                }
+            }
         }
 
         onView(withId(R.id.fab_add_word))
