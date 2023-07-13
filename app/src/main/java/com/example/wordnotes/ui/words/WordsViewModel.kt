@@ -8,7 +8,7 @@ import com.example.wordnotes.Event
 import com.example.wordnotes.data.onLoading
 import com.example.wordnotes.data.onSuccess
 import com.example.wordnotes.data.repositories.WordRepository
-import com.example.wordnotes.toWordUiState
+import com.example.wordnotes.data.toWordUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

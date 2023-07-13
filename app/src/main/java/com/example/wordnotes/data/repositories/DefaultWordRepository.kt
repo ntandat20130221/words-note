@@ -1,16 +1,11 @@
 package com.example.wordnotes.data.repositories
 
-import android.content.Context
-import androidx.room.Room
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.local.DATABASE_NAME
-import com.example.wordnotes.data.local.DefaultWordsLocalDataSource
-import com.example.wordnotes.data.local.WordDatabase
 import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
 
-class DefaultWordRepository private constructor(
+class DefaultWordRepository constructor(
     private val wordsLocalDataSource: WordsLocalDataSource
 ) : WordRepository {
 
@@ -32,19 +27,5 @@ class DefaultWordRepository private constructor(
 
     override suspend fun deleteWords(id: List<String>) {
         wordsLocalDataSource.deleteWords(id)
-    }
-
-    companion object {
-        private var INSTANCE: DefaultWordRepository? = null
-
-        fun initialize(context: Context) {
-            if (INSTANCE == null) {
-                val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, DATABASE_NAME).build()
-                val wordsLocalDataSource = DefaultWordsLocalDataSource(wordDatabase.wordDao())
-                INSTANCE = DefaultWordRepository(wordsLocalDataSource)
-            }
-        }
-
-        fun get() = INSTANCE ?: throw IllegalStateException("WordRepository must be initialized")
     }
 }

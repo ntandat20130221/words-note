@@ -1,4 +1,4 @@
-package com.example.wordnotes
+package com.example.wordnotes.data
 
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.ui.words.WordUiState
