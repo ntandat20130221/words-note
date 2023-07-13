@@ -1,4 +1,4 @@
-package com.example.wordnotes
+package com.example.wordnotes.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

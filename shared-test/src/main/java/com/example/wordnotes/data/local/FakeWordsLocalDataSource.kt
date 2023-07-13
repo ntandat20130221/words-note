@@ -1,7 +1,6 @@
-package com.example.wordnotes.data.repositories
+package com.example.wordnotes.data.local
 
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
 import java.lang.Exception

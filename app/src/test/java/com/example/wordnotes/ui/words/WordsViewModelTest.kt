@@ -1,6 +1,6 @@
 package com.example.wordnotes.ui.words
 
-import com.example.wordnotes.MainCoroutineRule
+import com.example.wordnotes.data.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
 
