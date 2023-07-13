@@ -3,12 +3,11 @@ package com.example.wordnotes.data.local
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
-import java.lang.Exception
 
 class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsLocalDataSource {
     private var _words: MutableMap<String, Word>? = null
 
-    private var words: List<Word>?
+    var words: List<Word>?
         get() = _words?.values?.toList()
         set(value) {
             _words = value?.associateBy { it.id }?.toMutableMap()
@@ -27,13 +26,11 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
     }
 
     override suspend fun getWords(): Result<List<Word>> {
-        words?.let { return Result.Success(it) }
-        return Result.Error(Exception("Words not found"))
+        return words?.let { Result.Success(it) } ?: Result.Error(Exception("Words not found"))
     }
 
     override suspend fun getWord(wordId: String): Result<Word> {
-        _words?.get(wordId)?.let { Result.Success(it) }
-        return Result.Error(Exception("Word with id = $wordId not found"))
+        return _words?.get(wordId)?.let { Result.Success(it) } ?: Result.Error(Exception("Word with id = $wordId not found"))
     }
 
     override suspend fun saveWord(word: Word) {
