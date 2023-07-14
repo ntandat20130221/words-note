@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class DefaultWordRepositoryTest {
+class DefaultWordsRepositoryTest {
     private val words = listOf(
         Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning", isLearning = true),
         Word(id = "2", word = "word2", pos = "po2s", ipa = "ipa2", meaning = "meaning2", isLearning = true),
@@ -19,12 +19,12 @@ class DefaultWordRepositoryTest {
     )
 
     private lateinit var wordsLocalDataSource: FakeWordsLocalDataSource
-    private lateinit var wordRepository: WordRepository
+    private lateinit var wordRepository: DefaultWordsRepository
 
     @Before
     fun createRepository() {
         wordsLocalDataSource = FakeWordsLocalDataSource(words)
-        wordRepository = DefaultWordRepository(wordsLocalDataSource)
+        wordRepository = DefaultWordsRepository(wordsLocalDataSource)
     }
 
     @Test

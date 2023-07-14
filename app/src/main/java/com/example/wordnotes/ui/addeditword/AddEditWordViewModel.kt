@@ -11,7 +11,7 @@ import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.onError
 import com.example.wordnotes.data.onLoading
 import com.example.wordnotes.data.onSuccess
-import com.example.wordnotes.data.repositories.WordRepository
+import com.example.wordnotes.data.repositories.WordsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddEditWordViewModel(
-    private val wordRepository: WordRepository,
+    private val wordsRepository: WordsRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -51,7 +51,7 @@ class AddEditWordViewModel(
             if (savedWord != null) {
                 _word.value = savedWord
             } else {
-                val result = wordRepository.getWord(wordId)
+                val result = wordsRepository.getWord(wordId)
                 result.onSuccess { data ->
                     _word.value = data
                 }
@@ -93,14 +93,14 @@ class AddEditWordViewModel(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordRepository.saveWord(newWord)
+        wordsRepository.saveWord(newWord)
         _taskUpdatedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
         if (isForAddingWord) throw IllegalStateException("updateWord(word: Word) was called but word is new")
 
-        wordRepository.updateWord(word)
+        wordsRepository.updateWord(word)
         _taskUpdatedEvent.value = Event(Unit)
     }
 }

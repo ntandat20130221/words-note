@@ -4,7 +4,7 @@ import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
 
-interface WordRepository {
+interface WordsRepository {
 
     fun observeWords(): Flow<Result<List<Word>>>
 

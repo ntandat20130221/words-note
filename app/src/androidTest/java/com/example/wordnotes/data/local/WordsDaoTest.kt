@@ -35,7 +35,7 @@ class WordsDaoTest {
     }
 
     @Test
-    fun insertWordAndGetWords() = runTest {
+    fun insertWord_AndGetWords() = runTest {
         val word = Word()
         wordsDao.insertWord(word)
 
@@ -44,7 +44,7 @@ class WordsDaoTest {
     }
 
     @Test
-    fun insertWordAndGetById() = runTest {
+    fun insertWord_AndGetById() = runTest {
         val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
         wordsDao.insertWord(word)
         val loaded = wordsDao.getWord(word.id)
@@ -60,7 +60,7 @@ class WordsDaoTest {
     }
 
     @Test
-    fun insertWordReplacesOnConflict() = runTest {
+    fun insertWord_ReplacesOnConflict() = runTest {
         val word1 = Word(word = "word")
         wordsDao.insertWord(word1)
 
@@ -76,7 +76,7 @@ class WordsDaoTest {
     }
 
     @Test
-    fun updateWordAndGetById() = runTest {
+    fun updateWord_AndGetById() = runTest {
         val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = false)
         wordsDao.insertWord(word)
 
@@ -92,7 +92,7 @@ class WordsDaoTest {
     }
 
     @Test
-    fun deleteWordsAndGetWords() = runTest {
+    fun deleteWords_AndGetWords() = runTest {
         val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
         val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isLearning = true)
         val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isLearning = true)

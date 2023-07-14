@@ -5,9 +5,9 @@ import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
 
-class DefaultWordRepository constructor(
+class DefaultWordsRepository constructor(
     private val wordsLocalDataSource: WordsLocalDataSource
-) : WordRepository {
+) : WordsRepository {
 
     override fun observeWords(): Flow<Result<List<Word>>> = wordsLocalDataSource.observeWords()
 

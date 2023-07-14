@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 class AppNavigationTest {
 
     @Test
-    fun clickFabShouldOpenAddEditWordFragment() {
+    fun clickFab_ShouldOpenAddEditWordFragment() {
         val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
 
         launchFragmentInContainer(themeResId = R.style.Theme_WordNotes) {

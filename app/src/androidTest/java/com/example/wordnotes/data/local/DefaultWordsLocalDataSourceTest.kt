@@ -40,7 +40,7 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
-    fun getWordsShouldReturnOneWord() = runTest(testDispatcher.scheduler) {
+    fun getWords_ShouldReturnOneWord() = runTest(testDispatcher.scheduler) {
         val word1 = Word(word = "word1", pos = "pos1", isLearning = true)
         val word2 = Word(word = "word2", pos = "pos2")
         wordsLocalDataSource.saveWord(word1)
@@ -53,7 +53,7 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
-    fun saveWordThenRetrievesWord() = runTest(testDispatcher.scheduler) {
+    fun saveWord_ThenRetrievesWord() = runTest(testDispatcher.scheduler) {
         val word = Word(word = "word", pos = "pos", isLearning = true)
         wordsLocalDataSource.saveWord(word)
 
@@ -70,7 +70,7 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
-    fun updateWordThenRetrievesWord() = runTest {
+    fun updateWord_ThenRetrievesWord() = runTest {
         val word = Word(word = "word", pos = "pos")
         wordsLocalDataSource.saveWord(word)
 
@@ -90,7 +90,7 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
-    fun deleteWordsThenRetrievesWords() = runTest {
+    fun deleteWords_ThenRetrievesWords() = runTest {
         val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
         val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isLearning = true)
         val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isLearning = true)

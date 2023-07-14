@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.Event
 import com.example.wordnotes.data.onLoading
 import com.example.wordnotes.data.onSuccess
-import com.example.wordnotes.data.repositories.WordRepository
+import com.example.wordnotes.data.repositories.WordsRepository
 import com.example.wordnotes.data.toWordUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +35,7 @@ data class WordsUiState(
     val selectedCount: Int = 0
 )
 
-class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
+class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel() {
     private val _uiState: MutableStateFlow<WordsUiState> = MutableStateFlow(WordsUiState())
     val uiState: StateFlow<WordsUiState> = _uiState.asStateFlow()
 
@@ -47,7 +47,7 @@ class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            wordRepository.observeWords().collect { result ->
+            wordsRepository.observeWords().collect { result ->
                 result.onSuccess {
                     _uiState.value = WordsUiState(words = it.map { word -> word.toWordUiState() })
                 }
@@ -87,7 +87,7 @@ class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
     }
 
     fun onActionModeMenuEdit() {
-        if (_uiState.value.isActionMode) {
+        if (_uiState.value.isActionMode && _uiState.value.selectedCount == 1) {
             val selectedWord = _uiState.value.words.find { it.isSelected }
             _clickItemEvent.value = Event(selectedWord?.id)
             destroyActionMode()
@@ -98,15 +98,17 @@ class WordsViewModel(private val wordRepository: WordRepository) : ViewModel() {
         if (_uiState.value.isActionMode) {
             val selectedWords = _uiState.value.words.filter { it.isSelected }
             viewModelScope.launch {
-                wordRepository.deleteWords(selectedWords.map { it.id })
+                wordsRepository.deleteWords(selectedWords.map { it.id })
                 destroyActionMode()
             }
         }
     }
 
     fun onActionModeMenuSelectAll() {
-        val updatedWords = _uiState.value.words.map { word -> word.copy(isSelected = true) }
-        _uiState.update { it.copy(words = updatedWords, isActionMode = true, selectedCount = updatedWords.size) }
+        if (_uiState.value.isActionMode) {
+            val updatedWords = _uiState.value.words.map { word -> word.copy(isSelected = true) }
+            _uiState.update { it.copy(words = updatedWords, isActionMode = true, selectedCount = updatedWords.size) }
+        }
     }
 
     fun destroyActionMode() {
