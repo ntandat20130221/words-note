@@ -15,7 +15,7 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class WordsViewModelTest {
     private lateinit var wordsViewModel: WordsViewModel
-    private lateinit var wordRepository: FakeWordsRepository
+    private lateinit var wordsRepository: FakeWordsRepository
 
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
@@ -25,12 +25,12 @@ class WordsViewModelTest {
 
     @Before
     fun setUpViewModel() {
-        wordRepository = FakeWordsRepository().apply {
+        wordsRepository = FakeWordsRepository().apply {
             addWords(Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning", isLearning = true))
             addWords(Word(id = "2", word = "word2", pos = "pos2", ipa = "ipa2", meaning = "meaning2", isLearning = true))
             addWords(Word(id = "3", word = "word3", pos = "pos3", ipa = "ipa3", meaning = "meaning3"))
         }
-        wordsViewModel = WordsViewModel(wordRepository)
+        wordsViewModel = WordsViewModel(wordsRepository)
     }
 
     @Test
@@ -41,7 +41,7 @@ class WordsViewModelTest {
 
     @Test
     fun addWordsFromRepository_CheckUiState() = runTest {
-        wordRepository.saveWord(Word(id = "4", word = "word4", isLearning = true))
+        wordsRepository.saveWord(Word(id = "4", word = "word4", isLearning = true))
 
         val firstUiState = wordsViewModel.uiState.first()
         assertThat(firstUiState.words).hasSize(4)
