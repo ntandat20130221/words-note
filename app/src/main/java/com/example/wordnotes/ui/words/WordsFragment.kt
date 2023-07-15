@@ -60,7 +60,7 @@ class WordsFragment : Fragment() {
 
     private fun setUpFab() {
         binding.fabAddWord.setOnClickListener {
-            findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(null))
+            findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(null))
         }
     }
 
@@ -77,7 +77,7 @@ class WordsFragment : Fragment() {
 
         wordsViewModel.clickItemEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver { wordId ->
-                findNavController().navigate(WordsFragmentDirections.actionShowAddEditWordFragment(wordId))
+                findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(wordId))
             }
         )
 

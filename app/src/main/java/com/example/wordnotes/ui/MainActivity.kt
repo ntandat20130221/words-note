@@ -25,9 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
             setupWithNavController(navController)
-            setOnItemSelectedListener { item ->
-                if (item.itemId == R.id.words_fragment && navController.currentDestination?.id == R.id.add_edit_word_fragment)
+            setOnItemReselectedListener { menuItem ->
+                if (menuItem.itemId == R.id.words_fragment && navController.currentDestination?.id == R.id.add_edit_word_fragment)
                     navController.popBackStack()
+            }
+            setOnItemSelectedListener { item ->
                 NavigationUI.onNavDestinationSelected(item, navController)
                 true
             }

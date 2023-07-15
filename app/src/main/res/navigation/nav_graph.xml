@@ -10,7 +10,7 @@
         android:label="WordsFragment"
         tools:layout="@layout/fragment_words">
         <action
-            android:id="@+id/action_show_add_edit_word_fragment"
+            android:id="@+id/action_words_fragment_to_add_edit_word_fragment"
             app:destination="@id/add_edit_word_fragment" />
     </fragment>
     <fragment
@@ -29,7 +29,8 @@
             app:argType="string"
             app:nullable="true" />
         <action
-            android:id="@+id/showWordsFragment"
-            app:destination="@id/words_fragment" />
+            android:id="@+id/action_add_edit_word_fragment_to_words_fragment"
+            app:destination="@id/words_fragment"
+            app:popUpTo="@id/words_fragment" />
     </fragment>
 </navigation>
