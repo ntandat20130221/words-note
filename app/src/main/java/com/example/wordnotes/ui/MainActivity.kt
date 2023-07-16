@@ -26,10 +26,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
             setupWithNavController(navController)
             setOnItemReselectedListener { menuItem ->
+                // https://stackoverflow.com/questions/60041437/bottom-navigation-in-android-works-only-on-double-clicks
                 if (menuItem.itemId == R.id.words_fragment && navController.currentDestination?.id == R.id.add_edit_word_fragment)
                     navController.popBackStack()
             }
             setOnItemSelectedListener { item ->
+                // https://stackoverflow.com/questions/71089052/android-navigation-component-bottomnavigationviews-selected-tab-icon-is-not-u
                 NavigationUI.onNavDestinationSelected(item, navController)
                 true
             }

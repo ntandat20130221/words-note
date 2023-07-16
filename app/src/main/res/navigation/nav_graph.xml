@@ -31,6 +31,7 @@
         <action
             android:id="@+id/action_add_edit_word_fragment_to_words_fragment"
             app:destination="@id/words_fragment"
+            app:popUpToInclusive="true"
             app:popUpTo="@id/words_fragment" />
     </fragment>
 </navigation>
