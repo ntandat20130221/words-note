@@ -37,6 +37,7 @@
                   <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
                   <entry key="api29" value="120" />
+                  <entry key="api_29" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.WordItemBinding
+import com.example.wordnotes.utils.themeColor
 
 class WordsAdapter(
     private val words: MutableList<WordUiState> = mutableListOf(),
@@ -52,7 +53,10 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
             root.apply {
-                setBackgroundColor(if (wordUiState.isSelected) context.getColor(R.color.purple_200) else context.getColor(R.color.neutral_98))
+                setBackgroundColor(
+                    if (wordUiState.isSelected) context.getColor(R.color.selected_background)
+                    else context.themeColor(com.google.android.material.R.attr.colorSurface)
+                )
                 setOnClickListener { onItemClicked(wordUiState.id) }
                 setOnLongClickListener { onItemLongClicked(wordUiState.id) }
             }
