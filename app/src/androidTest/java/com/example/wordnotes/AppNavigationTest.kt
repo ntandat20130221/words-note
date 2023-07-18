@@ -75,7 +75,7 @@ class AppNavigationTest {
     }
 
     @Test
-    fun clickFab_ShouldOpenAddEditWordFragment() {
+    fun testNavigationComponents() {
         val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
 
         launchFragmentInContainer(themeResId = R.style.Theme_WordNotes) {
