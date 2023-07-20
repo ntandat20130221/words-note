@@ -2,6 +2,7 @@ package com.example.wordnotes.ui.words
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -44,7 +45,10 @@ class WordsAdapter(
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
     fun bind(wordUiState: WordUiState, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
         binding.apply {
-            textAvatar.text = wordUiState.word[0].toString()
+            viewSwitcher.apply {
+                findViewById<TextView>(R.id.text_avatar).text = wordUiState.word[0].uppercase()
+                displayedChild = if (wordUiState.isSelected) 1 else 0
+            }
             textWord.text = wordUiState.word
             textIpa.text = wordUiState.ipa
             textTimestamp.text = timeAgo(root.context, wordUiState.timestamp)

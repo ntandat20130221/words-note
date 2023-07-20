@@ -8,17 +8,36 @@
     android:foreground="?selectableItemBackground"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_avatar"
+    <ViewSwitcher
+        android:id="@+id/view_switcher"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="@drawable/bg_avatar"
-        android:gravity="center"
-        android:textColor="?colorOnPrimary"
-        android:textSize="28sp"
+        android:animateFirstView="false"
+        android:inAnimation="@anim/flip_in"
+        android:outAnimation="@anim/flip_out"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="A" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:textColor="?colorOnPrimary"
+            android:textSize="28sp"
+            tools:text="A" />
+
+        <ImageView
+            android:id="@+id/image_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar"
+            android:importantForAccessibility="no"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_check"
+            app:tint="@color/white" />
+    </ViewSwitcher>
 
     <TextView
         android:id="@+id/text_word"
@@ -27,8 +46,8 @@
         android:layout_marginStart="16dp"
         android:textColor="?colorOnSurface"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/text_avatar"
-        app:layout_constraintTop_toTopOf="@+id/text_avatar"
+        app:layout_constraintStart_toEndOf="@id/view_switcher"
+        app:layout_constraintTop_toTopOf="@id/view_switcher"
         tools:text="Contemptuous" />
 
     <TextView
@@ -36,8 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?colorOnSurfaceVariant"
-        app:layout_constraintStart_toStartOf="@+id/text_word"
-        app:layout_constraintTop_toBottomOf="@+id/text_word"
+        app:layout_constraintStart_toStartOf="@id/text_word"
+        app:layout_constraintTop_toBottomOf="@id/text_word"
         tools:text="/kənˈtemptʃuəs/" />
 
     <TextView
@@ -55,8 +74,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="?colorOnSurface"
-        app:layout_constraintStart_toStartOf="@+id/text_word"
-        app:layout_constraintTop_toBottomOf="@+id/text_ipa"
+        app:layout_constraintStart_toStartOf="@id/text_word"
+        app:layout_constraintTop_toBottomOf="@id/text_ipa"
         tools:text="Khinh khỉnh" />
 
     <ImageView
@@ -66,6 +85,6 @@
         android:layout_marginTop="16dp"
         android:importantForAccessibility="no"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_timestamp"
+        app:layout_constraintTop_toBottomOf="@id/text_timestamp"
         app:srcCompat="@drawable/star" />
 </androidx.constraintlayout.widget.ConstraintLayout>
