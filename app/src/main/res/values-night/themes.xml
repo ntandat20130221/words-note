@@ -3,7 +3,7 @@
     <style name="Theme.WordNotes" parent="Base.AppTheme">
         <!-- Primary brand color -->
         <item name="colorPrimary">@color/primary_80</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/primary_10</item>
         <item name="colorOnPrimary">@color/primary_20</item>
         <!-- Secondary brand color -->
         <item name="colorSecondary">@color/secondary_80</item>
@@ -13,10 +13,11 @@
         <item name="colorSurface">@color/neutral_6</item>
         <item name="colorOnSurface">@color/neutral_90</item>
         <item name="colorOnSurfaceVariant">@color/neutral_variant_80</item>
-        <item name="colorOutlineVariant">@color/neutral_variant_30</item>
+        <item name="colorOutlineVariant">@color/neutral_variant_20</item>
         <item name="colorSurfaceContainer">@color/neutral_12</item>
         <item name="colorSurfaceContainerLow">@color/neutral_10</item>
 
+        <item name="color_selected_item_background">@color/selected_background_dark</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

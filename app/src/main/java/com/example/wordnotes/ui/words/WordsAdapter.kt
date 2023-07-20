@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.WordItemBinding
 import com.example.wordnotes.utils.themeColor
+import com.example.wordnotes.utils.timeAgo
 
 class WordsAdapter(
     private val words: MutableList<WordUiState> = mutableListOf(),
@@ -46,7 +47,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             textAvatar.text = wordUiState.word[0].toString()
             textWord.text = wordUiState.word
             textIpa.text = wordUiState.ipa
-            textTimestamp.text = wordUiState.timestamp.toString()
+            textTimestamp.text = timeAgo(root.context, wordUiState.timestamp)
             textMeaning.text = wordUiState.meaning
             imageStar.setImageDrawable(
                 if (wordUiState.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
@@ -54,7 +55,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             )
             root.apply {
                 setBackgroundColor(
-                    if (wordUiState.isSelected) context.getColor(R.color.selected_background)
+                    if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)
                     else context.themeColor(com.google.android.material.R.attr.colorSurface)
                 )
                 setOnClickListener { onItemClicked(wordUiState.id) }

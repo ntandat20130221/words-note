@@ -1,4 +1,4 @@
-package com.example.wordnotes.utils
+package com.example.wordnotes
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

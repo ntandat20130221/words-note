@@ -93,14 +93,14 @@ class AddEditWordViewModel(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordsRepository.saveWord(newWord)
+        wordsRepository.saveWord(newWord.copy(timestamp = System.currentTimeMillis()))
         _taskUpdatedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
         if (isForAddingWord) throw IllegalStateException("updateWord(word: Word) was called but word is new")
 
-        wordsRepository.updateWord(word)
+        wordsRepository.updateWord(word.copy(timestamp = System.currentTimeMillis()))
         _taskUpdatedEvent.value = Event(Unit)
     }
 }
