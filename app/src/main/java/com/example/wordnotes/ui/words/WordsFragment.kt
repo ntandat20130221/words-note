@@ -77,6 +77,12 @@ class WordsFragment : Fragment() {
 
         wordsViewModel.clickItemEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver { wordId ->
+                findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToWordDetailFragment(wordId))
+            }
+        )
+
+        wordsViewModel.clickEditItemEvent.observe(viewLifecycleOwner,
+            OneTimeEventObserver { wordId ->
                 findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(wordId))
             }
         )

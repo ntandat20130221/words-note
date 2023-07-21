@@ -7,6 +7,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.wordnotes.data.repositories.WordsRepository
 import com.example.wordnotes.ui.addeditword.AddEditWordViewModel
+import com.example.wordnotes.ui.worddetail.WordDetailViewModel
 import com.example.wordnotes.ui.words.WordsViewModel
 
 @Suppress("UNCHECKED_CAST")
@@ -18,6 +19,7 @@ val WordViewModelFactory = object : ViewModelProvider.Factory {
         when {
             isAssignableFrom(WordsViewModel::class.java) -> WordsViewModel(wordsRepository)
             isAssignableFrom(AddEditWordViewModel::class.java) -> AddEditWordViewModel(wordsRepository, extras.createSavedStateHandle())
+            isAssignableFrom(WordDetailViewModel::class.java) -> WordDetailViewModel(wordsRepository)
             else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     } as T

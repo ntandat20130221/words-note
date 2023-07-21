@@ -39,8 +39,11 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     private val _uiState: MutableStateFlow<WordsUiState> = MutableStateFlow(WordsUiState())
     val uiState: StateFlow<WordsUiState> = _uiState.asStateFlow()
 
-    private val _clickItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
-    val clickItemEvent: LiveData<Event<String?>> = _clickItemEvent
+    private val _clickItemEvent: MutableLiveData<Event<String>> = MutableLiveData()
+    val clickItemEvent: LiveData<Event<String>> = _clickItemEvent
+
+    private val _clickEditItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
+    val clickEditItemEvent: LiveData<Event<String?>> = _clickEditItemEvent
 
     private val _actionModeEvent: MutableLiveData<Event<ActionModeState>> = MutableLiveData()
     val actionModeEvent: LiveData<Event<ActionModeState>> = _actionModeEvent
@@ -89,7 +92,7 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     fun onActionModeMenuEdit() {
         if (_uiState.value.isActionMode && _uiState.value.selectedCount == 1) {
             val selectedWord = _uiState.value.words.find { it.isSelected }
-            _clickItemEvent.value = Event(selectedWord?.id)
+            _clickEditItemEvent.value = Event(selectedWord?.id)
             destroyActionMode()
         }
     }
