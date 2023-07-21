@@ -14,6 +14,7 @@
     <string name="select_all">Select all</string>
     <string name="selected_template">%d selected</string>
     <string name="now">now</string>
+    <string name="error_while_loading_word">Error while loading word</string>
 
     <plurals name="minute">
         <item quantity="one">%d minute</item>

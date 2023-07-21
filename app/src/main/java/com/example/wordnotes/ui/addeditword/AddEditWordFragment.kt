@@ -17,7 +17,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.WordViewModelFactory
-import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -50,18 +49,15 @@ class AddEditWordFragment : Fragment() {
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { addEditWordViewModel.word.collect { updateUi(it) } }
                 launch {
-                    addEditWordViewModel.snackBarMessage.collect { messageResId ->
-                        if (messageResId != 0) {
-                            showSnackBar(messageResId)
-                        }
+                    addEditWordViewModel.uiState.collect { uiState ->
+                        updateUi(uiState)
                     }
                 }
             }
         }
 
-        addEditWordViewModel.taskUpdatedEvent.observe(viewLifecycleOwner,
+        addEditWordViewModel.wordUpdatedEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver {
                 findNavController().navigate(AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment())
             }
@@ -110,38 +106,40 @@ class AddEditWordFragment : Fragment() {
         }
     }
 
-    private fun updateUi(word: Word) {
+    private fun updateUi(uiState: AddEditWordUiState) {
         binding.apply {
-            if (word.word != inputWords.text.toString()) {
+            if (uiState.word.word != inputWords.text.toString()) {
                 inputWords.apply {
-                    setText(word.word)
-                    setSelection(word.word.length)
+                    setText(uiState.word.word)
+                    setSelection(uiState.word.word.length)
                 }
             }
-            if (word.pos != inputPos.text.toString()) {
+            if (uiState.word.pos != inputPos.text.toString()) {
                 inputPos.apply {
-                    setText(word.pos)
-                    setSelection(word.pos.length)
+                    setText(uiState.word.pos)
+                    setSelection(uiState.word.pos.length)
                 }
             }
-            if (word.ipa != inputIpa.text.toString()) {
+            if (uiState.word.ipa != inputIpa.text.toString()) {
                 inputIpa.apply {
-                    setText(word.ipa)
-                    setSelection(word.ipa.length)
+                    setText(uiState.word.ipa)
+                    setSelection(uiState.word.ipa.length)
                 }
             }
-            if (word.meaning != inputMeaning.text.toString()) {
+            if (uiState.word.meaning != inputMeaning.text.toString()) {
                 inputMeaning.apply {
-                    setText(word.meaning)
-                    setSelection(word.meaning.length)
+                    setText(uiState.word.meaning)
+                    setSelection(uiState.word.meaning.length)
                 }
             }
             checkLearning.apply {
-                isChecked = word.isLearning
+                isChecked = uiState.word.isLearning
                 jumpDrawablesToCurrentState()
                 // TODO("Make jumpDrawablesToCurrentState() only when the first population")
             }
         }
+
+        uiState.snackBarMessage?.let { showSnackBar(it) }
     }
 
     private fun showSnackBar(@StringRes messageResId: Int) {

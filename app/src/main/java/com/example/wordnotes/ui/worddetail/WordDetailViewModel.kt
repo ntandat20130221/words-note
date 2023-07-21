@@ -2,6 +2,7 @@ package com.example.wordnotes.ui.worddetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.repositories.WordsRepository
@@ -43,7 +44,7 @@ class WordDetailViewModel(
             )
 
             is Result.Error -> WordDetailUiState(
-                snackBarMessage = wordResult.exception.hashCode()
+                snackBarMessage = R.string.error_while_loading_word
             )
 
             is Result.Success -> WordDetailUiState(

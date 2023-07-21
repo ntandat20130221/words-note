@@ -128,7 +128,7 @@ class WordsViewModelTest {
 
         wordsViewModel.onActionModeMenuEdit()
 
-        assertThat(wordsViewModel.clickItemEvent.value?.getContent()).isEqualTo("2")
+        assertThat(wordsViewModel.clickEditItemEvent.value?.getContent()).isEqualTo("2")
         assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STOPPED)
 
         val firstUiState = wordsViewModel.uiState.first()
