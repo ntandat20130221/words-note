@@ -32,9 +32,9 @@ class DefaultWordsRepositoryTest {
         val result = wordRepository.getWords()
 
         assertThat(result is Result.Success).isTrue()
-        result.onSuccess {
-            assertThat(it.size).isEqualTo(words.size)
-            assertThat(it).containsExactlyElementsIn(words)
+        result.onSuccess { data ->
+            assertThat(data.size).isEqualTo(words.size)
+            assertThat(data).containsExactlyElementsIn(words)
         }
     }
 
@@ -44,8 +44,8 @@ class DefaultWordsRepositoryTest {
         val result = wordRepository.getWords()
 
         assertThat(result is Result.Success).isTrue()
-        result.onSuccess {
-            assertThat(it).isEmpty()
+        result.onSuccess { data ->
+            assertThat(data).isEmpty()
         }
     }
 
@@ -64,8 +64,8 @@ class DefaultWordsRepositoryTest {
 
         val result = wordRepository.getWord(word.id)
         assertThat(result is Result.Success).isTrue()
-        result.onSuccess {
-            assertThat(it).isEqualTo(word)
+        result.onSuccess { data ->
+            assertThat(data).isEqualTo(word)
         }
     }
 
@@ -76,14 +76,14 @@ class DefaultWordsRepositoryTest {
 
         val wordsResult = wordRepository.getWords()
         assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess {
-            assertThat(it).hasSize(3)
+        wordsResult.onSuccess { data ->
+            assertThat(data).hasSize(3)
         }
 
         val result = wordRepository.getWord(word.id)
         assertThat(result is Result.Success).isTrue()
-        result.onSuccess {
-            assertThat(it).isEqualTo(word)
+        result.onSuccess { data ->
+            assertThat(data).isEqualTo(word)
         }
     }
 
@@ -94,14 +94,14 @@ class DefaultWordsRepositoryTest {
 
         val wordsResult = wordRepository.getWords()
         assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess {
-            assertThat(it).hasSize(3)
+        wordsResult.onSuccess { data ->
+            assertThat(data).hasSize(3)
         }
 
         val result = wordRepository.getWord(word.id)
         assertThat(result is Result.Success).isTrue()
-        result.onSuccess {
-            assertThat(it).isEqualTo(word)
+        result.onSuccess { data ->
+            assertThat(data).isEqualTo(word)
         }
     }
 
@@ -111,9 +111,9 @@ class DefaultWordsRepositoryTest {
 
         val wordsResult = wordRepository.getWords()
         assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess {
-            assertThat(it).hasSize(1)
-            assertThat(it).containsExactly(words[2])
+        wordsResult.onSuccess { data ->
+            assertThat(data).hasSize(1)
+            assertThat(data).containsExactly(words[2])
         }
     }
 

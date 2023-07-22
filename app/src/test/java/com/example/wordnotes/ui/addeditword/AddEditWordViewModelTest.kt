@@ -38,64 +38,68 @@ class AddEditWordViewModelTest {
     }
 
     @Test
-    fun initializeWord_CheckUiState() = runTest {
+    fun initializeWord() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
-
-        val word = addEditWordViewModel.word.first()
-        assertThat(word.id).isEqualTo("1")
+        val uiState = addEditWordViewModel.uiState.first()
+        assertThat(uiState.word.id).isEqualTo("1")
     }
 
     @Test
-    fun initializeWord_WithNullValue_CheckUiState() = runTest {
+    fun initializeWithNullValue() = runTest {
         addEditWordViewModel.initializeWithWordId(null)
-        val word = addEditWordViewModel.word.first()
-        assertThat(word.id).isNotIn(listOf("1", "2", "3"))
+        val uiState = addEditWordViewModel.uiState.first()
+        assertThat(uiState.word.id).isNotIn(listOf("1", "2", "3"))
     }
 
     @Test
-    fun initializeWord_UpdateWord_AndSaveWord() = runTest {
+    fun updateWord() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2") }
 
-        val word = addEditWordViewModel.word.first()
-        assertThat(word.id).isEqualTo("1")
-        assertThat(word.word).isEqualTo("word2")
+        val uiState = addEditWordViewModel.uiState.first()
+        assertThat(uiState.word.id).isEqualTo("1")
+        assertThat(uiState.word.word).isEqualTo("word2")
+    }
 
+    @Test
+    fun updateWord_ThenSaveWord() = runTest {
+        addEditWordViewModel.initializeWithWordId("1")
+        addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2") }
         addEditWordViewModel.saveWord()
-        assertThat(addEditWordViewModel.snackBarMessage.value).isEqualTo(R.string.update_word_successfully)
-        wordsRepository.getWord("1").onSuccess {
-            assertThat(it.word).isEqualTo("word2")
+
+        assertThat(addEditWordViewModel.uiState.value.snackBarMessage).isEqualTo(R.string.update_word_successfully)
+        val result = wordsRepository.getWord("1")
+        assertThat(result is Result.Success).isTrue()
+        result.onSuccess { data ->
+            assertThat(data.word).isEqualTo("word2")
         }
     }
 
     @Test
-    fun initializeWord_WithNullValue_UpdateWord_AndSaveWord() = runTest {
+    fun initializeWithNullValue_UpdateWord_ThenSaveWord() = runTest {
         addEditWordViewModel.initializeWithWordId(null)
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "meaning2") }
-
-        val word = addEditWordViewModel.word.first()
-        assertThat(word.id).isNotIn(listOf("1", "2", "3"))
-        assertThat(word.word).isEqualTo("word2")
-
         addEditWordViewModel.saveWord()
-        assertThat(addEditWordViewModel.snackBarMessage.value).isEqualTo(R.string.add_new_word_successfully)
-        assertThat(wordsRepository.getWord(word.id) is Result.Success).isTrue()
-        wordsRepository.getWord(word.id).onSuccess {
-            assertThat(it.word).isEqualTo("word2")
+
+        assertThat(addEditWordViewModel.uiState.value.snackBarMessage).isEqualTo(R.string.add_new_word_successfully)
+        val result = wordsRepository.getWord(addEditWordViewModel.uiState.value.word.id)
+        assertThat(result is Result.Success).isTrue()
+        result.onSuccess { data ->
+            assertThat(data.word).isEqualTo("word2")
+            assertThat(data.meaning).isEqualTo("meaning2")
         }
     }
 
     @Test
-    fun initializeWordAndUpdateWord_WithInvalidInput_SaveWord() = runTest {
+    fun updateWord_WithInvalidInput_ThenSaveWord() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
-        addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "") }
 
+        addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "") }
         addEditWordViewModel.saveWord()
-        assertThat(addEditWordViewModel.snackBarMessage.value).isEqualTo(R.string.word_and_meaning_must_not_be_empty)
+        assertThat(addEditWordViewModel.uiState.value.snackBarMessage).isEqualTo(R.string.word_and_meaning_must_not_be_empty)
 
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "meaning2") }
-
         addEditWordViewModel.saveWord()
-        assertThat(addEditWordViewModel.snackBarMessage.value).isEqualTo(R.string.update_word_successfully)
+        assertThat(addEditWordViewModel.uiState.value.snackBarMessage).isEqualTo(R.string.update_word_successfully)
     }
 }
