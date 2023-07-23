@@ -59,6 +59,10 @@ class WordDetailViewModel(
         initialValue = WordDetailUiState(isLoading = true)
     )
 
+    /**
+     * [wordId] persists across configuration change and process death.
+     * So no need a `savedStateHandle`.
+     */
     fun initializeWithWordId(wordId: String) {
         this.wordId.value = wordId
     }

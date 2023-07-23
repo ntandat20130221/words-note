@@ -21,6 +21,8 @@ import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
+// TODO: Add loading UI
+// TODO: Create polish UI
 class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!

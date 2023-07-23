@@ -59,6 +59,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
             root.apply {
+
                 setBackgroundColor(
                     if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)
                     else context.themeColor(com.google.android.material.R.attr.colorSurface)

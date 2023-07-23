@@ -21,6 +21,10 @@ import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
 import kotlinx.coroutines.launch
 
+// TODO: Add loading UI
+// TODO: Add dialog delete items
+// TODO: Add empty screen
+// TODO: Implement search
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!

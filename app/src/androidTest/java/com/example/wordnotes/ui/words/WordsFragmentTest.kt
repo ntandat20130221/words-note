@@ -35,8 +35,8 @@ class WordsFragmentTest {
     }
 
     @Test
-    fun clickItem_NavigateToAddEditWordFragment() {
+    fun clickItem_NavigateToWordDetailFragment() {
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, click()))
-        assertThat(navController.currentDestination?.id).isEqualTo(R.id.add_edit_word_fragment)
+        assertThat(navController.currentDestination?.id).isEqualTo(R.id.word_detail_fragment)
     }
 }
