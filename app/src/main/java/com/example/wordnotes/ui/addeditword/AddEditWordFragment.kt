@@ -46,24 +46,6 @@ class AddEditWordFragment : Fragment() {
         _binding = null
     }
 
-    private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    addEditWordViewModel.uiState.collect { uiState ->
-                        updateUi(uiState)
-                    }
-                }
-            }
-        }
-
-        addEditWordViewModel.wordUpdatedEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver {
-                findNavController().navigate(AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment())
-            }
-        )
-    }
-
     private fun setUpNavigation() {
         val navController = findNavController()
         val appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -104,6 +86,22 @@ class AddEditWordFragment : Fragment() {
 
             buttonSave.setOnClickListener { addEditWordViewModel.saveWord() }
         }
+    }
+
+    private fun observeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addEditWordViewModel.uiState.collect { uiState ->
+                    updateUi(uiState)
+                }
+            }
+        }
+
+        addEditWordViewModel.wordUpdatedEvent.observe(viewLifecycleOwner,
+            OneTimeEventObserver {
+                findNavController().navigate(AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment())
+            }
+        )
     }
 
     private fun updateUi(uiState: AddEditWordUiState) {

@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.wordnotes.EventObserver
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
@@ -26,7 +25,7 @@ class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
 
-    private val wordsViewModel by activityViewModels<WordsViewModel> { WordViewModelFactory }
+    private val wordsViewModel: WordsViewModel by activityViewModels { WordViewModelFactory }
     private lateinit var wordsAdapter: WordsAdapter
     private var actionMode: ActionMode? = null
     private var selectedCount = 0
@@ -51,10 +50,10 @@ class WordsFragment : Fragment() {
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            wordsAdapter = WordsAdapter(
+            adapter = WordsAdapter(
                 onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
                 onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) }
-            ).also { adapter = it }
+            ).also { wordsAdapter = it }
         }
     }
 
@@ -68,9 +67,8 @@ class WordsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.uiState.collect { uiState ->
-                    wordsAdapter.setData(uiState.words)
-                    selectedCount = uiState.selectedCount
-                    actionMode?.invalidate()
+                    wordsAdapter.setData(uiState.items)
+                    updateActionMode(uiState)
                 }
             }
         }
@@ -87,22 +85,6 @@ class WordsFragment : Fragment() {
             }
         )
 
-        wordsViewModel.actionModeEvent.observe(viewLifecycleOwner,
-            EventObserver { actionModeState ->
-                when (actionModeState) {
-                    ActionModeState.STARTED -> {
-                        startActionMode()
-                        binding.fabAddWord.hide()
-                    }
-
-                    ActionModeState.STOPPED -> {
-                        actionMode?.finish()
-                        binding.fabAddWord.show()
-                    }
-                }
-            }
-        )
-
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id != R.id.words_fragment) {
                 wordsViewModel.destroyActionMode()
@@ -110,8 +92,26 @@ class WordsFragment : Fragment() {
         }
     }
 
+    private fun updateActionMode(uiState: WordsUiState) {
+        if (uiState.isActionMode) {
+            if (actionMode == null) {
+                startActionMode()
+            }
+            selectedCount = uiState.selectedCount
+            actionMode?.invalidate()
+        } else {
+            actionMode?.let { stopActionMode() }
+        }
+    }
+
     private fun startActionMode() {
         actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
+        binding.fabAddWord.hide()
+    }
+
+    private fun stopActionMode() {
+        actionMode?.finish()
+        binding.fabAddWord.show()
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {

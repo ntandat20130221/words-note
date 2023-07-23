@@ -5,8 +5,11 @@ import com.example.wordnotes.data.MainCoroutineRule
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.repositories.FakeWordsRepository
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -33,50 +36,59 @@ class WordsViewModelTest {
         wordsViewModel = WordsViewModel(wordsRepository)
     }
 
-    @Test
-    fun checkSize() = runTest {
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.words).hasSize(3)
+    private fun createEmptyUiStateCollector(scope: CoroutineScope, scheduler: TestCoroutineScheduler) {
+        scope.launch(UnconfinedTestDispatcher(scheduler)) { wordsViewModel.uiState.collect {} }
     }
 
     @Test
-    fun addWordsFromRepository_CheckUiState() = runTest {
+    fun checkSizeAtInitialState() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        assertThat(wordsViewModel.uiState.value.items).hasSize(3)
+    }
+
+    @Test
+    fun addWordsFromRepository() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsRepository.saveWord(Word(id = "4", word = "word4", isLearning = true))
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.words).hasSize(4)
+        assertThat(wordsViewModel.uiState.value.items).hasSize(4)
     }
 
     @Test
-    fun startActionMode_ThenCheckUitState() = runTest {
+    fun startActionMode() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
 
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STARTED)
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.isActionMode).isTrue()
-        assertThat(firstUiState.selectedCount).isEqualTo(1)
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(1)
-        assertThat(firstUiState.words[0].isSelected).isTrue()
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isTrue()
+        assertThat(uiState.selectedCount).isEqualTo(1)
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(1)
+        assertThat(uiState.items[0].isSelected).isTrue()
     }
 
     @Test
-    fun clickItemInActionMode_UntilDestroy_CheckUiState() = runTest {
+    fun clickItemInActionMode_UntilDestroy() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
+
+        assertThat(wordsViewModel.uiState.value.isActionMode).isTrue()
+        assertThat(wordsViewModel.uiState.value.selectedCount).isEqualTo(2)
+
         wordsViewModel.itemClicked(wordId = "1")
+
+        assertThat(wordsViewModel.uiState.value.selectedCount).isEqualTo(1)
+
         wordsViewModel.itemClicked(wordId = "2")
 
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STOPPED)
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.isActionMode).isFalse()
-        assertThat(firstUiState.selectedCount).isEqualTo(0)
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(0)
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.selectedCount).isEqualTo(0)
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(0)
     }
 
     @Test
     fun clickItemNotInActionMode_CheckOneTimeEvent() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemClicked(wordId = "2")
 
         assertThat(wordsViewModel.clickItemEvent.value?.getContentIfHasNotBeenHandled()).isEqualTo("2")
@@ -84,18 +96,20 @@ class WordsViewModelTest {
     }
 
     @Test
-    fun startActionMode_ThenDestroyActionMode_ThenCheckUiState() = runTest {
+    fun startActionMode_DestroyActionMode() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.destroyActionMode()
 
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.isActionMode).isFalse()
-        assertThat(firstUiState.selectedCount).isEqualTo(0)
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(0)
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.selectedCount).isEqualTo(0)
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(0)
     }
 
     @Test
-    fun startActionMode_ThenDestroyActionMode_ThenClickItem() = runTest {
+    fun startActionMode_DestroyActionMode_ClickItem() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.destroyActionMode()
         wordsViewModel.itemClicked(wordId = "2")
@@ -104,64 +118,61 @@ class WordsViewModelTest {
     }
 
     @Test
-    fun startActionMode_ThenClickItems_ThenClickEditMenu_CheckUiState_NothingHappened() = runTest {
+    fun startActionMode_ClickAnotherItem_ClickEditMenu_CheckUiStateNothingHappened() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
 
         wordsViewModel.onActionModeMenuEdit()
+        assertThat(wordsViewModel.clickEditItemEvent.value?.getContent()).isNull()
 
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STARTED)
-        assertThat(wordsViewModel.clickItemEvent.value?.getContent()).isNull()
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.isActionMode).isTrue()
-        assertThat(firstUiState.selectedCount).isEqualTo(2)
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(2)
-        assertThat(firstUiState.words[2].isSelected).isFalse()
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isTrue()
+        assertThat(uiState.selectedCount).isEqualTo(2)
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(2)
+        assertThat(uiState.items[2].isSelected).isFalse()
     }
 
     @Test
-    fun startActionMode_ClickEditMenu_CheckUiState() = runTest {
+    fun startActionMode_ClickEditMenu() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
         wordsViewModel.itemClicked(wordId = "1")
 
         wordsViewModel.onActionModeMenuEdit()
-
         assertThat(wordsViewModel.clickEditItemEvent.value?.getContent()).isEqualTo("2")
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STOPPED)
 
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.isActionMode).isFalse()
-        assertThat(firstUiState.selectedCount).isEqualTo(0)
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(0)
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.selectedCount).isEqualTo(0)
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(0)
     }
 
     @Test
-    fun startActionMode_ClickDeleteMenu_CheckUiState() = runTest {
+    fun startActionMode_ClickDeleteMenu() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
         wordsViewModel.itemClicked(wordId = "3")
         wordsViewModel.itemClicked(wordId = "1")
 
         wordsViewModel.onActionModeMenuDelete()
-
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STOPPED)
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.words).hasSize(1)
-        assertThat(firstUiState.words[0].id).isEqualTo("1")
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.items).hasSize(1)
+        assertThat(uiState.items[0].word.id).isEqualTo("1")
     }
 
     @Test
-    fun startActionMode_ClickSelectAllMenu_CheckUiState() = runTest {
+    fun startActionMode_ClickSelectAllMenu() = runTest {
+        createEmptyUiStateCollector(backgroundScope, testScheduler)
         wordsViewModel.itemLongClicked(wordId = "1")
 
         wordsViewModel.onActionModeMenuSelectAll()
 
-        assertThat(wordsViewModel.actionModeEvent.value?.getContent()).isEqualTo(ActionModeState.STARTED)
-
-        val firstUiState = wordsViewModel.uiState.first()
-        assertThat(firstUiState.words.filter { it.isSelected }).hasSize(3)
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isTrue()
+        assertThat(uiState.items.filter { it.isSelected }).hasSize(3)
     }
 }

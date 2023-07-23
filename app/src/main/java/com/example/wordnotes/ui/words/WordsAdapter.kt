@@ -44,17 +44,18 @@ class WordsAdapter(
 
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
     fun bind(wordUiState: WordUiState, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
+        val word = wordUiState.word
         binding.apply {
             viewSwitcher.apply {
-                findViewById<TextView>(R.id.text_avatar).text = wordUiState.word[0].uppercase()
+                findViewById<TextView>(R.id.text_avatar).text = word.word[0].uppercase()
                 displayedChild = if (wordUiState.isSelected) 1 else 0
             }
-            textWord.text = wordUiState.word
-            textIpa.text = wordUiState.ipa
-            textTimestamp.text = timeAgo(root.context, wordUiState.timestamp)
-            textMeaning.text = wordUiState.meaning
+            textWord.text = word.word
+            textIpa.text = word.ipa
+            textTimestamp.text = timeAgo(root.context, word.timestamp)
+            textMeaning.text = word.meaning
             imageStar.setImageDrawable(
-                if (wordUiState.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
+                if (word.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
             root.apply {
@@ -62,8 +63,8 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
                     if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)
                     else context.themeColor(com.google.android.material.R.attr.colorSurface)
                 )
-                setOnClickListener { onItemClicked(wordUiState.id) }
-                setOnLongClickListener { onItemLongClicked(wordUiState.id) }
+                setOnClickListener { onItemClicked(word.id) }
+                setOnLongClickListener { onItemLongClicked(word.id) }
             }
         }
     }
@@ -72,7 +73,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
 class WordDiffUtilCallback(private val oldList: List<WordUiState>, private val newList: List<WordUiState>) : DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size
-    override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition].id == newList[newPosition].id
+    override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition].word.id == newList[newPosition].word.id
     override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
     override fun getChangePayload(oldPosition: Int, newPosition: Int) = newList[newPosition].isSelected
 }

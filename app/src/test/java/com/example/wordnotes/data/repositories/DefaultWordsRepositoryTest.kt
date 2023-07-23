@@ -50,7 +50,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun getWords_WithLocalDataSourceUnavailable_ReturnsError() = runTest {
+    fun getWordsWithLocalDataSourceUnavailable_ReturnsError() = runTest {
         wordsLocalDataSource.words = null
         val result = wordRepository.getWords()
 
@@ -58,7 +58,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun saveWord_AndGetWord() = runTest {
+    fun saveWord_GetWord() = runTest {
         val word = Word(id = "4", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
         wordRepository.saveWord(word)
 
@@ -70,7 +70,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun saveWord_WithDuplicateId_ReplacesWithNewWord() = runTest {
+    fun saveWordWithDuplicateId_ReplacesWithNewWord() = runTest {
         val word = Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
         wordRepository.saveWord(word)
 
@@ -88,7 +88,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun updateWord_AndGetWord() = runTest {
+    fun updateWord_GetWord() = runTest {
         val word = Word(id = "1", word = "word2", pos = "pos2", ipa = "ipa", meaning = "meaning", isLearning = true)
         wordRepository.updateWord(word)
 
@@ -106,7 +106,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun deleteWords_AndGetWords() = runTest {
+    fun deleteWords_GetWords() = runTest {
         wordRepository.deleteWords(listOf("1", "2"))
 
         val wordsResult = wordRepository.getWords()
@@ -118,7 +118,7 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
-    fun deleteWords_ThenGetDeletedWord_ReturnsError() = runTest {
+    fun deleteWords_GetDeletedWord_ReturnsError() = runTest {
         wordRepository.deleteWords(listOf("1", "2"))
 
         val loaded = wordRepository.getWord(wordId = "1")

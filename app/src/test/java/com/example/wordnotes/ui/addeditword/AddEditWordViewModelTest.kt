@@ -62,7 +62,7 @@ class AddEditWordViewModelTest {
     }
 
     @Test
-    fun updateWord_ThenSaveWord() = runTest {
+    fun updateWord_SaveWord() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2") }
         addEditWordViewModel.saveWord()
@@ -76,7 +76,7 @@ class AddEditWordViewModelTest {
     }
 
     @Test
-    fun initializeWithNullValue_UpdateWord_ThenSaveWord() = runTest {
+    fun initializeWithNullValue_UpdateWord_SaveWord() = runTest {
         addEditWordViewModel.initializeWithWordId(null)
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "meaning2") }
         addEditWordViewModel.saveWord()
@@ -91,7 +91,7 @@ class AddEditWordViewModelTest {
     }
 
     @Test
-    fun updateWord_WithInvalidInput_ThenSaveWord() = runTest {
+    fun updateWordWithInvalidInput_SaveWord() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
 
         addEditWordViewModel.onUserUpdatesWord { word -> word.copy(word = "word2", meaning = "") }
