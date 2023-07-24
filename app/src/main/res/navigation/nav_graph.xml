@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/words_fragment"
         android:name="com.example.wordnotes.ui.words.WordsFragment"
-        android:label="WordsFragment"
+        android:label="Words"
         tools:layout="@layout/fragment_words">
         <action
             android:id="@+id/action_words_fragment_to_add_edit_word_fragment"
@@ -19,12 +19,12 @@
     <fragment
         android:id="@+id/settings_fragment"
         android:name="com.example.wordnotes.ui.settings.SettingsFragment"
-        android:label="SettingsFragment"
+        android:label="Settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/add_edit_word_fragment"
         android:name="com.example.wordnotes.ui.addeditword.AddEditWordFragment"
-        android:label="AddEditWordFragment"
+        android:label="Add/Edit Word"
         tools:layout="@layout/fragment_add_edit_word">
         <argument
             android:name="wordId"
@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/word_detail_fragment"
         android:name="com.example.wordnotes.ui.worddetail.WordDetailFragment"
-        android:label="WordDetailFragment"
+        android:label="Word Detail"
         tools:layout="@layout/fragment_word_detail">
         <argument
             android:name="wordId"

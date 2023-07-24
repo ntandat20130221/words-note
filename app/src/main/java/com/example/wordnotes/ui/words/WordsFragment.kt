@@ -19,6 +19,7 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
+import com.example.wordnotes.utils.setUpToolbar
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
@@ -41,6 +42,7 @@ class WordsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        findNavController().setUpToolbar(binding.toolbar.toolbar)
         setUpRecyclerView()
         setUpFab()
         observeData()

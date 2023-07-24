@@ -82,4 +82,7 @@ dependencies {
 
     // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
+
+    // preference
+    implementation 'androidx.preference:preference:1.2.0'
 }
