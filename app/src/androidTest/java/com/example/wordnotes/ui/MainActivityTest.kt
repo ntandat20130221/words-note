@@ -1,4 +1,4 @@
-package com.example.wordnotes
+package com.example.wordnotes.ui
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -10,8 +10,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
-import com.example.wordnotes.ui.MainActivity
+import com.example.wordnotes.R
+import com.example.wordnotes.atPosition
 import com.example.wordnotes.ui.words.WordsViewHolder
+import com.example.wordnotes.withBackgroundColor
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.core.StringContains.containsString
 import org.junit.Rule

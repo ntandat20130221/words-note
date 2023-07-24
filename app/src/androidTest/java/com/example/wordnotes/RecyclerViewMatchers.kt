@@ -17,8 +17,8 @@ fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> {
         }
 
         override fun matchesSafely(view: RecyclerView): Boolean {
-            val viewHolder = view.findViewHolderForAdapterPosition(position)
-            return if (viewHolder == null) false else itemMatcher.matches(viewHolder.itemView)
+            val viewHolder = view.findViewHolderForAdapterPosition(position) ?: return false
+            return itemMatcher.matches(viewHolder.itemView)
         }
     }
 }
@@ -26,11 +26,11 @@ fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> {
 fun withBackgroundColor(@AttrRes colorAttr: Int): Matcher<View> {
     return object : BoundedMatcher<View, View>(View::class.java) {
         override fun describeTo(description: Description) {
-            description.appendText("with text color: ");
+            description.appendText("with text color: ")
         }
 
         override fun matchesSafely(item: View): Boolean {
-            val colorDrawable = item.background as ColorDrawable
+            val colorDrawable = item.background as? ColorDrawable ?: return false
             return colorDrawable.color == item.context.themeColor(colorAttr)
         }
     }

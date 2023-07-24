@@ -27,7 +27,7 @@ class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
 
-    private val addEditWordViewModel by viewModels<AddEditWordViewModel> { WordViewModelFactory }
+    private val addEditWordViewModel: AddEditWordViewModel by viewModels { WordViewModelFactory }
     private val args: AddEditWordFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
