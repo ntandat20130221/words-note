@@ -16,6 +16,16 @@
     <string name="now">now</string>
     <string name="error_while_loading_word">Error while loading word</string>
 
+    <string name="pref_title_end_time">End time</string>
+    <string name="pref_title_start_time">Start time</string>
+    <string name="pref_title_remind">Remind</string>
+    <string name="pref_title_number_of_reminds_a_day">Number of reminds a day</string>
+
+    <plurals name="remind_times">
+        <item quantity="one">%d time</item>
+        <item quantity="other">%d times</item>
+    </plurals>
+
     <plurals name="minute">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
