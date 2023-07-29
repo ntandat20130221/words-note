@@ -41,6 +41,14 @@ class DefaultWordsLocalDataSource internal constructor(
         }
     }
 
+    override suspend fun getLearningWords(): Result<List<Word>> = withContext(ioDispatcher) {
+        return@withContext try {
+            Result.Success(wordsDao.getLeaningWords())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun saveWord(word: Word) = withContext(ioDispatcher) {
         wordsDao.insertWord(word)
     }

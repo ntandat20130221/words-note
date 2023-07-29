@@ -14,6 +14,8 @@ interface WordsRepository {
 
     suspend fun getWord(wordId: String): Result<Word>
 
+    suspend fun getLearningWords(): Result<List<Word>>
+
     suspend fun saveWord(word: Word)
 
     suspend fun updateWord(word: Word)

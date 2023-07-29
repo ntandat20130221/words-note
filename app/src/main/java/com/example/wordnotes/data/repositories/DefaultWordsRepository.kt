@@ -17,6 +17,8 @@ class DefaultWordsRepository constructor(
 
     override suspend fun getWord(wordId: String): Result<Word> = wordsLocalDataSource.getWord(wordId)
 
+    override suspend fun getLearningWords(): Result<List<Word>> = wordsLocalDataSource.getLearningWords()
+
     override suspend fun saveWord(word: Word) {
         wordsLocalDataSource.saveWord(word)
     }

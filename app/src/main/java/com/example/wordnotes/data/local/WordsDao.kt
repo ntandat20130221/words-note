@@ -23,6 +23,9 @@ interface WordsDao {
     @Query("SELECT * FROM words WHERE id = :wordId")
     suspend fun getWord(wordId: String): Word
 
+    @Query("SELECT * FROM words WHERE learning = 1")
+    suspend fun getLeaningWords(): List<Word>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)
 

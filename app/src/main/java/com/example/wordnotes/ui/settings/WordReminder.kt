@@ -2,9 +2,12 @@ package com.example.wordnotes.ui.settings
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.SystemClock
+import androidx.annotation.VisibleForTesting
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -16,13 +19,24 @@ class WordReminder(
     private val alarmManager = context.applicationContext.getSystemService(AlarmManager::class.java)
 
     fun schedule(next: Boolean = false) {
-        cancel()
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, getTriggerTime(next = next), getInterval(), getPendingIntent())
+        enableBootReceiver()
     }
 
     fun cancel() {
         val cancelPendingIntent = getPendingIntent(isCancel = true)
         cancelPendingIntent?.let { alarmManager.cancel(it) }
+        disableBootReceiver()
+    }
+
+    private fun enableBootReceiver() {
+        val receiver = ComponentName(context, BootReceiver::class.java)
+        context.packageManager.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
+    }
+
+    private fun disableBootReceiver() {
+        val receiver = ComponentName(context, BootReceiver::class.java)
+        context.packageManager.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
     private fun getTriggerTime(valueIfError: Long = System.currentTimeMillis(), next: Boolean = false): Long {
@@ -49,7 +63,8 @@ class WordReminder(
         }
     }
 
-    private fun getPendingIntent(isCancel: Boolean = false): PendingIntent? {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getPendingIntent(isCancel: Boolean = false): PendingIntent? {
         val broadcastIntent = Intent(context, RemindReceiver::class.java)
         val flags = if (isCancel) (PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE) else PendingIntent.FLAG_IMMUTABLE
         return PendingIntent.getBroadcast(context.applicationContext, 0, broadcastIntent, flags)

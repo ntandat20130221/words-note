@@ -7,6 +7,8 @@ import androidx.preference.PreferenceManager
 class WordPreferences(context: Context) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+    fun isRemind(default: Boolean = false) = sharedPreferences.getBoolean(SettingsFragment.KEY_REMIND, default)
+
     fun getRemindTimes(default: Int = 0): Int = sharedPreferences.getString(SettingsFragment.KEY_REMIND_TIMES, default.toString())!!.toInt()
 
     fun getStartTime(default: String? = null) = sharedPreferences.getString(SettingsFragment.KEY_START_TIME, default)
