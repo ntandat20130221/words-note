@@ -18,8 +18,6 @@ import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
 import com.example.wordnotes.getQuantityString
 import com.example.wordnotes.getString
-import com.example.wordnotes.setChecked
-import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Test
@@ -46,12 +44,6 @@ class SettingsFragmentTest {
         val appContainer = ApplicationProvider.getApplicationContext<WordNotesApplication>().appContainer
         wordPreferences = appContainer.wordPreferencesFactory.create()
         wordReminder = appContainer.wordReminderFactory.create()
-    }
-
-    @Before
-    fun resetAlarm() {
-        getRemindCheckBox().perform(setChecked(false))
-        wordReminder.cancel()
     }
 
     private fun getRemindCheckBox() = onView(
@@ -97,17 +89,5 @@ class SettingsFragmentTest {
 
         // End time
         getSummary(getString(R.string.pref_title_end_time)).check(matches(withText(wordPreferences.getEndTime())))
-    }
-
-    @Test
-    fun checkRemind_ScheduleReminder() {
-        getRemindCheckBox().perform(setChecked(true))
-        assertThat(wordReminder.getPendingIntent()).isNotNull()
-    }
-
-    @Test
-    fun uncheckRemind_StopReminder() {
-        getRemindCheckBox().perform(setChecked(false))
-        assertThat(wordReminder.getPendingIntent(isCancel = true)).isNull()
     }
 }

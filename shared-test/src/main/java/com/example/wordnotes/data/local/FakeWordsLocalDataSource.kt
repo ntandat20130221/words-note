@@ -33,6 +33,11 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
         return _words?.get(wordId)?.let { Result.Success(it) } ?: Result.Error(Exception("Word with id = $wordId not found"))
     }
 
+    override suspend fun getLearningWords(): Result<List<Word>> {
+        val learningWords = words?.let { it.filter { word -> word.isLearning } }
+        return learningWords?.let { Result.Success(it) } ?: Result.Error(Exception("Words not found"))
+    }
+
     override suspend fun saveWord(word: Word) {
         _words?.put(word.id, word)
     }

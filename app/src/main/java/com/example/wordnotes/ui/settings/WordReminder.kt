@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.SystemClock
-import androidx.annotation.VisibleForTesting
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -63,8 +62,7 @@ class WordReminder(
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getPendingIntent(isCancel: Boolean = false): PendingIntent? {
+    private fun getPendingIntent(isCancel: Boolean = false): PendingIntent? {
         val broadcastIntent = Intent(context, RemindReceiver::class.java)
         val flags = if (isCancel) (PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE) else PendingIntent.FLAG_IMMUTABLE
         return PendingIntent.getBroadcast(context.applicationContext, 0, broadcastIntent, flags)

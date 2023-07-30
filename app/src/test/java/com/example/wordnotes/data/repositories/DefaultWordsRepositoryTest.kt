@@ -58,6 +58,18 @@ class DefaultWordsRepositoryTest {
     }
 
     @Test
+    fun getLearningWords() = runTest {
+        val result = wordRepository.getLearningWords()
+        assertThat(result is Result.Success).isTrue()
+
+        result.onSuccess { data ->
+            assertThat(data).hasSize(2)
+            assertThat(data[0].id).isEqualTo("1")
+            assertThat(data[1].id).isEqualTo("2")
+        }
+    }
+
+    @Test
     fun saveWord_GetWord() = runTest {
         val word = Word(id = "4", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
         wordRepository.saveWord(word)

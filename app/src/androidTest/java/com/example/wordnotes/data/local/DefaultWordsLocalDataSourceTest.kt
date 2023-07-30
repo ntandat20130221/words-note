@@ -7,12 +7,10 @@ import androidx.test.filters.SmallTest
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.onSuccess
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -48,7 +46,24 @@ class DefaultWordsLocalDataSourceTest {
 
         val results = wordsLocalDataSource.getWords()
         results.onSuccess { data ->
-            assertThat(data.size, `is`(2))
+            assertThat(data).hasSize(2)
+        }
+    }
+
+    @Test
+    fun getLearningWords() = runTest(testDispatcher.scheduler) {
+        val word1 = Word(word = "word1", pos = "pos1", isLearning = true)
+        val word2 = Word(word = "word2", pos = "pos2")
+        val word3 = Word(word = "word3", pos = "pos3", isLearning = true)
+        wordsLocalDataSource.saveWord(word1)
+        wordsLocalDataSource.saveWord(word2)
+        wordsLocalDataSource.saveWord(word3)
+
+        val results = wordsLocalDataSource.getLearningWords()
+        assertThat(results is Result.Success).isTrue()
+        results.onSuccess { data ->
+            assertThat(data[0].id).isEqualTo(word1.id)
+            assertThat(data[1].id).isEqualTo(word3.id)
         }
     }
 
@@ -59,13 +74,13 @@ class DefaultWordsLocalDataSourceTest {
 
         val result = wordsLocalDataSource.getWord(word.id)
         result.onSuccess {
-            assertThat(it.id, `is`(word.id))
-            assertThat(it.word, `is`("word"))
-            assertThat(it.pos, `is`("pos"))
-            assertThat(it.ipa, `is`(""))
-            assertThat(it.meaning, `is`(""))
-            assertThat(it.timestamp, `is`(word.timestamp))
-            assertThat(it.isLearning, `is`(true))
+            assertThat(it.id).isEqualTo(word.id)
+            assertThat(it.word).isEqualTo("word")
+            assertThat(it.pos).isEqualTo("pos")
+            assertThat(it.ipa).isEqualTo("")
+            assertThat(it.meaning).isEqualTo("")
+            assertThat(it.timestamp).isEqualTo(word.timestamp)
+            assertThat(it.isLearning).isTrue()
         }
     }
 
@@ -79,13 +94,13 @@ class DefaultWordsLocalDataSourceTest {
 
         val result = wordsLocalDataSource.getWord(word.id)
         result.onSuccess {
-            assertThat(it.id, `is`(word.id))
-            assertThat(it.word, `is`("word2"))
-            assertThat(it.pos, `is`("pos2"))
-            assertThat(it.ipa, `is`(updatedWord.ipa))
-            assertThat(it.meaning, `is`(updatedWord.meaning))
-            assertThat(it.timestamp, `is`(updatedWord.timestamp))
-            assertThat(it.isLearning, `is`(true))
+            assertThat(it.id).isEqualTo(word.id)
+            assertThat(it.word).isEqualTo("word2")
+            assertThat(it.pos).isEqualTo("pos2")
+            assertThat(it.ipa).isEqualTo(updatedWord.ipa)
+            assertThat(it.meaning).isEqualTo(updatedWord.meaning)
+            assertThat(it.timestamp).isEqualTo(updatedWord.timestamp)
+            assertThat(it.isLearning).isTrue()
         }
     }
 
@@ -102,19 +117,19 @@ class DefaultWordsLocalDataSourceTest {
 
         val sizeResult = wordsLocalDataSource.getWords()
         sizeResult.onSuccess {
-            assertThat(it.size, `is`(1))
+            assertThat(it).hasSize(1)
         }
 
         val nullResult = wordsLocalDataSource.getWord(word.id)
-        assertThat(nullResult is Result.Success, `is`(true))
+        assertThat(nullResult is Result.Success).isTrue()
         nullResult.onSuccess {
-            assertThat(it, equalTo(null))
+            assertThat(it).isNull()
         }
 
         val result = wordsLocalDataSource.getWord(word2.id)
-        assertThat(result is Result.Success, `is`(true))
+        assertThat(result is Result.Success).isTrue()
         result.onSuccess {
-            assertThat(it, equalTo(word2))
+            assertThat(it).isEqualTo(word2)
         }
     }
 }

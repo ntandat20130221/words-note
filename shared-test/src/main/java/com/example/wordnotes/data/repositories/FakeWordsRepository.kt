@@ -47,7 +47,12 @@ class FakeWordsRepository : WordsRepository {
 
     override suspend fun getWord(wordId: String): Result<Word> {
         if (shouldThrowError) return Result.Error(Exception("Test exception"))
-        return _savedWords.value[wordId]?.let { Result.Success(it) } ?: Result.Error(Exception("Word not found"))
+        return savedWords.value[wordId]?.let { Result.Success(it) } ?: Result.Error(Exception("Word not found"))
+    }
+
+    override suspend fun getLearningWords(): Result<List<Word>> {
+        val learningWords = savedWords.value.values.filter { it.isLearning }
+        return if (learningWords.isNotEmpty()) learningWords.let { Result.Success(it) } else Result.Error(Exception("Words not found"))
     }
 
     override suspend fun saveWord(word: Word) {
