@@ -79,6 +79,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         this.fragmentManager = fragmentManager
     }
 
+    // TODO: Replace toast with dialog.
     private fun showToast() {
         val message = when (key) {
             SettingsFragment.KEY_START_TIME -> "Start time must be sooner than End time!"

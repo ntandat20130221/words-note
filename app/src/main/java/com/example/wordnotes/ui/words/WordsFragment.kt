@@ -106,7 +106,7 @@ class WordsFragment : Fragment() {
             selectedCount = uiState.selectedCount
             actionMode?.invalidate()
         } else {
-            actionMode?.let { stopActionMode() }
+            stopActionMode()
         }
     }
 

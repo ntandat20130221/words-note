@@ -71,4 +71,13 @@ class MainActivityTest {
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
         onView(withId(R.id.menu_edit)).check(matches(isDisplayed()))
     }
+
+    @Test
+    fun clickActionModeCloseButton_ShowFab() {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+
+        onView(withId(com.google.android.material.R.id.action_mode_close_button)).perform(click())
+        onView(withId(R.id.fab_add_word)).check(matches(isDisplayed()))
+    }
 }

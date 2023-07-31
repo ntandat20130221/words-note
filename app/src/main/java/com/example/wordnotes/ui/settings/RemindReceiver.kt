@@ -21,42 +21,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
-class RemindJobService : JobService() {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    override fun onStartJob(params: JobParameters?): Boolean {
-
-        val wordsRepository = (applicationContext as WordNotesApplication).appContainer.wordsRepository
-
-        coroutineScope.launch {
-            val result = wordsRepository.getLearningWords()
-            result.onSuccess {
-                it.randomOrNull()?.let { word ->
-                    pushNotification(word)
-                    jobFinished(params, false)
-                }
-            }
-        }
-
-        return false
-    }
-
-    override fun onStopJob(params: JobParameters?): Boolean {
-        coroutineScope.cancel()
-        return false
-    }
-
-    private fun pushNotification(word: Word) {
-        val notification = Notification.Builder(applicationContext, CHANNEL_ID)
-            .setContentTitle(word.word)
-            .setContentText(word.meaning)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
-        val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
-        notificationManager.notify(0, notification)
-    }
-}
-
 class RemindReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -79,5 +43,40 @@ class RemindReceiver : BroadcastReceiver() {
     private fun isTimeOut(wordPreferences: WordPreferences): Boolean {
         val endTime = TimePickerPreference.Formatter.parse(wordPreferences.getEndTime()!!)
         return LocalTime.now().isAfter(endTime)
+    }
+}
+
+class RemindJobService : JobService() {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    override fun onStartJob(params: JobParameters?): Boolean {
+        val wordsRepository = (applicationContext as WordNotesApplication).appContainer.wordsRepository
+
+        coroutineScope.launch {
+            val result = wordsRepository.getLearningWords()
+            result.onSuccess {
+                it.randomOrNull()?.let { word ->
+                    pushNotification(word)
+                }
+            }
+            jobFinished(params, false)
+        }
+        return false
+    }
+
+    override fun onStopJob(params: JobParameters?): Boolean {
+        coroutineScope.cancel()
+        return false
+    }
+
+    private fun pushNotification(word: Word) {
+        val notification = Notification.Builder(applicationContext, CHANNEL_ID)
+            .setContentTitle(word.word)
+            .setContentText(word.meaning)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setShowWhen(true)
+            .build()
+        val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
+        notificationManager.notify(word.id.hashCode(), notification)
     }
 }

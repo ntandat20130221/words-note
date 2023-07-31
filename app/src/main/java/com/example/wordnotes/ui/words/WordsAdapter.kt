@@ -48,6 +48,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
         binding.apply {
             viewSwitcher.apply {
                 findViewById<TextView>(R.id.text_avatar).text = word.word[0].uppercase()
+                // TODO: Fix bug animation start and end of recyclerview when scrolling
                 displayedChild = if (wordUiState.isSelected) 1 else 0
             }
             textWord.text = word.word
@@ -59,7 +60,6 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
                 else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
             )
             root.apply {
-
                 setBackgroundColor(
                     if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)
                     else context.themeColor(com.google.android.material.R.attr.colorSurface)
