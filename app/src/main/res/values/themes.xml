@@ -27,10 +27,13 @@
         <item name="colorSurfaceContainer">@color/neutral_94</item>
         <item name="colorSurfaceContainerLow">@color/neutral_96</item>
 
-        <item name="color_selected_item_background">@color/selected_background</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="color_selected_item_background">@color/selected_background</item>
+        <item name="color_pos_background">@color/primary_opacity_12</item>
     </style>
 
+    <!-- ActionMode style -->
     <style name="ActionModeCloseButtonStyle">
         <item name="tint">?colorOnSurfaceVariant</item>
     </style>
@@ -43,16 +46,7 @@
         <item name="android:textColor">?colorOnSurfaceVariant</item>
     </style>
 
-    <style name="BottomSheetItemStyle">
-        <item name="android:drawablePadding">16dp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="drawableTint">?colorOnSurfaceVariant</item>
-        <item name="android:clickable">true</item>
-        <item name="android:background">?selectableItemBackground</item>
-    </style>
-
+    <!-- BottomSheetStyle -->
     <style name="BottomSheetDialogStyle" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>

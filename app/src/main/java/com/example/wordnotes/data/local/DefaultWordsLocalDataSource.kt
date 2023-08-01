@@ -20,8 +20,11 @@ class DefaultWordsLocalDataSource internal constructor(
     }
 
     override fun observeWord(wordId: String): Flow<Result<Word>> {
-        return wordsDao.observeWord(wordId).map {
-            Result.Success(it)
+        return wordsDao.observeWord(wordId).map { word ->
+            if (word != null)
+                Result.Success(word)
+            else
+                Result.Error(Exception("Word not found"))
         }
     }
 

@@ -2,8 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="selected_background">#F1EAFF</color>
-    <color name="selected_background_dark">#211F26</color>
     <color name="primary_10">#21005D</color>
     <color name="primary_20">#381E72</color>
     <color name="primary_40">#6750A4</color>
@@ -22,4 +20,8 @@
     <color name="neutral_variant_20">#322F37</color>
     <color name="neutral_variant_30">#49454F</color>
     <color name="neutral_variant_80">#CAC4D0</color>
+    <color name="selected_background">#F1EAFF</color>
+    <color name="selected_background_dark">#211F26</color>
+    <color name="primary_opacity_12">#1F6750A4</color>
+    <color name="primary_opacity_12_dark">#1FD0BCFF</color>
 </resources>

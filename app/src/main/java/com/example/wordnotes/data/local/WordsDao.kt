@@ -15,7 +15,7 @@ interface WordsDao {
     fun observeWords(): Flow<List<Word>>
 
     @Query("SELECT * FROM words WHERE id = :wordId")
-    fun observeWord(wordId: String): Flow<Word>
+    fun observeWord(wordId: String): Flow<Word?>
 
     @Query("SELECT * FROM words")
     suspend fun getWords(): List<Word>
