@@ -20,6 +20,8 @@
     <string name="pref_title_start_time">Start time</string>
     <string name="pref_title_remind">Remind</string>
     <string name="pref_title_number_of_reminds_a_day">Number of reminds a day</string>
+    <string name="part_of_speech">Part of Speech</string>
+    <string name="save">Save</string>
 
     <plurals name="remind_times">
         <item quantity="one">%d time</item>

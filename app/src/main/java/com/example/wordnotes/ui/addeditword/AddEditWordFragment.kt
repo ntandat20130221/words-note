@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
+import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.example.wordnotes.utils.setUpToolbar
@@ -37,7 +38,7 @@ class AddEditWordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addEditWordViewModel.initializeWithWordId(args.wordId)
-        findNavController().setUpToolbar(binding.toolbar.toolbar)
+        setUpToolbar()
         setViewListeners()
         observeData()
     }
@@ -47,9 +48,16 @@ class AddEditWordFragment : Fragment() {
         _binding = null
     }
 
+    private fun setUpToolbar() {
+        binding.toolbar.toolbar.apply {
+            inflateMenu(R.menu.add_edit_word_toolbar)
+            findNavController().setUpToolbar(this)
+        }
+    }
+
     private fun setViewListeners() {
         binding.apply {
-            inputWords.doOnTextChanged { text, _, _, _ ->
+            inputWord.doOnTextChanged { text, _, _, _ ->
                 addEditWordViewModel.onUserUpdatesWord { currentWord ->
                     currentWord.copy(word = text.toString())
                 }
@@ -78,8 +86,16 @@ class AddEditWordFragment : Fragment() {
                     currentWord.copy(isLearning = isChecked)
                 }
             }
+        }
 
-            buttonSave.setOnClickListener { addEditWordViewModel.saveWord() }
+        binding.toolbar.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_save -> {
+                    addEditWordViewModel.saveWord()
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            false
         }
     }
 
@@ -101,8 +117,8 @@ class AddEditWordFragment : Fragment() {
 
     private fun updateUi(uiState: AddEditWordUiState) {
         binding.apply {
-            if (uiState.word.word != inputWords.text.toString()) {
-                inputWords.apply {
+            if (uiState.word.word != inputWord.text.toString()) {
+                inputWord.apply {
                     setText(uiState.word.word)
                     setSelection(uiState.word.word.length)
                 }
@@ -137,5 +153,6 @@ class AddEditWordFragment : Fragment() {
 
     private fun showSnackBar(@StringRes messageResId: Int) {
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
+        addEditWordViewModel.snakeBarShown()
     }
 }

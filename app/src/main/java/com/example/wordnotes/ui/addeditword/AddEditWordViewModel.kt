@@ -105,6 +105,10 @@ class AddEditWordViewModel(
         wordsRepository.updateWord(word.copy(timestamp = System.currentTimeMillis()))
         _wordUpdatedEvent.value = Event(Unit)
     }
+
+    fun snakeBarShown() {
+        _uiState.update { it.copy(snackBarMessage = null) }
+    }
 }
 
 const val WORDS_SAVED_STATE_KEY = "WORDS_SAVED_STATE_KEY"
