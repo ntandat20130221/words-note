@@ -12,8 +12,9 @@ import com.example.wordnotes.databinding.WordItemBinding
 import com.example.wordnotes.utils.themeColor
 import com.example.wordnotes.utils.timeAgo
 
+// TODO: About payload
 class WordsAdapter(
-    private val words: MutableList<WordUiState> = mutableListOf(),
+    private var words: List<WordItem> = emptyList(),
     private val onItemClicked: (String) -> Unit,
     private val onItemLongClicked: (String) -> Boolean
 ) : Adapter<WordsViewHolder>() {
@@ -32,18 +33,15 @@ class WordsAdapter(
         else holder.bind(words[position].copy(isSelected = payloads[0] as Boolean), onItemClicked, onItemLongClicked)
     }
 
-    fun setData(words: List<WordUiState>) {
+    fun setData(words: List<WordItem>) {
         val diffResult = DiffUtil.calculateDiff(WordDiffUtilCallback(this.words, words))
         diffResult.dispatchUpdatesTo(this)
-        this.words.apply {
-            clear()
-            addAll(words)
-        }
+        this.words = words
     }
 }
 
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
-    fun bind(wordUiState: WordUiState, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
+    fun bind(wordUiState: WordItem, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
         val word = wordUiState.word
         binding.apply {
             viewSwitcher.apply {
@@ -71,7 +69,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
     }
 }
 
-class WordDiffUtilCallback(private val oldList: List<WordUiState>, private val newList: List<WordUiState>) : DiffUtil.Callback() {
+class WordDiffUtilCallback(private val oldList: List<WordItem>, private val newList: List<WordItem>) : DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size
     override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition].word.id == newList[newPosition].word.id

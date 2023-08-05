@@ -2,6 +2,7 @@
 
     <style name="Base.AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">?colorSurface</item>
+        <item name="colorControlNormal">?colorOnSurfaceVariant</item>
         <!-- ActionMode -->
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@drawable/bg_words_action_mode</item>
@@ -24,13 +25,14 @@
         <item name="colorOnSurface">@color/neutral_10</item>
         <item name="colorOnSurfaceVariant">@color/neutral_variant_30</item>
         <item name="colorOutlineVariant">@color/neutral_variant_80</item>
-        <item name="colorSurfaceContainer">@color/neutral_94</item>
         <item name="colorSurfaceContainerLow">@color/neutral_96</item>
+        <item name="colorSurfaceContainer">@color/neutral_94</item>
+        <item name="colorSurfaceContainerHighest">@color/neutral_90</item>
 
         <item name="android:windowLightStatusBar">true</item>
 
         <item name="color_selected_item_background">@color/selected_background</item>
-        <item name="color_pos_background">@color/primary_opacity_12</item>
+        <item name="color_pos_detail_background">@color/primary_opacity_12</item>
     </style>
 
     <!-- ActionMode style -->
@@ -40,6 +42,7 @@
 
     <style name="ActionModeStyle" parent="@style/Widget.MaterialComponents.ActionMode">
         <item name="titleTextStyle">@style/TitleTextStyle</item>
+        <item name="height">@dimen/toolbar_height</item>
     </style>
 
     <style name="TitleTextStyle" parent="@style/TextAppearance.MaterialComponents.Headline6">

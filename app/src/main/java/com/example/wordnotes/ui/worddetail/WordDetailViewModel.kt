@@ -55,7 +55,7 @@ class WordDetailViewModel(
         _wordId.value = wordId
     }
 
-    fun delete() {
+    fun deleteWord() {
         viewModelScope.launch {
             wordsRepository.deleteWords(listOf(uiState.value.id))
             _dismissEvent.value = Event(Unit)

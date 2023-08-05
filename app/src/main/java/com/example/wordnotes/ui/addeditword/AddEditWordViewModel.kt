@@ -7,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.Event
 import com.example.wordnotes.R
+import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.onError
-import com.example.wordnotes.data.onLoading
-import com.example.wordnotes.data.onSuccess
 import com.example.wordnotes.data.repositories.WordsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +18,7 @@ import kotlinx.coroutines.launch
 
 data class AddEditWordUiState(
     val word: Word = Word(),
+    val currentPartOfSpeechIndex: Int = 0,
     val isLoading: Boolean = false,
     val snackBarMessage: Int? = null
 )
@@ -29,11 +28,13 @@ class AddEditWordViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val englishPartsOfSpeech: Array<String> = arrayOf("Verb", "Noun", "Adj.", "Adv.", "Pro.", "Prep.", "Conj.", "Interj.", "Det.")
+
     private val _uiState: MutableStateFlow<AddEditWordUiState> = MutableStateFlow(AddEditWordUiState())
     val uiState: StateFlow<AddEditWordUiState> = _uiState.asStateFlow()
 
-    private val _wordUpdatedEvent: MutableLiveData<Event<Unit>> = MutableLiveData<Event<Unit>>()
-    val wordUpdatedEvent: LiveData<Event<Unit>> = _wordUpdatedEvent
+    private val _wordSavedEvent: MutableLiveData<Event<Unit>> = MutableLiveData<Event<Unit>>()
+    val wordSavedEvent: LiveData<Event<Unit>> = _wordSavedEvent
 
     private var isForAddingWord = false
 
@@ -43,30 +44,44 @@ class AddEditWordViewModel(
     }
 
     private fun loadWord(wordId: String) {
+        // Only useful when the fragment implement loading UI.
         _uiState.update { it.copy(isLoading = true) }
+
         viewModelScope.launch {
             val savedWord: Word? = savedStateHandle[WORDS_SAVED_STATE_KEY]
             if (savedWord != null) {
                 _uiState.update {
-                    it.copy(word = savedWord, isLoading = false)
+                    it.copy(
+                        word = savedWord,
+                        currentPartOfSpeechIndex = savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] ?: 0,
+                        isLoading = false
+                    )
                 }
             } else {
-                wordsRepository.getWord(wordId).let { result ->
-                    result.onSuccess { data ->
-                        _uiState.update { it.copy(word = data, isLoading = false) }
-                    }
-                    result.onError {
-                        _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
-                    }
-                    result.onLoading {
-                        _uiState.update { it.copy(isLoading = false) }
-                    }
-                }
+                loadFromRepository(wordId)
             }
         }
     }
 
-    fun onUserUpdatesWord(onUpdate: (Word) -> Word) {
+    private suspend fun loadFromRepository(wordId: String) {
+        wordsRepository.getWord(wordId).let { result ->
+            when (result) {
+                is Result.Success -> {
+                    val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
+                    _uiState.update {
+                        it.copy(word = result.data, currentPartOfSpeechIndex = currentPartOfSpeechIndex, isLoading = false)
+                    }
+                    savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = currentPartOfSpeechIndex
+                }
+
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
+
+                is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
+            }
+        }
+    }
+
+    fun onUpdateWord(onUpdate: (Word) -> Word) {
         _uiState.update { currentWord ->
             currentWord.copy(word = onUpdate(currentWord.word)).also {
                 savedStateHandle[WORDS_SAVED_STATE_KEY] = it.word
@@ -74,15 +89,12 @@ class AddEditWordViewModel(
         }
     }
 
-    fun saveWord() {
-        if (_uiState.value.word.isValid)
-            onInputValid()
-        else
-            // TODO("Make stronger invalidation check")
-            _uiState.update { it.copy(snackBarMessage = R.string.word_and_meaning_must_not_be_empty) }
-    }
+    private fun Word.isValid() = word.isNotEmpty()
 
-    private val Word.isValid get() = word.isNotEmpty() and meaning.isNotEmpty()
+    fun saveWord() {
+        if (_uiState.value.word.isValid()) onInputValid()
+        else _uiState.update { it.copy(snackBarMessage = R.string.word_must_not_be_empty) }
+    }
 
     private fun onInputValid() {
         if (isForAddingWord) {
@@ -96,19 +108,24 @@ class AddEditWordViewModel(
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
         wordsRepository.saveWord(newWord.copy(timestamp = System.currentTimeMillis()))
-        _wordUpdatedEvent.value = Event(Unit)
+        _wordSavedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        if (isForAddingWord) throw IllegalStateException("updateWord(word: Word) was called but word is new")
-
         wordsRepository.updateWord(word.copy(timestamp = System.currentTimeMillis()))
-        _wordUpdatedEvent.value = Event(Unit)
+        _wordSavedEvent.value = Event(Unit)
     }
 
     fun snakeBarShown() {
         _uiState.update { it.copy(snackBarMessage = null) }
     }
+
+    fun onPosItemClicked(selectedPosition: Int) {
+        _uiState.update { it.copy(currentPartOfSpeechIndex = selectedPosition) }
+        onUpdateWord { it.copy(pos = englishPartsOfSpeech[selectedPosition].lowercase()) }
+        savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = selectedPosition
+    }
 }
 
 const val WORDS_SAVED_STATE_KEY = "WORDS_SAVED_STATE_KEY"
+const val CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY = "CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY"

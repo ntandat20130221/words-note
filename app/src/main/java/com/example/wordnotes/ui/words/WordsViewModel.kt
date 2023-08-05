@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class WordUiState(
+data class WordItem(
     val word: Word,
     val isSelected: Boolean = false
 )
 
 data class WordsUiState(
-    val items: List<WordUiState> = emptyList(),
+    val items: List<WordItem> = emptyList(),
     val isLoading: Boolean = false,
     val isActionMode: Boolean = false,
     val selectedCount: Int = 0
@@ -36,7 +36,7 @@ class WordsViewModel(
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _isActionMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _selectedWordIds: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
-    private val _wordsResult: Flow<Result<List<WordUiState>>> = combine(
+    private val _wordItemsResult: Flow<Result<List<WordItem>>> = combine(
         wordsRepository.observeWords(), _selectedWordIds
     ) { wordsResult, selectedWordId ->
         when (wordsResult) {
@@ -47,21 +47,19 @@ class WordsViewModel(
     }
 
     val uiState: StateFlow<WordsUiState> = combine(
-        _isLoading, _isActionMode, _selectedWordIds, _wordsResult
-    ) { isLoading, isActionMode, selectedWordIds, wordsResult ->
+        _isLoading, _isActionMode, _wordItemsResult
+    ) { isLoading, isActionMode, wordsResult ->
         when (wordsResult) {
-            is Result.Loading -> WordsUiState(
-                isLoading = true
-            )
-
-            is Result.Error -> WordsUiState()
-
             is Result.Success -> WordsUiState(
                 items = wordsResult.data,
                 isLoading = isLoading,
                 isActionMode = isActionMode,
-                selectedCount = selectedWordIds.size
+                selectedCount = _selectedWordIds.value.size
             )
+
+            is Result.Loading -> WordsUiState(isLoading = true)
+
+            is Result.Error -> WordsUiState()
         }
     }
         .stateIn(
@@ -76,8 +74,8 @@ class WordsViewModel(
     private val _clickEditItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
     val clickEditItemEvent: LiveData<Event<String?>> = _clickEditItemEvent
 
-    private fun resolveSelected(words: List<Word>, selectedWordId: Set<String>): List<WordUiState> {
-        return words.map { WordUiState(word = it, isSelected = it.id in selectedWordId) }
+    private fun resolveSelected(words: List<Word>, selectedWordId: Set<String>): List<WordItem> {
+        return words.map { WordItem(word = it, isSelected = it.id in selectedWordId) }
     }
 
     fun itemClicked(wordId: String) {
@@ -108,15 +106,16 @@ class WordsViewModel(
         _selectedWordIds.update { updatedWordIds }
     }
 
-    fun onActionModeMenuEdit() {
+    fun onActionModeMenuEdit(): Boolean {
         if (uiState.value.isActionMode && uiState.value.selectedCount == 1) {
             val selectedWord = uiState.value.items.find { it.isSelected }
             _clickEditItemEvent.value = Event(selectedWord?.word?.id)
             destroyActionMode()
         }
+        return true
     }
 
-    fun onActionModeMenuDelete() {
+    fun onActionModeMenuDelete(): Boolean {
         if (uiState.value.isActionMode) {
             val selectedWords = uiState.value.items.filter { it.isSelected }
             viewModelScope.launch {
@@ -124,12 +123,14 @@ class WordsViewModel(
                 destroyActionMode()
             }
         }
+        return true
     }
 
-    fun onActionModeMenuSelectAll() {
+    fun onActionModeMenuSelectAll(): Boolean {
         if (uiState.value.isActionMode) {
             _selectedWordIds.update { uiState.value.items.map { it.word.id }.toSet() }
         }
+        return true
     }
 
     fun destroyActionMode() {

@@ -17,18 +17,19 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
+import com.example.wordnotes.utils.setTextAndMoveCursor
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
-// TODO: Create polish UI
 class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
 
     private val addEditWordViewModel: AddEditWordViewModel by viewModels { WordViewModelFactory }
     private val args: AddEditWordFragmentArgs by navArgs()
+    private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAddEditWordBinding.inflate(inflater, container, false)
@@ -39,8 +40,9 @@ class AddEditWordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         addEditWordViewModel.initializeWithWordId(args.wordId)
         setUpToolbar()
+        setUpPartsOfSpeechRecyclerView()
         setViewListeners()
-        observeData()
+        observeUiState()
     }
 
     override fun onDestroyView() {
@@ -50,41 +52,36 @@ class AddEditWordFragment : Fragment() {
 
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
+            title = if (args.wordId == null) getString(R.string.add_new_word) else getString(R.string.edit_word)
             inflateMenu(R.menu.add_edit_word_toolbar)
             findNavController().setUpToolbar(this)
+        }
+    }
+
+    private fun setUpPartsOfSpeechRecyclerView() {
+        binding.posRecyclerView.apply {
+            itemAnimator = null
+            adapter = PartsOfSpeechAdapter(
+                data = addEditWordViewModel.englishPartsOfSpeech,
+                onItemClicked = { clickedIndex -> addEditWordViewModel.onPosItemClicked(clickedIndex) }
+            )
+                .also { partsOfSpeechAdapter = it }
         }
     }
 
     private fun setViewListeners() {
         binding.apply {
             inputWord.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.onUserUpdatesWord { currentWord ->
-                    currentWord.copy(word = text.toString())
-                }
+                addEditWordViewModel.onUpdateWord { it.copy(word = text.toString()) }
             }
-
-            inputPos.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.onUserUpdatesWord { currentWord ->
-                    currentWord.copy(pos = text.toString())
-                }
-            }
-
             inputIpa.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.onUserUpdatesWord { currentWord ->
-                    currentWord.copy(ipa = text.toString())
-                }
+                addEditWordViewModel.onUpdateWord { it.copy(ipa = text.toString()) }
             }
-
             inputMeaning.doOnTextChanged { text, _, _, _ ->
-                addEditWordViewModel.onUserUpdatesWord { currentWord ->
-                    currentWord.copy(meaning = text.toString())
-                }
+                addEditWordViewModel.onUpdateWord { it.copy(meaning = text.toString()) }
             }
-
             checkLearning.setOnCheckedChangeListener { _, isChecked ->
-                addEditWordViewModel.onUserUpdatesWord { currentWord ->
-                    currentWord.copy(isLearning = isChecked)
-                }
+                addEditWordViewModel.onUpdateWord { it.copy(isLearning = isChecked) }
             }
         }
 
@@ -99,7 +96,7 @@ class AddEditWordFragment : Fragment() {
         }
     }
 
-    private fun observeData() {
+    private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 addEditWordViewModel.uiState.collect { uiState ->
@@ -108,7 +105,7 @@ class AddEditWordFragment : Fragment() {
             }
         }
 
-        addEditWordViewModel.wordUpdatedEvent.observe(viewLifecycleOwner,
+        addEditWordViewModel.wordSavedEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver {
                 findNavController().navigate(AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment())
             }
@@ -117,36 +114,16 @@ class AddEditWordFragment : Fragment() {
 
     private fun updateUi(uiState: AddEditWordUiState) {
         binding.apply {
-            if (uiState.word.word != inputWord.text.toString()) {
-                inputWord.apply {
-                    setText(uiState.word.word)
-                    setSelection(uiState.word.word.length)
-                }
-            }
-            if (uiState.word.pos != inputPos.text.toString()) {
-                inputPos.apply {
-                    setText(uiState.word.pos)
-                    setSelection(uiState.word.pos.length)
-                }
-            }
-            if (uiState.word.ipa != inputIpa.text.toString()) {
-                inputIpa.apply {
-                    setText(uiState.word.ipa)
-                    setSelection(uiState.word.ipa.length)
-                }
-            }
-            if (uiState.word.meaning != inputMeaning.text.toString()) {
-                inputMeaning.apply {
-                    setText(uiState.word.meaning)
-                    setSelection(uiState.word.meaning.length)
-                }
-            }
+            inputWord.setTextAndMoveCursor(uiState.word.word)
+            inputIpa.setTextAndMoveCursor(uiState.word.ipa)
+            inputMeaning.setTextAndMoveCursor(uiState.word.meaning)
             checkLearning.apply {
                 isChecked = uiState.word.isLearning
                 jumpDrawablesToCurrentState()
-                // TODO("Make jumpDrawablesToCurrentState() only when the first population")
             }
         }
+
+        partsOfSpeechAdapter.setSelectedIndex(uiState.currentPartOfSpeechIndex)
 
         uiState.snackBarMessage?.let { showSnackBar(it) }
     }

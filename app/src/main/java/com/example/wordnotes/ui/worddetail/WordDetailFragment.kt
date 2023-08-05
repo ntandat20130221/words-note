@@ -23,7 +23,6 @@ class WordDetailFragment : BottomSheetDialogFragment() {
 
     private val wordDetailViewModel: WordDetailViewModel by viewModels { WordViewModelFactory }
     private val args: WordDetailFragmentArgs by navArgs()
-
     private lateinit var wordId: String
 
     override fun getTheme() = R.style.BottomSheetDialogStyle
@@ -38,6 +37,11 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         wordDetailViewModel.initializeWithWordId(args.wordId.also { wordId = it })
         observeUiState()
         setActionListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun observeUiState() {
@@ -63,16 +67,11 @@ class WordDetailFragment : BottomSheetDialogFragment() {
 
     private fun setActionListeners() {
         binding.actionDelete.setOnClickListener {
-            wordDetailViewModel.delete()
+            wordDetailViewModel.deleteWord()
         }
 
         binding.actionEdit.setOnClickListener {
             findNavController().navigate(WordDetailFragmentDirections.actionWordDetailFragmentToAddEditWordFragment(wordId))
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

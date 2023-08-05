@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?actionBarSize"
-    android:background="@drawable/bg_toolbar"
-    android:theme="@style/Widget.AppCompat.Light.ActionBar"
+    android:layout_height="@dimen/toolbar_height"
+    app:buttonGravity="center_vertical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:titleCentered="true"
     app:titleTextColor="?colorOnSurfaceVariant" />

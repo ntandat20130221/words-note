@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_words_bottom_sheet">
+    android:background="@drawable/bg_words_bottom_sheet"
+    tools:layout_gravity="bottom">
 
     <View
         android:id="@+id/drag_handle"
@@ -20,12 +21,12 @@
         android:id="@+id/text_word"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
         android:textColor="?colorOnSurface"
-        android:textSize="36sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/drag_handle"
         tools:text="consciously" />
@@ -36,21 +37,36 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         android:textColor="?colorOnSurface"
-        app:layout_constraintEnd_toEndOf="@+id/text_word"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/text_word"
         app:layout_constraintTop_toBottomOf="@+id/text_word"
         tools:text="/ˈkɑːnʃəsli/" />
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="24dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_volume"
+        app:layout_constraintBottom_toBottomOf="@+id/text_ipa"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_word"
+        app:layout_constraintVertical_bias="0.3"
+        app:tint="?colorOnSurface" />
 
     <TextView
         android:id="@+id/text_pos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_pos"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_pos_detail"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="2dp"
         android:textColor="?colorOnSurface"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/text_word"
         app:layout_constraintTop_toBottomOf="@+id/text_ipa"
         tools:text="adv" />
 
@@ -59,19 +75,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
         android:textColor="?colorOnSurface"
-        android:textSize="18sp"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/text_pos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/text_pos"
-        app:layout_constraintTop_toTopOf="@+id/text_pos"
-        tools:text="có ý thức; sự sáng suốt" />
+        tools:text="có ý thức; sự sáng suốt; cái ảnh đã nói lên tất cả." />
 
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:background="?colorOutlineVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +110,7 @@
                 android:id="@+id/action_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?selectableItemBackground"
+                android:background="?selectableItemBackgroundBorderless"
                 android:padding="16dp">
 
                 <ImageView
@@ -124,7 +139,7 @@
                 android:id="@+id/action_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?selectableItemBackground"
+                android:background="?selectableItemBackgroundBorderless"
                 android:padding="16dp">
 
                 <ImageView

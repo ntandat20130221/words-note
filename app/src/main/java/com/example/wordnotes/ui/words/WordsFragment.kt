@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
@@ -13,19 +14,22 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
 import com.example.wordnotes.utils.setUpToolbar
+import com.example.wordnotes.utils.themeColor
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
 // TODO: Add dialog delete items
 // TODO: Add empty screen
 // TODO: Implement search
+// TODO: Optimize observe UI (update the action mode only changes)
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
@@ -42,10 +46,10 @@ class WordsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().setUpToolbar(binding.toolbar.toolbar)
+        setUpToolbar()
         setUpRecyclerView()
         setUpFab()
-        observeData()
+        observeUiState()
     }
 
     override fun onDestroyView() {
@@ -53,13 +57,20 @@ class WordsFragment : Fragment() {
         _binding = null
     }
 
+    private fun setUpToolbar() {
+        binding.toolbar.toolbar.apply {
+            title = getString(R.string.words)
+            findNavController().setUpToolbar(this)
+        }
+    }
+
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
             adapter = WordsAdapter(
                 onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
                 onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) }
-            ).also { wordsAdapter = it }
+            )
+                .also { wordsAdapter = it }
         }
     }
 
@@ -69,7 +80,7 @@ class WordsFragment : Fragment() {
         }
     }
 
-    private fun observeData() {
+    private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.uiState.collect { uiState ->
@@ -90,12 +101,6 @@ class WordsFragment : Fragment() {
                 findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(wordId))
             }
         )
-
-        findNavController().addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id != R.id.words_fragment) {
-                wordsViewModel.destroyActionMode()
-            }
-        }
     }
 
     private fun updateActionMode(uiState: WordsUiState) {
@@ -113,11 +118,25 @@ class WordsFragment : Fragment() {
     private fun startActionMode() {
         actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
         binding.fabAddWord.hide()
+        // Change status bar color
+        requireActivity().window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurfaceContainer)
+        }
+        // Hide bottom nav
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
     }
 
     private fun stopActionMode() {
         actionMode?.finish()
         binding.fabAddWord.show()
+        // Reset status bar color
+        requireActivity().window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurface)
+        }
+        // Show bottom nav
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {
@@ -133,25 +152,11 @@ class WordsFragment : Fragment() {
             return true
         }
 
-        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-            when (item.itemId) {
-                R.id.menu_edit -> {
-                    wordsViewModel.onActionModeMenuEdit()
-                    return true
-                }
-
-                R.id.menu_delete -> {
-                    wordsViewModel.onActionModeMenuDelete()
-                    return true
-                }
-
-                R.id.menu_select_all -> {
-                    wordsViewModel.onActionModeMenuSelectAll()
-                    return true
-                }
-            }
-
-            return false
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = when (item.itemId) {
+            R.id.menu_edit -> wordsViewModel.onActionModeMenuEdit()
+            R.id.menu_delete -> wordsViewModel.onActionModeMenuDelete()
+            R.id.menu_select_all -> wordsViewModel.onActionModeMenuSelectAll()
+            else -> false
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {

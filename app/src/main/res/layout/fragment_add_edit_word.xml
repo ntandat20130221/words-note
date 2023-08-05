@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/add_edit_word_fragment_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,84 +18,114 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="32dp">
+            android:padding="16dp">
 
             <EditText
                 android:id="@+id/input_word"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:minHeight="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input"
                 android:hint="@string/words"
                 android:importantForAutofill="no"
                 android:inputType="text"
+                android:minHeight="48dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:textColor="?colorOnSurface"
-                android:textSize="32sp"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/input_pos"
+                android:id="@+id/input_ipa"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@null"
-                android:hint="@string/part_of_speech"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input"
+                android:hint="@string/ipa"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:minHeight="48dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:textColor="?colorOnSurface"
-                android:textSize="24sp"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="@+id/input_word"
                 app:layout_constraintStart_toStartOf="@+id/input_word"
                 app:layout_constraintTop_toBottomOf="@+id/input_word" />
 
-            <EditText
-                android:id="@+id/input_ipa"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pos_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:minHeight="48dp"
-                android:background="@null"
-                android:hint="@string/ipa"
-                android:importantForAutofill="no"
-                android:inputType="text"
-                android:textColor="?colorOnSurface"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="@+id/input_pos"
-                app:layout_constraintStart_toStartOf="@+id/input_pos"
-                app:layout_constraintTop_toBottomOf="@+id/input_pos" />
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/input_word"
+                app:layout_constraintStart_toStartOf="@id/input_word"
+                app:layout_constraintTop_toBottomOf="@id/input_ipa"
+                tools:listitem="@layout/pos_item" />
 
             <EditText
                 android:id="@+id/input_meaning"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:minHeight="48dp"
-                android:background="@null"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input"
+                android:gravity="top|start"
                 android:hint="@string/meaning"
                 android:importantForAutofill="no"
-                android:inputType="text"
+                android:inputType="textMultiLine"
+                android:lines="6"
+                android:minHeight="48dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:textColor="?colorOnSurface"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="@+id/input_ipa"
-                app:layout_constraintStart_toStartOf="@+id/input_ipa"
-                app:layout_constraintTop_toBottomOf="@+id/input_ipa" />
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/input_word"
+                app:layout_constraintStart_toStartOf="@+id/input_word"
+                app:layout_constraintTop_toBottomOf="@+id/pos_recycler_view" />
 
-            <CheckBox
-                android:id="@+id/check_learning"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Mark as learning"
-                app:layout_constraintStart_toStartOf="@+id/input_meaning"
-                app:layout_constraintTop_toBottomOf="@+id/input_meaning" />
+                android:background="@drawable/bg_input"
+                android:minHeight="48dp"
+                app:layout_constraintEnd_toEndOf="@id/input_word"
+                app:layout_constraintStart_toStartOf="@id/input_word"
+                app:layout_constraintTop_toBottomOf="@id/input_meaning">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/pref_title_remind"
+                    android:textColor="?colorOnSurface"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/check_learning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>

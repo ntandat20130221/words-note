@@ -43,8 +43,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar).findViewById<Toolbar>(R.id.toolbar)
+        toolbar.title = getString(R.string.settings)
         findNavController().setUpToolbar(
-            view.findViewById<Toolbar>(R.id.toolbar).findViewById(R.id.toolbar),
+            toolbar,
             AppBarConfiguration(setOf(R.id.words_fragment, R.id.settings_fragment))
         )
     }
