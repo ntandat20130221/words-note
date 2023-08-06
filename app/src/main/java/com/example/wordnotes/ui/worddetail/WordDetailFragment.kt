@@ -73,5 +73,9 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         binding.actionEdit.setOnClickListener {
             findNavController().navigate(WordDetailFragmentDirections.actionWordDetailFragmentToAddEditWordFragment(wordId))
         }
+
+        binding.actionRemind.setOnClickListener {
+            wordDetailViewModel.remindWord()
+        }
     }
 }

@@ -40,16 +40,14 @@ class AddEditWordViewModel(
 
     fun initializeWithWordId(wordId: String?) {
         if (wordId == null) isForAddingWord = true
+        else if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateWithSavedState()
         else loadWord(wordId)
     }
 
-    private fun loadWord(wordId: String) {
-        // Only useful when the fragment implement loading UI.
-        _uiState.update { it.copy(isLoading = true) }
-
+    private fun updateWithSavedState() {
         viewModelScope.launch {
-            val savedWord: Word? = savedStateHandle[WORDS_SAVED_STATE_KEY]
-            if (savedWord != null) {
+            _uiState.update { it.copy(isLoading = true) }
+            savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY)?.let { savedWord ->
                 _uiState.update {
                     it.copy(
                         word = savedWord,
@@ -57,26 +55,32 @@ class AddEditWordViewModel(
                         isLoading = false
                     )
                 }
-            } else {
-                loadFromRepository(wordId)
             }
         }
     }
 
-    private suspend fun loadFromRepository(wordId: String) {
-        wordsRepository.getWord(wordId).let { result ->
-            when (result) {
-                is Result.Success -> {
-                    val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
-                    _uiState.update {
-                        it.copy(word = result.data, currentPartOfSpeechIndex = currentPartOfSpeechIndex, isLoading = false)
+    private fun loadWord(wordId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            wordsRepository.getWord(wordId).let { result ->
+                when (result) {
+                    is Result.Success -> {
+                        val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
+                        _uiState.update {
+                            it.copy(
+                                word = result.data,
+                                currentPartOfSpeechIndex = currentPartOfSpeechIndex,
+                                isLoading = false
+                            )
+                        }
+                        savedStateHandle[WORDS_SAVED_STATE_KEY] = result.data
+                        savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = currentPartOfSpeechIndex
                     }
-                    savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = currentPartOfSpeechIndex
+
+                    is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
+
+                    is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
                 }
-
-                is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
-
-                is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
             }
         }
     }
@@ -112,7 +116,7 @@ class AddEditWordViewModel(
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        wordsRepository.updateWord(word.copy(timestamp = System.currentTimeMillis()))
+        wordsRepository.updateWord(word)
         _wordSavedEvent.value = Event(Unit)
     }
 

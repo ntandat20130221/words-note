@@ -1,9 +1,9 @@
 package com.example.wordnotes.ui.words
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -53,10 +53,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             textIpa.text = word.ipa
             textTimestamp.text = timeAgo(root.context, word.timestamp)
             textMeaning.text = word.meaning
-            imageStar.setImageDrawable(
-                if (word.isLearning) ContextCompat.getDrawable(binding.root.context, R.drawable.star_fill)
-                else ContextCompat.getDrawable(binding.root.context, R.drawable.star)
-            )
+            imageRemind.visibility = if (word.isLearning) View.VISIBLE else View.GONE
             root.apply {
                 setBackgroundColor(
                     if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)

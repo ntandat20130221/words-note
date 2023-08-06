@@ -17,7 +17,6 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
-import com.example.wordnotes.utils.setTextAndMoveCursor
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -107,17 +106,17 @@ class AddEditWordFragment : Fragment() {
 
         addEditWordViewModel.wordSavedEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver {
-                findNavController().navigate(AddEditWordFragmentDirections.actionAddEditWordFragmentToWordsFragment())
+                findNavController().navigateUp()
             }
         )
     }
 
     private fun updateUi(uiState: AddEditWordUiState) {
         binding.apply {
-            inputWord.setTextAndMoveCursor(uiState.word.word)
-            inputIpa.setTextAndMoveCursor(uiState.word.ipa)
-            inputMeaning.setTextAndMoveCursor(uiState.word.meaning)
-            checkLearning.apply {
+            if (inputWord.text.toString() != uiState.word.word) inputWord.setText(uiState.word.word)
+            if (inputIpa.text.toString() != uiState.word.ipa) inputIpa.setText(uiState.word.ipa)
+            if (inputMeaning.text.toString() != uiState.word.meaning) inputMeaning.setText(uiState.word.meaning)
+            if (checkLearning.isChecked != uiState.word.isLearning) checkLearning.apply {
                 isChecked = uiState.word.isLearning
                 jumpDrawablesToCurrentState()
             }

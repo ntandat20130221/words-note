@@ -10,10 +10,12 @@
 
     <ViewSwitcher
         android:id="@+id/view_switcher"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:animateFirstView="false"
         android:inAnimation="@anim/flip_in"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:outAnimation="@anim/flip_out"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -46,7 +48,7 @@
         android:layout_marginHorizontal="16dp"
         android:includeFontPadding="false"
         android:textColor="?colorOnSurface"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/text_timestamp"
         app:layout_constraintStart_toEndOf="@id/view_switcher"
         app:layout_constraintTop_toTopOf="@id/view_switcher"
@@ -56,6 +58,7 @@
         android:id="@+id/text_ipa"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:textColor="?colorOnSurfaceVariant"
         app:layout_constraintEnd_toEndOf="@+id/text_word"
         app:layout_constraintStart_toStartOf="@id/text_word"
@@ -67,6 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?colorOnSurfaceVariant"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="2m" />
@@ -75,23 +79,24 @@
         android:id="@+id/text_meaning"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:lines="1"
         android:textColor="?colorOnSurface"
-        app:layout_constraintEnd_toStartOf="@+id/image_star"
+        app:layout_constraintEnd_toStartOf="@+id/image_remind"
         app:layout_constraintStart_toStartOf="@id/text_word"
         app:layout_constraintTop_toBottomOf="@id/text_ipa"
         tools:text="có ý thức; sự sáng suốt" />
 
     <ImageView
-        android:id="@+id/image_star"
+        android:id="@+id/image_remind"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="16dp"
         android:importantForAccessibility="no"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_timestamp"
-        app:srcCompat="@drawable/star" />
+        app:srcCompat="@drawable/ic_alarm"
+        app:tint="?colorOnSurface" />
 </androidx.constraintlayout.widget.ConstraintLayout>

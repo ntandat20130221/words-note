@@ -28,11 +28,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_add_edit_word_fragment_to_words_fragment"
-            app:destination="@id/words_fragment"
-            app:popUpTo="@id/words_fragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <dialog
         android:id="@+id/word_detail_fragment"

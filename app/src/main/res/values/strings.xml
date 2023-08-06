@@ -24,6 +24,7 @@
     <string name="save">Save</string>
     <string name="add_new_word">Add new word</string>
     <string name="edit_word">Edit word</string>
+    <string name="add_word">Add word</string>
 
     <plurals name="remind_times">
         <item quantity="one">%d time</item>

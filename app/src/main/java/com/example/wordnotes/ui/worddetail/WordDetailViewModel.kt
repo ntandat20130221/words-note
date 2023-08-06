@@ -61,4 +61,11 @@ class WordDetailViewModel(
             _dismissEvent.value = Event(Unit)
         }
     }
+
+    fun remindWord() {
+        viewModelScope.launch {
+            wordsRepository.updateWord(uiState.value.copy(isLearning = true))
+            _dismissEvent.value = Event(Unit)
+        }
+    }
 }

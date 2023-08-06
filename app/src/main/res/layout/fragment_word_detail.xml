@@ -38,8 +38,8 @@
         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         android:textColor="?colorOnSurface"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/text_word"
-        app:layout_constraintTop_toBottomOf="@+id/text_word"
+        app:layout_constraintStart_toStartOf="@id/text_word"
+        app:layout_constraintTop_toBottomOf="@id/text_word"
         tools:text="/ˈkɑːnʃəsli/" />
 
     <ImageView
@@ -50,9 +50,9 @@
         android:clickable="true"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_volume"
-        app:layout_constraintBottom_toBottomOf="@+id/text_ipa"
+        app:layout_constraintBottom_toBottomOf="@id/text_ipa"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_word"
+        app:layout_constraintTop_toTopOf="@id/text_word"
         app:layout_constraintVertical_bias="0.3"
         app:tint="?colorOnSurface" />
 
@@ -66,8 +66,8 @@
         android:paddingVertical="2dp"
         android:textColor="?colorOnSurface"
         android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@+id/text_word"
-        app:layout_constraintTop_toBottomOf="@+id/text_ipa"
+        app:layout_constraintStart_toStartOf="@id/text_word"
+        app:layout_constraintTop_toBottomOf="@id/text_ipa"
         tools:text="adv" />
 
     <TextView
@@ -77,9 +77,9 @@
         android:layout_marginHorizontal="16dp"
         android:textColor="?colorOnSurface"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/text_pos"
+        app:layout_constraintBaseline_toBaselineOf="@id/text_pos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/text_pos"
+        app:layout_constraintStart_toEndOf="@id/text_pos"
         tools:text="có ý thức; sự sáng suốt; cái ảnh đã nói lên tất cả." />
 
     <View
@@ -108,10 +108,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/action_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
                 android:background="?selectableItemBackgroundBorderless"
-                android:padding="16dp">
+                android:paddingVertical="16dp">
 
                 <ImageView
                     android:id="@+id/image_delete"
@@ -119,9 +119,11 @@
                     android:layout_height="wrap_content"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_delete"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.1"
                     app:tint="?colorOnSurfaceVariant" />
 
                 <TextView
@@ -130,17 +132,18 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/delete"
                     android:textColor="?colorOnSurface"
-                    app:layout_constraintEnd_toEndOf="@+id/image_delete"
-                    app:layout_constraintStart_toStartOf="@+id/image_delete"
-                    app:layout_constraintTop_toBottomOf="@+id/image_delete" />
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@id/image_delete"
+                    app:layout_constraintStart_toStartOf="@id/image_delete"
+                    app:layout_constraintTop_toBottomOf="@id/image_delete" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/action_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
                 android:background="?selectableItemBackgroundBorderless"
-                android:padding="16dp">
+                android:paddingVertical="16dp">
 
                 <ImageView
                     android:id="@+id/image_edit"
@@ -148,9 +151,11 @@
                     android:layout_height="wrap_content"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_edit"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.1"
                     app:tint="?colorOnSurfaceVariant" />
 
                 <TextView
@@ -159,9 +164,43 @@
                     android:layout_marginTop="4dp"
                     android:text="@string/edit"
                     android:textColor="?colorOnSurface"
-                    app:layout_constraintEnd_toEndOf="@+id/image_edit"
-                    app:layout_constraintStart_toStartOf="@+id/image_edit"
-                    app:layout_constraintTop_toBottomOf="@+id/image_edit" />
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@id/image_edit"
+                    app:layout_constraintStart_toStartOf="@id/image_edit"
+                    app:layout_constraintTop_toBottomOf="@id/image_edit" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/action_remind"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackgroundBorderless"
+                android:paddingVertical="16dp">
+
+                <ImageView
+                    android:id="@+id/image_remind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_alarm"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.1"
+                    app:tint="?colorOnSurfaceVariant" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/pref_title_remind"
+                    android:textAlignment="center"
+                    android:textColor="?colorOnSurface"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@id/image_remind"
+                    app:layout_constraintStart_toStartOf="@id/image_remind"
+                    app:layout_constraintTop_toBottomOf="@id/image_remind" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </HorizontalScrollView>
