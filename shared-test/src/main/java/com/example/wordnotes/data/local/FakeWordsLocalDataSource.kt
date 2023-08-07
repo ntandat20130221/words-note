@@ -17,11 +17,11 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
         words = initialWords
     }
 
-    override fun observeWords(): Flow<Result<List<Word>>> {
+    override fun getWordsStream(): Flow<Result<List<Word>>> {
         TODO("Not yet implemented")
     }
 
-    override fun observeWord(wordId: String): Flow<Result<Word>> {
+    override fun getWordStream(wordId: String): Flow<Result<Word>> {
         TODO("Not yet implemented")
     }
 
@@ -33,9 +33,9 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
         return _words?.get(wordId)?.let { Result.Success(it) } ?: Result.Error(Exception("Word with id = $wordId not found"))
     }
 
-    override suspend fun getLearningWords(): Result<List<Word>> {
-        val learningWords = words?.let { it.filter { word -> word.isLearning } }
-        return learningWords?.let { Result.Success(it) } ?: Result.Error(Exception("Words not found"))
+    override suspend fun getRemindWords(): Result<List<Word>> {
+        val remindWords = words?.let { it.filter { word -> word.isRemind } }
+        return remindWords?.let { Result.Success(it) } ?: Result.Error(Exception("Words not found"))
     }
 
     override suspend fun saveWord(word: Word) {

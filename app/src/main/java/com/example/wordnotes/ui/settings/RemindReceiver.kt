@@ -53,7 +53,7 @@ class RemindJobService : JobService() {
         val wordsRepository = (applicationContext as WordNotesApplication).appContainer.wordsRepository
 
         coroutineScope.launch {
-            val result = wordsRepository.getLearningWords()
+            val result = wordsRepository.getRemindWords()
             result.onSuccess {
                 it.randomOrNull()?.let { word ->
                     pushNotification(word)

@@ -30,7 +30,7 @@ class WordDetailViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<Word> = _wordId.flatMapLatest { wordId ->
         if (wordId != null) {
-            wordsRepository.observeWord(wordId).map { result ->
+            wordsRepository.getWordStream(wordId).map { result ->
                 when (result) {
                     is Result.Success -> result.data
                     is Result.Error -> Word()
@@ -55,17 +55,13 @@ class WordDetailViewModel(
         _wordId.value = wordId
     }
 
-    fun deleteWord() {
-        viewModelScope.launch {
-            wordsRepository.deleteWords(listOf(uiState.value.id))
-            _dismissEvent.value = Event(Unit)
-        }
+    fun deleteWord() = viewModelScope.launch {
+        wordsRepository.deleteWords(listOf(uiState.value.id))
+        _dismissEvent.value = Event(Unit)
     }
 
-    fun remindWord() {
-        viewModelScope.launch {
-            wordsRepository.updateWord(uiState.value.copy(isLearning = true))
-            _dismissEvent.value = Event(Unit)
-        }
+    fun remindWord() = viewModelScope.launch {
+        wordsRepository.updateWord(uiState.value.copy(isRemind = true))
+        _dismissEvent.value = Event(Unit)
     }
 }

@@ -58,14 +58,14 @@ class AppNavigationTest {
         onView(withId(R.id.fab_add_word)).perform(click())
 
         onView(withId(R.id.input_word)).perform(replaceText("word"))
-        onView(withId(R.id.check_learning)).perform(click())
+        onView(withId(R.id.check_remind)).perform(click())
 
         onView(withId(R.id.settings_fragment)).perform(click())
         onView(withId(R.id.words_fragment)).perform(click())
 
         onView(withId(R.id.add_edit_word_fragment_layout)).check(matches(isDisplayed()))
         onView(withId(R.id.input_word)).check(matches(withText("word")))
-        onView(withId(R.id.check_learning)).check(matches(isChecked()))
+        onView(withId(R.id.check_remind)).check(matches(isChecked()))
 
         onView(isRoot()).perform(pressBack())
         onView(withId(R.id.words_fragment_layout)).check(matches(isDisplayed()))

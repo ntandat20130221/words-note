@@ -6,15 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface WordsRepository {
 
-    fun observeWords(): Flow<Result<List<Word>>>
+    fun getWordsStream(): Flow<Result<List<Word>>>
 
-    fun observeWord(wordId: String): Flow<Result<Word>>
+    fun getWordStream(wordId: String): Flow<Result<Word>>
 
     suspend fun getWords(): Result<List<Word>>
 
     suspend fun getWord(wordId: String): Result<Word>
 
-    suspend fun getLearningWords(): Result<List<Word>>
+    suspend fun getRemindWords(): Result<List<Word>>
 
     suspend fun saveWord(word: Word)
 

@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 data class AddEditWordUiState(
     val word: Word = Word(),
-    val currentPartOfSpeechIndex: Int = 0,
+    val currentPosIndex: Int = 0,
     val isLoading: Boolean = false,
     val snackBarMessage: Int? = null
 )
@@ -51,7 +51,7 @@ class AddEditWordViewModel(
                 _uiState.update {
                     it.copy(
                         word = savedWord,
-                        currentPartOfSpeechIndex = savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] ?: 0,
+                        currentPosIndex = savedStateHandle[CURRENT_POS_INDEX_SAVED_STATE_KEY] ?: 0,
                         isLoading = false
                     )
                 }
@@ -69,12 +69,12 @@ class AddEditWordViewModel(
                         _uiState.update {
                             it.copy(
                                 word = result.data,
-                                currentPartOfSpeechIndex = currentPartOfSpeechIndex,
+                                currentPosIndex = currentPartOfSpeechIndex,
                                 isLoading = false
                             )
                         }
                         savedStateHandle[WORDS_SAVED_STATE_KEY] = result.data
-                        savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = currentPartOfSpeechIndex
+                        savedStateHandle[CURRENT_POS_INDEX_SAVED_STATE_KEY] = currentPartOfSpeechIndex
                     }
 
                     is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
@@ -124,12 +124,12 @@ class AddEditWordViewModel(
         _uiState.update { it.copy(snackBarMessage = null) }
     }
 
-    fun onPosItemClicked(selectedPosition: Int) {
-        _uiState.update { it.copy(currentPartOfSpeechIndex = selectedPosition) }
-        onUpdateWord { it.copy(pos = englishPartsOfSpeech[selectedPosition].lowercase()) }
-        savedStateHandle[CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY] = selectedPosition
+    fun onPosItemClicked(selectedIndex: Int) {
+        _uiState.update { it.copy(currentPosIndex = selectedIndex) }
+        onUpdateWord { it.copy(pos = englishPartsOfSpeech[selectedIndex].lowercase()) }
+        savedStateHandle[CURRENT_POS_INDEX_SAVED_STATE_KEY] = selectedIndex
     }
 }
 
 const val WORDS_SAVED_STATE_KEY = "WORDS_SAVED_STATE_KEY"
-const val CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY = "CURRENT_PART_OF_SPEECH_POSITION_SAVED_STATE_KEY"
+const val CURRENT_POS_INDEX_SAVED_STATE_KEY = "CURRENT_POS_INDEX_SAVED_STATE_KEY"

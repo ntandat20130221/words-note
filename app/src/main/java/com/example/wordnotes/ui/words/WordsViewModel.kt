@@ -37,7 +37,7 @@ class WordsViewModel(
     private val _isActionMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _selectedWordIds: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
     private val _wordItemsResult: Flow<Result<List<WordItem>>> = combine(
-        wordsRepository.observeWords(), _selectedWordIds
+        wordsRepository.getWordsStream(), _selectedWordIds
     ) { wordsResult, selectedWordId ->
         when (wordsResult) {
             is Result.Success -> Result.Success(resolveSelected(wordsResult.data, selectedWordId))

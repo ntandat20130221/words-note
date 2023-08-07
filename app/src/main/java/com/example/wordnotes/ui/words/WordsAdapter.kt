@@ -53,7 +53,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             textIpa.text = word.ipa
             textTimestamp.text = timeAgo(root.context, word.timestamp)
             textMeaning.text = word.meaning
-            imageRemind.visibility = if (word.isLearning) View.VISIBLE else View.GONE
+            imageRemind.visibility = if (word.isRemind) View.VISIBLE else View.GONE
             root.apply {
                 setBackgroundColor(
                     if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)

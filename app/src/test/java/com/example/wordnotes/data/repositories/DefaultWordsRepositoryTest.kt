@@ -3,7 +3,6 @@ package com.example.wordnotes.data.repositories
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.local.FakeWordsLocalDataSource
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.onSuccess
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -12,9 +11,9 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class DefaultWordsRepositoryTest {
-    private val words = listOf(
-        Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning", isLearning = true),
-        Word(id = "2", word = "word2", pos = "po2s", ipa = "ipa2", meaning = "meaning2", isLearning = true),
+    private val data = listOf(
+        Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning", isRemind = true),
+        Word(id = "2", word = "word2", pos = "po2s", ipa = "ipa2", meaning = "meaning2", isRemind = true),
         Word(id = "3", word = "word3", pos = "pos3", ipa = "ipa3", meaning = "meaning3")
     )
 
@@ -23,117 +22,86 @@ class DefaultWordsRepositoryTest {
 
     @Before
     fun createRepository() {
-        wordsLocalDataSource = FakeWordsLocalDataSource(words)
+        wordsLocalDataSource = FakeWordsLocalDataSource(data)
         wordRepository = DefaultWordsRepository(wordsLocalDataSource)
     }
 
     @Test
     fun getWords() = runTest {
-        val result = wordRepository.getWords()
-
-        assertThat(result is Result.Success).isTrue()
-        result.onSuccess { data ->
-            assertThat(data.size).isEqualTo(words.size)
-            assertThat(data).containsExactlyElementsIn(words)
-        }
+        val words = (wordRepository.getWords() as Result.Success).data
+        assertThat(words.size).isEqualTo(data.size)
+        assertThat(words).containsExactlyElementsIn(data)
     }
 
     @Test
-    fun getWords_EmptyRepository() = runTest {
-        wordsLocalDataSource.deleteWords(words.map { it.id })
-        val result = wordRepository.getWords()
-
-        assertThat(result is Result.Success).isTrue()
-        result.onSuccess { data ->
-            assertThat(data).isEmpty()
-        }
+    fun deleteAllWords_getWords() = runTest {
+        wordsLocalDataSource.deleteWords(data.map { it.id })
+        val words = (wordRepository.getWords() as Result.Success).data
+        assertThat(words).isEmpty()
     }
 
     @Test
     fun getWordsWithLocalDataSourceUnavailable_ReturnsError() = runTest {
         wordsLocalDataSource.words = null
         val result = wordRepository.getWords()
-
         assertThat(result is Result.Error).isTrue()
     }
 
     @Test
-    fun getLearningWords() = runTest {
-        val result = wordRepository.getLearningWords()
-        assertThat(result is Result.Success).isTrue()
-
-        result.onSuccess { data ->
-            assertThat(data).hasSize(2)
-            assertThat(data[0].id).isEqualTo("1")
-            assertThat(data[1].id).isEqualTo("2")
-        }
+    fun getRemindWords() = runTest {
+        val remindWords = (wordRepository.getRemindWords() as Result.Success).data
+        assertThat(remindWords).hasSize(2)
+        assertThat(remindWords[0].id).isEqualTo("1")
+        assertThat(remindWords[1].id).isEqualTo("2")
     }
 
     @Test
     fun saveWord_GetWord() = runTest {
-        val word = Word(id = "4", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
-        wordRepository.saveWord(word)
+        val newWord = Word(id = "4", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
+        wordRepository.saveWord(newWord)
 
-        val result = wordRepository.getWord(word.id)
-        assertThat(result is Result.Success).isTrue()
-        result.onSuccess { data ->
-            assertThat(data).isEqualTo(word)
-        }
+        val word = (wordRepository.getWord(newWord.id) as Result.Success).data
+        assertThat(word).isEqualTo(newWord)
     }
 
     @Test
     fun saveWordWithDuplicateId_ReplacesWithNewWord() = runTest {
-        val word = Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
-        wordRepository.saveWord(word)
+        val newWord = Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
+        wordRepository.saveWord(newWord)
 
-        val wordsResult = wordRepository.getWords()
-        assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess { data ->
-            assertThat(data).hasSize(3)
-        }
+        val words = (wordRepository.getWords() as Result.Success).data
+        assertThat(words).hasSize(3)
 
-        val result = wordRepository.getWord(word.id)
-        assertThat(result is Result.Success).isTrue()
-        result.onSuccess { data ->
-            assertThat(data).isEqualTo(word)
-        }
+        val word = (wordRepository.getWord(newWord.id) as Result.Success).data
+        assertThat(word).isEqualTo(newWord)
     }
 
     @Test
     fun updateWord_GetWord() = runTest {
-        val word = Word(id = "1", word = "word2", pos = "pos2", ipa = "ipa", meaning = "meaning", isLearning = true)
-        wordRepository.updateWord(word)
+        val updatingWord = Word(id = "1", word = "word2", pos = "pos2", ipa = "ipa", meaning = "meaning", isRemind = true)
+        wordRepository.updateWord(updatingWord)
 
-        val wordsResult = wordRepository.getWords()
-        assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess { data ->
-            assertThat(data).hasSize(3)
-        }
+        val words = (wordRepository.getWords() as Result.Success).data
+        assertThat(words).hasSize(3)
 
-        val result = wordRepository.getWord(word.id)
-        assertThat(result is Result.Success).isTrue()
-        result.onSuccess { data ->
-            assertThat(data).isEqualTo(word)
-        }
+        val word = (wordRepository.getWord(updatingWord.id) as Result.Success).data
+        assertThat(word).isEqualTo(updatingWord)
     }
 
     @Test
     fun deleteWords_GetWords() = runTest {
         wordRepository.deleteWords(listOf("1", "2"))
 
-        val wordsResult = wordRepository.getWords()
-        assertThat(wordsResult is Result.Success).isTrue()
-        wordsResult.onSuccess { data ->
-            assertThat(data).hasSize(1)
-            assertThat(data).containsExactly(words[2])
-        }
+        val words = (wordRepository.getWords() as Result.Success).data
+        assertThat(words).hasSize(1)
+        assertThat(words).containsExactly(data[2])
     }
 
     @Test
     fun deleteWords_GetDeletedWord_ReturnsError() = runTest {
         wordRepository.deleteWords(listOf("1", "2"))
 
-        val loaded = wordRepository.getWord(wordId = "1")
-        assertThat(loaded is Result.Error).isTrue()
+        val result = wordRepository.getWord(wordId = "1")
+        assertThat(result is Result.Error).isTrue()
     }
 }

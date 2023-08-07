@@ -9,15 +9,15 @@ class DefaultWordsRepository constructor(
     private val wordsLocalDataSource: WordsLocalDataSource
 ) : WordsRepository {
 
-    override fun observeWords(): Flow<Result<List<Word>>> = wordsLocalDataSource.observeWords()
+    override fun getWordsStream(): Flow<Result<List<Word>>> = wordsLocalDataSource.getWordsStream()
 
-    override fun observeWord(wordId: String): Flow<Result<Word>> = wordsLocalDataSource.observeWord(wordId)
+    override fun getWordStream(wordId: String): Flow<Result<Word>> = wordsLocalDataSource.getWordStream(wordId)
 
     override suspend fun getWords(): Result<List<Word>> = wordsLocalDataSource.getWords()
 
     override suspend fun getWord(wordId: String): Result<Word> = wordsLocalDataSource.getWord(wordId)
 
-    override suspend fun getLearningWords(): Result<List<Word>> = wordsLocalDataSource.getLearningWords()
+    override suspend fun getRemindWords(): Result<List<Word>> = wordsLocalDataSource.getRemindWords()
 
     override suspend fun saveWord(word: Word) {
         wordsLocalDataSource.saveWord(word)

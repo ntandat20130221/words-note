@@ -39,7 +39,7 @@ class DefaultWordsLocalDataSourceTest {
 
     @Test
     fun getWords_ShouldReturnOneWord() = runTest(testDispatcher.scheduler) {
-        val word1 = Word(word = "word1", pos = "pos1", isLearning = true)
+        val word1 = Word(word = "word1", pos = "pos1", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2")
         wordsLocalDataSource.saveWord(word1)
         wordsLocalDataSource.saveWord(word2)
@@ -51,15 +51,15 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
-    fun getLearningWords() = runTest(testDispatcher.scheduler) {
-        val word1 = Word(word = "word1", pos = "pos1", isLearning = true)
+    fun getRemindWords() = runTest(testDispatcher.scheduler) {
+        val word1 = Word(word = "word1", pos = "pos1", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2")
-        val word3 = Word(word = "word3", pos = "pos3", isLearning = true)
+        val word3 = Word(word = "word3", pos = "pos3", isRemind = true)
         wordsLocalDataSource.saveWord(word1)
         wordsLocalDataSource.saveWord(word2)
         wordsLocalDataSource.saveWord(word3)
 
-        val results = wordsLocalDataSource.getLearningWords()
+        val results = wordsLocalDataSource.getRemindWords()
         assertThat(results is Result.Success).isTrue()
         results.onSuccess { data ->
             assertThat(data[0].id).isEqualTo(word1.id)
@@ -69,7 +69,7 @@ class DefaultWordsLocalDataSourceTest {
 
     @Test
     fun saveWord_ThenRetrievesWord() = runTest(testDispatcher.scheduler) {
-        val word = Word(word = "word", pos = "pos", isLearning = true)
+        val word = Word(word = "word", pos = "pos", isRemind = true)
         wordsLocalDataSource.saveWord(word)
 
         val result = wordsLocalDataSource.getWord(word.id)
@@ -80,7 +80,7 @@ class DefaultWordsLocalDataSourceTest {
             assertThat(it.ipa).isEqualTo("")
             assertThat(it.meaning).isEqualTo("")
             assertThat(it.timestamp).isEqualTo(word.timestamp)
-            assertThat(it.isLearning).isTrue()
+            assertThat(it.isRemind).isTrue()
         }
     }
 
@@ -89,7 +89,7 @@ class DefaultWordsLocalDataSourceTest {
         val word = Word(word = "word", pos = "pos")
         wordsLocalDataSource.saveWord(word)
 
-        val updatedWord = Word(id = word.id, word = "word2", pos = "pos2", isLearning = true)
+        val updatedWord = Word(id = word.id, word = "word2", pos = "pos2", isRemind = true)
         wordsLocalDataSource.updateWord(updatedWord)
 
         val result = wordsLocalDataSource.getWord(word.id)
@@ -100,15 +100,15 @@ class DefaultWordsLocalDataSourceTest {
             assertThat(it.ipa).isEqualTo(updatedWord.ipa)
             assertThat(it.meaning).isEqualTo(updatedWord.meaning)
             assertThat(it.timestamp).isEqualTo(updatedWord.timestamp)
-            assertThat(it.isLearning).isTrue()
+            assertThat(it.isRemind).isTrue()
         }
     }
 
     @Test
     fun deleteWords_ThenRetrievesWords() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
-        val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isLearning = true)
-        val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isLearning = true)
+        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
+        val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isRemind = true)
+        val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isRemind = true)
         wordsLocalDataSource.saveWord(word)
         wordsLocalDataSource.saveWord(word2)
         wordsLocalDataSource.saveWord(word3)

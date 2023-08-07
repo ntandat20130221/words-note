@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 class FakeWordsRepository : WordsRepository {
     private var shouldThrowError = false
 
-    private val _savedWords = MutableStateFlow(LinkedHashMap<String, Word>())
+    private val _savedWords: MutableStateFlow<LinkedHashMap<String, Word>> = MutableStateFlow(LinkedHashMap())
     private val savedWords: StateFlow<LinkedHashMap<String, Word>> = _savedWords.asStateFlow()
 
     private val observableWords: Flow<Result<List<Word>>> = savedWords.map {
@@ -26,9 +26,9 @@ class FakeWordsRepository : WordsRepository {
         shouldThrowError = value
     }
 
-    override fun observeWords(): Flow<Result<List<Word>>> = observableWords
+    override fun getWordsStream(): Flow<Result<List<Word>>> = observableWords
 
-    override fun observeWord(wordId: String): Flow<Result<Word>> {
+    override fun getWordStream(wordId: String): Flow<Result<Word>> {
         return observableWords.map { result ->
             when (result) {
                 is Result.Loading -> Result.Loading
@@ -50,9 +50,9 @@ class FakeWordsRepository : WordsRepository {
         return savedWords.value[wordId]?.let { Result.Success(it) } ?: Result.Error(Exception("Word not found"))
     }
 
-    override suspend fun getLearningWords(): Result<List<Word>> {
-        val learningWords = savedWords.value.values.filter { it.isLearning }
-        return if (learningWords.isNotEmpty()) learningWords.let { Result.Success(it) } else Result.Error(Exception("Words not found"))
+    override suspend fun getRemindWords(): Result<List<Word>> {
+        val remindWords = savedWords.value.values.filter { it.isRemind }
+        return if (remindWords.isNotEmpty()) remindWords.let { Result.Success(it) } else Result.Error(Exception("Words not found"))
     }
 
     override suspend fun saveWord(word: Word) {

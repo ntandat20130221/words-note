@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 interface WordsDao {
 
     @Query("SELECT * FROM words")
-    fun observeWords(): Flow<List<Word>>
+    fun getWordsStream(): Flow<List<Word>>
 
     @Query("SELECT * FROM words WHERE id = :wordId")
-    fun observeWord(wordId: String): Flow<Word?>
+    fun getWordStream(wordId: String): Flow<Word?>
 
     @Query("SELECT * FROM words")
     suspend fun getWords(): List<Word>
@@ -24,7 +24,7 @@ interface WordsDao {
     suspend fun getWord(wordId: String): Word
 
     @Query("SELECT * FROM words WHERE learning = 1")
-    suspend fun getLeaningWords(): List<Word>
+    suspend fun getRemindWords(): List<Word>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)

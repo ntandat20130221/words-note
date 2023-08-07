@@ -45,7 +45,7 @@ class WordsDaoTest {
 
     @Test
     fun insertWord_AndGetById() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
+        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
         wordsDao.insertWord(word)
         val loaded = wordsDao.getWord(word.id)
 
@@ -55,7 +55,7 @@ class WordsDaoTest {
         assertThat(loaded.pos, `is`(word.pos))
         assertThat(loaded.ipa, `is`(""))
         assertThat(loaded.meaning, `is`("meaning"))
-        assertThat(loaded.isLearning, `is`(true))
+        assertThat(loaded.isRemind, `is`(true))
         assertThat(loaded.timestamp, `is`(word.timestamp))
     }
 
@@ -64,7 +64,7 @@ class WordsDaoTest {
         val word1 = Word(word = "word")
         wordsDao.insertWord(word1)
 
-        val word2 = Word(id = word1.id, word = "word2", isLearning = true)
+        val word2 = Word(id = word1.id, word = "word2", isRemind = true)
         wordsDao.insertWord(word2)
 
         assertThat(wordsDao.getWords().size, `is`(1))
@@ -72,15 +72,15 @@ class WordsDaoTest {
         val loaded = wordsDao.getWord(word1.id)
         assertThat(loaded.id, `is`(word1.id))
         assertThat(loaded.word, `is`("word2"))
-        assertThat(loaded.isLearning, `is`(true))
+        assertThat(loaded.isRemind, `is`(true))
     }
 
     @Test
     fun updateWord_AndGetById() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = false)
+        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = false)
         wordsDao.insertWord(word)
 
-        val updatedWord = Word(word.id, word = "word2", pos = "pos2", isLearning = true)
+        val updatedWord = Word(word.id, word = "word2", pos = "pos2", isRemind = true)
         wordsDao.insertWord(updatedWord)
 
         val loaded = wordsDao.getWord(word.id)
@@ -88,14 +88,14 @@ class WordsDaoTest {
         assertThat(loaded.word, `is`("word2"))
         assertThat(loaded.pos, `is`("pos2"))
         assertThat(loaded.meaning, `is`(""))
-        assertThat(loaded.isLearning, `is`(true))
+        assertThat(loaded.isRemind, `is`(true))
     }
 
     @Test
     fun deleteWords_AndGetWords() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isLearning = true)
-        val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isLearning = true)
-        val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isLearning = true)
+        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
+        val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isRemind = true)
+        val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isRemind = true)
         wordsDao.insertWord(word)
         wordsDao.insertWord(word2)
         wordsDao.insertWord(word3)

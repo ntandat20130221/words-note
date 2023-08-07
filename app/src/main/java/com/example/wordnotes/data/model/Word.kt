@@ -14,7 +14,7 @@ data class Word(
     val pos: String = "",
     val ipa: String = "",
     val meaning: String = "",
-    @ColumnInfo(name = "learning") val isLearning: Boolean = false,
+    @ColumnInfo(name = "learning") val isRemind: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 ) : Parcelable {
 
@@ -35,7 +35,7 @@ data class Word(
             writeString(pos)
             writeString(ipa)
             writeString(meaning)
-            writeByte(if (isLearning) 1 else 0)
+            writeByte(if (isRemind) 1 else 0)
             writeLong(timestamp)
         }
     }

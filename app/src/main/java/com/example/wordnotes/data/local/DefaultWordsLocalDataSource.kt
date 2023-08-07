@@ -13,14 +13,14 @@ class DefaultWordsLocalDataSource internal constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WordsLocalDataSource {
 
-    override fun observeWords(): Flow<Result<List<Word>>> {
-        return wordsDao.observeWords().map {
+    override fun getWordsStream(): Flow<Result<List<Word>>> {
+        return wordsDao.getWordsStream().map {
             Result.Success(it)
         }
     }
 
-    override fun observeWord(wordId: String): Flow<Result<Word>> {
-        return wordsDao.observeWord(wordId).map { word ->
+    override fun getWordStream(wordId: String): Flow<Result<Word>> {
+        return wordsDao.getWordStream(wordId).map { word ->
             if (word != null)
                 Result.Success(word)
             else
@@ -44,9 +44,9 @@ class DefaultWordsLocalDataSource internal constructor(
         }
     }
 
-    override suspend fun getLearningWords(): Result<List<Word>> = withContext(ioDispatcher) {
+    override suspend fun getRemindWords(): Result<List<Word>> = withContext(ioDispatcher) {
         return@withContext try {
-            Result.Success(wordsDao.getLeaningWords())
+            Result.Success(wordsDao.getRemindWords())
         } catch (e: Exception) {
             Result.Error(e)
         }

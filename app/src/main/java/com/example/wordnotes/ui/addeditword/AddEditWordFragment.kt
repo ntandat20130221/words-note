@@ -79,8 +79,8 @@ class AddEditWordFragment : Fragment() {
             inputMeaning.doOnTextChanged { text, _, _, _ ->
                 addEditWordViewModel.onUpdateWord { it.copy(meaning = text.toString()) }
             }
-            checkLearning.setOnCheckedChangeListener { _, isChecked ->
-                addEditWordViewModel.onUpdateWord { it.copy(isLearning = isChecked) }
+            checkRemind.setOnCheckedChangeListener { _, isChecked ->
+                addEditWordViewModel.onUpdateWord { it.copy(isRemind = isChecked) }
             }
         }
 
@@ -116,13 +116,13 @@ class AddEditWordFragment : Fragment() {
             if (inputWord.text.toString() != uiState.word.word) inputWord.setText(uiState.word.word)
             if (inputIpa.text.toString() != uiState.word.ipa) inputIpa.setText(uiState.word.ipa)
             if (inputMeaning.text.toString() != uiState.word.meaning) inputMeaning.setText(uiState.word.meaning)
-            if (checkLearning.isChecked != uiState.word.isLearning) checkLearning.apply {
-                isChecked = uiState.word.isLearning
+            if (checkRemind.isChecked != uiState.word.isRemind) checkRemind.apply {
+                isChecked = uiState.word.isRemind
                 jumpDrawablesToCurrentState()
             }
         }
 
-        partsOfSpeechAdapter.setSelectedIndex(uiState.currentPartOfSpeechIndex)
+        partsOfSpeechAdapter.setSelectedIndex(uiState.currentPosIndex)
 
         uiState.snackBarMessage?.let { showSnackBar(it) }
     }
