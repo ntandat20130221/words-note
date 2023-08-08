@@ -3,15 +3,12 @@ package com.example.wordnotes.ui.worddetail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.wordnotes.data.MainCoroutineRule
 import com.example.wordnotes.data.Result
+import com.example.wordnotes.data.createEmptyCollector
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.repositories.FakeWordsRepository
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -38,10 +35,6 @@ class WordDetailViewModelTest {
         wordDetailViewModel = WordDetailViewModel(wordsRepository)
     }
 
-    private fun createEmptyUiStateCollector(scope: CoroutineScope, scheduler: TestCoroutineScheduler) {
-        scope.launch(UnconfinedTestDispatcher(scheduler)) { wordDetailViewModel.uiState.collect {} }
-    }
-
     @Test
     fun initialize_CheckUiState() = runTest {
         wordDetailViewModel.initializeWithWordId("1")
@@ -51,7 +44,7 @@ class WordDetailViewModelTest {
 
     @Test
     fun deleteWord_RepositoryUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordDetailViewModel.uiState)
         wordDetailViewModel.initializeWithWordId("1")
         wordDetailViewModel.deleteWord()
 
@@ -61,9 +54,9 @@ class WordDetailViewModelTest {
 
     @Test
     fun remindWord_RepositoryUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordDetailViewModel.uiState)
         wordDetailViewModel.initializeWithWordId("3")
-        wordDetailViewModel.remindWord()
+        wordDetailViewModel.toggleRemind()
 
         val word = (wordsRepository.getWord("3") as Result.Success).data
         assertThat(word.isRemind).isTrue()

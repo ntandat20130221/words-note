@@ -71,8 +71,9 @@ class RemindJobService : JobService() {
 
     private fun pushNotification(word: Word) {
         val notification = Notification.Builder(applicationContext, CHANNEL_ID)
-            .setContentTitle(word.word)
-            .setContentText(word.meaning)
+            .setSubText(getString(R.string.reminder))
+            .setContentTitle("${word.word} ${word.ipa}")
+            .setContentText("(${word.pos}) ${word.meaning}")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setShowWhen(true)
             .build()

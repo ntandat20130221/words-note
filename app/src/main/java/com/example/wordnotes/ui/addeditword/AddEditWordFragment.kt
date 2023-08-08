@@ -17,6 +17,7 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
+import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -42,6 +43,11 @@ class AddEditWordFragment : Fragment() {
         setUpPartsOfSpeechRecyclerView()
         setViewListeners()
         observeUiState()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.GONE)
     }
 
     override fun onDestroyView() {

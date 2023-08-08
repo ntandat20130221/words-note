@@ -39,9 +39,14 @@ class AddEditWordViewModel(
     private var isForAddingWord = false
 
     fun initializeWithWordId(wordId: String?) {
-        if (wordId == null) isForAddingWord = true
+        if (wordId == null) prepareForAddingWord()
         else if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateWithSavedState()
         else loadWord(wordId)
+    }
+
+    private fun prepareForAddingWord() {
+        isForAddingWord = true
+        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0])) }
     }
 
     private fun updateWithSavedState() {

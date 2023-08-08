@@ -2,14 +2,11 @@ package com.example.wordnotes.ui.words
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.wordnotes.data.MainCoroutineRule
+import com.example.wordnotes.data.createEmptyCollector
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.repositories.FakeWordsRepository
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -36,19 +33,15 @@ class WordsViewModelTest {
         wordsViewModel = WordsViewModel(wordsRepository)
     }
 
-    private fun createEmptyUiStateCollector(scope: CoroutineScope, scheduler: TestCoroutineScheduler) {
-        scope.launch(UnconfinedTestDispatcher(scheduler)) { wordsViewModel.uiState.collect {} }
-    }
-
     @Test
     fun checkSizeAtInitialState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         assertThat(wordsViewModel.uiState.value.items).hasSize(3)
     }
 
     @Test
     fun addWordsFromRepository_UiStateUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsRepository.saveWord(Word(id = "4", word = "word4", isRemind = true))
         assertThat(wordsViewModel.uiState.value.items).hasSize(4)
         assertThat(wordsViewModel.uiState.value.items[3].word.id).isEqualTo("4")
@@ -56,7 +49,7 @@ class WordsViewModelTest {
 
     @Test
     fun clickItem_ClickItemEventUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemClicked(wordId = "2")
 
         assertThat(wordsViewModel.clickItemEvent.value?.getContentIfHasNotBeenHandled()).isEqualTo("2")
@@ -65,7 +58,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_CheckUiState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
 
         val uiState = wordsViewModel.uiState.value
@@ -77,7 +70,7 @@ class WordsViewModelTest {
 
     @Test
     fun clickItemInActionMode_UntilDestroy_CheckUiState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
 
@@ -98,7 +91,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_DestroyActionMode_CheckUiState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.destroyActionMode()
 
@@ -110,7 +103,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_DestroyActionMode_ClickItem_ClickItemEventUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.destroyActionMode()
         wordsViewModel.itemClicked(wordId = "2")
@@ -120,7 +113,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_ClickAnotherItem_ClickEditMenu_UiStateDoesNotUpdate() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
 
@@ -136,7 +129,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_ClickEditMenu_ClickEditMenuEventUpdateCorrectly() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
         wordsViewModel.itemClicked(wordId = "1")
@@ -152,7 +145,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_ClickDeleteMenu_CheckUiState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
         wordsViewModel.itemClicked(wordId = "3")
@@ -167,7 +160,7 @@ class WordsViewModelTest {
 
     @Test
     fun startActionMode_ClickSelectAllMenu_CheckUiState() = runTest {
-        createEmptyUiStateCollector(backgroundScope, testScheduler)
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
 
         wordsViewModel.onActionModeMenuSelectAll()

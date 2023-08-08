@@ -23,8 +23,7 @@ class WordReminder(
     }
 
     fun cancel() {
-        val cancelPendingIntent = getPendingIntent(isCancel = true)
-        cancelPendingIntent?.let { alarmManager.cancel(it) }
+        getPendingIntent(forCanceling = true)?.let { alarmManager.cancel(it) }
         disableBootReceiver()
     }
 
@@ -62,9 +61,9 @@ class WordReminder(
         }
     }
 
-    private fun getPendingIntent(isCancel: Boolean = false): PendingIntent? {
-        val broadcastIntent = Intent(context, RemindReceiver::class.java)
-        val flags = if (isCancel) (PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE) else PendingIntent.FLAG_IMMUTABLE
-        return PendingIntent.getBroadcast(context.applicationContext, 0, broadcastIntent, flags)
+    private fun getPendingIntent(forCanceling: Boolean = false): PendingIntent? {
+        val intent = Intent(context, RemindReceiver::class.java)
+        val flags = if (forCanceling) PendingIntent.FLAG_NO_CREATE else PendingIntent.FLAG_IMMUTABLE
+        return PendingIntent.getBroadcast(context.applicationContext, 0, intent, flags)
     }
 }

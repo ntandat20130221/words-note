@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
+import com.example.wordnotes.ui.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
@@ -39,6 +41,11 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         setActionListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -53,6 +60,14 @@ class WordDetailFragment : BottomSheetDialogFragment() {
                         textIpa.text = uiState.ipa
                         textPos.text = uiState.pos
                         textMeaning.text = uiState.meaning
+
+                        imageRemind.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                if (uiState.isRemind) R.drawable.ic_alarm_off else R.drawable.ic_alarm
+                            )
+                        )
+                        textRemind.setText(if (uiState.isRemind) R.string.stop_remind else R.string.pref_title_remind)
                     }
                 }
             }
@@ -75,7 +90,7 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         }
 
         binding.actionRemind.setOnClickListener {
-            wordDetailViewModel.remindWord()
+            wordDetailViewModel.toggleRemind()
         }
     }
 }

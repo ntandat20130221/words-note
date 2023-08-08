@@ -20,9 +20,9 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
+import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.setUpToolbar
 import com.example.wordnotes.utils.themeColor
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
@@ -50,6 +50,11 @@ class WordsFragment : Fragment() {
         setUpRecyclerView()
         setUpFab()
         observeUiState()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     override fun onDestroyView() {
@@ -124,7 +129,7 @@ class WordsFragment : Fragment() {
             statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurfaceContainer)
         }
         // Hide bottom nav
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.GONE)
     }
 
     private fun stopActionMode() {
@@ -136,7 +141,7 @@ class WordsFragment : Fragment() {
             statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurface)
         }
         // Show bottom nav
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {
@@ -148,7 +153,7 @@ class WordsFragment : Fragment() {
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
             // Can only edit one item at a time.
             menu.findItem(R.id.menu_edit)?.isVisible = selectedCount < 2
-            mode.title = getString(R.string.selected_template, selectedCount)
+            mode.title = selectedCount.toString()
             return true
         }
 
