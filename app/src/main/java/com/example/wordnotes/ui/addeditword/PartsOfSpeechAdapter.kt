@@ -40,6 +40,7 @@ class PartsOfSpeechViewHolder(private val binding: PosItemBinding) : ViewHolder(
                 background =
                     if (selectedIndex == adapterPosition) ContextCompat.getDrawable(context, R.drawable.bg_pos_item_selected)
                     else ContextCompat.getDrawable(context, R.drawable.bg_input)
+                isSelected = selectedIndex == adapterPosition   // For testing
                 setOnClickListener { onItemClicked(adapterPosition) }
             }
         }

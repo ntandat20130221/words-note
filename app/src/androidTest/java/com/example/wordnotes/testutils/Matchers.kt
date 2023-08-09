@@ -1,32 +1,18 @@
-package com.example.wordnotes
+package com.example.wordnotes.testutils
 
-import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.Checkable
 import androidx.annotation.AttrRes
-import androidx.annotation.PluralsRes
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.BoundedMatcher
 import com.example.wordnotes.utils.themeColor
 import org.hamcrest.BaseMatcher
-import org.hamcrest.CoreMatchers.isA
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-
-fun getString(@StringRes stringRes: Int, vararg args: Any): String {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    return context.getString(stringRes, *args)
-}
-
-fun getQuantityString(@PluralsRes res: Int, quantity: Int, vararg args: Any): String {
-    val context = ApplicationProvider.getApplicationContext<Context>()
-    return context.resources.getQuantityString(res, quantity, *args)
-}
 
 fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> = object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
     override fun describeTo(description: Description) {
@@ -42,7 +28,7 @@ fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> = objec
 
 fun withBackgroundColor(@AttrRes colorAttr: Int): Matcher<View> = object : BoundedMatcher<View, View>(View::class.java) {
     override fun describeTo(description: Description) {
-        description.appendText("with text color: ")
+        description.appendText("with background color: ")
     }
 
     override fun matchesSafely(item: View): Boolean {
@@ -56,7 +42,7 @@ fun setChecked(checked: Boolean): ViewAction = object : ViewAction {
 
     override fun getConstraints(): Matcher<View> = object : BaseMatcher<View>() {
         override fun describeTo(description: Description?) {}
-        override fun matches(actual: Any?): Boolean = isA(Checkable::class.java).matches(actual)
+        override fun matches(actual: Any?): Boolean = CoreMatchers.isA(Checkable::class.java).matches(actual)
     }
 
     override fun perform(uiController: UiController?, view: View?) {

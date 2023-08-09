@@ -1,42 +1,95 @@
 package com.example.wordnotes.ui.words
 
-import androidx.fragment.app.testing.FragmentScenario
-import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.testing.TestNavHostController
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.google.common.truth.Truth.assertThat
-import org.junit.Before
+import com.example.wordnotes.testutils.InitSomeWordItemsRule
+import com.example.wordnotes.testutils.atPosition
+import com.example.wordnotes.testutils.withBackgroundColor
+import com.example.wordnotes.ui.MainActivity
+import org.hamcrest.CoreMatchers
+import org.junit.ClassRule
+import org.junit.Rule
 import org.junit.Test
 
 class WordsFragmentTest {
-    private lateinit var navController: NavController
-    private lateinit var fragmentScenario: FragmentScenario<WordsFragment>
+    @get:Rule
+    val activityScenarioRule = activityScenarioRule<MainActivity>()
 
-    @Before
-    fun setUpNavController() {
-        navController = TestNavHostController(ApplicationProvider.getApplicationContext())
-        fragmentScenario = launchFragmentInContainer(themeResId = R.style.Theme_WordNotes) {
-            WordsFragment().also { fragment ->
-                fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
-                    if (viewLifecycleOwner != null) {
-                        navController.setGraph(R.navigation.nav_graph)
-                        Navigation.setViewNavController(fragment.requireView(), navController)
-                    }
-                }
-            }
-        }
+    companion object {
+        @get:ClassRule
+        @JvmStatic
+        val initSomeWordItemsRule = InitSomeWordItemsRule()
     }
 
     @Test
-    fun clickItem_NavigateToWordDetailFragment() {
+    fun openThenCloseActionMode_FabAndBottomNavDisplayCorrectly() {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
+        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
+        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
+        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, click()))
-        assertThat(navController.currentDestination?.id).isEqualTo(R.id.word_detail_fragment)
+        onView(withId(com.google.android.material.R.id.action_mode_bar)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(isDisplayed()))
+        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
+        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+
+        onView(withId(com.google.android.material.R.id.action_mode_close_button)).perform(click())
+        onView(withId(com.google.android.material.R.id.action_mode_bar)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(isDisplayed()))
+        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun openActionMode_SelectMoreItems_Recreate_PersistUiState() {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, click()))
+
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
+
+        activityScenarioRule.scenario.recreate()
+
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+    }
+
+    @Test
+    fun openActionMode_SelectMoreItems_EditMenuItemDisplayProperly() {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.menu_edit)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, click()))
+        onView(withId(R.id.menu_edit)).check(ViewAssertions.doesNotExist())
+
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.menu_edit)).check(matches(isDisplayed()))
     }
 }

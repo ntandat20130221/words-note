@@ -39,6 +39,25 @@ class AddEditWordViewModelTest {
     }
 
     @Test
+    fun initialize_WithErrorFromRepository() = runTest {
+        wordsRepository.setShouldThrowError(true)
+        addEditWordViewModel.initializeWithWordId("1")
+        val uiState = addEditWordViewModel.uiState.first()
+
+        assertThat(uiState.snackBarMessage).isEqualTo(R.string.error_while_loading_word)
+        assertThat(uiState.word.id).isNotEqualTo("1")
+    }
+
+    @Test
+    fun initialize_withWrongWordId() = runTest {
+        addEditWordViewModel.initializeWithWordId("123")
+        val uiState = addEditWordViewModel.uiState.first()
+
+        assertThat(uiState.snackBarMessage).isEqualTo(R.string.error_while_loading_word)
+        assertThat(uiState.word.id).isNotEqualTo("123")
+    }
+
+    @Test
     fun initializeWord_SavedStateHandleValueSetCorrectly() = runTest {
         addEditWordViewModel.initializeWithWordId("1")
         val uiState = addEditWordViewModel.uiState.first()

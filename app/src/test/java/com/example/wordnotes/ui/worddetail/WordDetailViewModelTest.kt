@@ -36,6 +36,23 @@ class WordDetailViewModelTest {
     }
 
     @Test
+    fun initialize_WithErrorFromRepository() = runTest {
+        wordsRepository.setShouldThrowError(true)
+        wordDetailViewModel.initializeWithWordId("1")
+
+        val uiState = wordDetailViewModel.uiState.first()
+        assertThat(uiState.id).isNotEqualTo("1")
+    }
+
+    @Test
+    fun initialize_WithWrongWordId() = runTest {
+        wordDetailViewModel.initializeWithWordId("123")
+
+        val uiState = wordDetailViewModel.uiState.first()
+        assertThat(uiState.id).isNotEqualTo("123")
+    }
+
+    @Test
     fun initialize_CheckUiState() = runTest {
         wordDetailViewModel.initializeWithWordId("1")
         val uiState = wordDetailViewModel.uiState.first()
@@ -60,5 +77,9 @@ class WordDetailViewModelTest {
 
         val word = (wordsRepository.getWord("3") as Result.Success).data
         assertThat(word.isRemind).isTrue()
+
+        wordDetailViewModel.toggleRemind()
+        val word2 = (wordsRepository.getWord("3") as Result.Success).data
+        assertThat(word2.isRemind).isFalse()
     }
 }

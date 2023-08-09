@@ -13,8 +13,8 @@ import android.content.Intent
 import com.example.wordnotes.CHANNEL_ID
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
+import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.onSuccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -54,8 +54,8 @@ class RemindJobService : JobService() {
 
         coroutineScope.launch {
             val result = wordsRepository.getRemindWords()
-            result.onSuccess {
-                it.randomOrNull()?.let { word ->
+            if (result is Result.Success) {
+                result.data.randomOrNull()?.let { word ->
                     pushNotification(word)
                 }
             }

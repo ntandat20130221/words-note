@@ -16,8 +16,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
-import com.example.wordnotes.getQuantityString
-import com.example.wordnotes.getString
+import com.example.wordnotes.testutils.getQuantityString
+import com.example.wordnotes.testutils.getString
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Test
