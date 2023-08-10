@@ -20,7 +20,7 @@ class MainActivityTest {
     val activityScenarioRule = activityScenarioRule<MainActivity>()
 
     @Test
-    fun multiClickSettingBottomNavItem_DestinationDoesNotChange() {
+    fun multiClickSettingBottomNavItem_DestinationDidNotChange() {
         onView(withId(R.id.settings_fragment)).perform(click())
         onView(withId(R.id.settings_fragment_layout)).check(matches(isDisplayed()))
         withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.settings_fragment) }

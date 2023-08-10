@@ -15,7 +15,10 @@ class InitSomeWordItemsRule : TestWatcher() {
         super.starting(description)
         launchActivity<MainActivity>()
         onView(withId(R.id.fab_add_word)).perform(click())
-        onView(withId(R.id.input_word)).perform(click(), typeText("word1"))
+        onView(withId(R.id.input_word)).perform(click(), typeText("word"))
+        onView(withId(R.id.input_ipa)).perform(click(), typeText("ipa"))
+        onView(withId(R.id.input_meaning)).perform(click(), typeText("meaning"))
+        onView(withId(R.id.check_remind)).perform(click())
         onView(withId(R.id.menu_save)).perform(click())
 
         onView(withId(R.id.fab_add_word)).perform(click())

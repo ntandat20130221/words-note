@@ -46,27 +46,6 @@ class SettingsFragmentTest {
         wordReminder = appContainer.wordReminderFactory.create()
     }
 
-    private fun getRemindCheckBox() = onView(
-        allOf(
-            isDescendantOfA(
-                hasDescendant(
-                    allOf(
-                        withId(android.R.id.title),
-                        withText(getString(R.string.pref_title_remind))
-                    )
-                )
-            ),
-            withId(android.R.id.checkbox)
-        )
-    )
-
-    private fun getSummary(title: String) = onView(
-        allOf(
-            withId(android.R.id.summary),
-            hasSibling(allOf(withId(android.R.id.title), withText(title)))
-        )
-    )
-
     @Test
     fun checkPreferencesAndSharedPreferences_InSync() {
         // Is remind
@@ -90,4 +69,25 @@ class SettingsFragmentTest {
         // End time
         getSummary(getString(R.string.pref_title_end_time)).check(matches(withText(wordPreferences.getEndTime())))
     }
+
+    private fun getRemindCheckBox() = onView(
+        allOf(
+            isDescendantOfA(
+                hasDescendant(
+                    allOf(
+                        withId(android.R.id.title),
+                        withText(getString(R.string.pref_title_remind))
+                    )
+                )
+            ),
+            withId(android.R.id.checkbox)
+        )
+    )
+
+    private fun getSummary(title: String) = onView(
+        allOf(
+            withId(android.R.id.summary),
+            hasSibling(allOf(withId(android.R.id.title), withText(title)))
+        )
+    )
 }

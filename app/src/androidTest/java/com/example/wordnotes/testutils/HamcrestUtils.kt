@@ -7,8 +7,10 @@ import androidx.annotation.AttrRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.matcher.BoundedMatcher
 import com.example.wordnotes.utils.themeColor
+import com.google.common.truth.Truth.assertThat
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
@@ -48,4 +50,10 @@ fun setChecked(checked: Boolean): ViewAction = object : ViewAction {
     override fun perform(uiController: UiController?, view: View?) {
         (view as Checkable).isChecked = checked
     }
+}
+
+fun hasItemCount(expectedCount: Int): ViewAssertion = ViewAssertion { view, noViewFoundException ->
+    noViewFoundException?.let { throw noViewFoundException }
+    val actualCount = (view as RecyclerView).adapter?.itemCount
+    assertThat(expectedCount).isEqualTo(actualCount)
 }

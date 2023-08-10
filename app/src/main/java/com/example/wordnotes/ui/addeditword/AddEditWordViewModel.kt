@@ -46,7 +46,7 @@ class AddEditWordViewModel(
 
     private fun prepareForAddingWord() {
         isForAddingWord = true
-        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0])) }
+        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase())) }
     }
 
     private fun updateWithSavedState() {
