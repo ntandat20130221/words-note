@@ -71,10 +71,18 @@ class FakeWordsRepository : WordsRepository {
         }
     }
 
-    override suspend fun deleteWords(id: List<String>) {
+    override suspend fun remindWords(ids: List<String>) {
         _savedWords.update { words ->
             LinkedHashMap<String, Word>(words).also {
-                it.keys.removeAll(id.toSet())
+                it.putAll(ids.map { id -> id to it[id]!!.copy(isRemind = true) })
+            }
+        }
+    }
+
+    override suspend fun deleteWords(ids: List<String>) {
+        _savedWords.update { words ->
+            LinkedHashMap<String, Word>(words).also {
+                it.keys.removeAll(ids.toSet())
             }
         }
     }

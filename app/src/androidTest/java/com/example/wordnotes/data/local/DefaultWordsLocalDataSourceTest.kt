@@ -101,6 +101,23 @@ class DefaultWordsLocalDataSourceTest {
     }
 
     @Test
+    fun remindWords_GetWords() = runTest(testDispatcher.scheduler) {
+        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
+        val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2")
+        val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3")
+        wordsLocalDataSource.saveWord(word)
+        wordsLocalDataSource.saveWord(word2)
+        wordsLocalDataSource.saveWord(word3)
+
+        wordsLocalDataSource.remindWords(listOf(word.id, word2.id, word3.id))
+        val words = (wordsLocalDataSource.getWords() as Result.Success).data
+        assertThat(words).hasSize(3)
+        assertThat(words[0].isRemind).isTrue()
+        assertThat(words[1].isRemind).isTrue()
+        assertThat(words[2].isRemind).isTrue()
+    }
+
+    @Test
     fun deleteWords_GetWords() = runTest(testDispatcher.scheduler) {
         val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isRemind = true)

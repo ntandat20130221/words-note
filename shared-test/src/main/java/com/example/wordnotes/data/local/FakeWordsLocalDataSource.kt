@@ -46,7 +46,11 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
         _words?.put(word.id, word)
     }
 
-    override suspend fun deleteWords(id: List<String>) {
-        _words?.keys?.removeAll(id.toSet())
+    override suspend fun remindWords(ids: List<String>) {
+        _words?.putAll(ids.map { it to _words?.get(it)!!.copy(isRemind = true) })
+    }
+
+    override suspend fun deleteWords(ids: List<String>) {
+        _words?.keys?.removeAll(ids.toSet())
     }
 }

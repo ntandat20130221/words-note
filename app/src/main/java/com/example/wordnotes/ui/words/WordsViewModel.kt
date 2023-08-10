@@ -126,6 +126,17 @@ class WordsViewModel(
         return true
     }
 
+    fun onActionModeMenuRemind(): Boolean {
+        if (uiState.value.isActionMode) {
+            val selectedWords = uiState.value.items.filter { it.isSelected }
+            viewModelScope.launch {
+                wordsRepository.remindWords(selectedWords.map { it.word.id })
+                destroyActionMode()
+            }
+        }
+        return true
+    }
+
     fun onActionModeMenuSelectAll(): Boolean {
         if (uiState.value.isActionMode) {
             _selectedWordIds.update { uiState.value.items.map { it.word.id }.toSet() }

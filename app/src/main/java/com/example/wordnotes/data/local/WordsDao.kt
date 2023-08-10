@@ -32,6 +32,9 @@ interface WordsDao {
     @Update
     suspend fun updateWord(word: Word)
 
-    @Query("DELETE FROM words WHERE id IN (:id)")
-    suspend fun deleteWords(id: List<String>)
+    @Query("UPDATE words SET learning = 1 WHERE id IN (:ids)")
+    suspend fun remindWords(ids: List<String>)
+
+    @Query("DELETE FROM words WHERE id IN (:ids)")
+    suspend fun deleteWords(ids: List<String>)
 }

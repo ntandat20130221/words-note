@@ -27,7 +27,11 @@ class DefaultWordsRepository constructor(
         wordsLocalDataSource.updateWord(word)
     }
 
-    override suspend fun deleteWords(id: List<String>) {
-        wordsLocalDataSource.deleteWords(id)
+    override suspend fun remindWords(ids: List<String>) {
+        wordsLocalDataSource.remindWords(ids)
+    }
+
+    override suspend fun deleteWords(ids: List<String>) {
+        wordsLocalDataSource.deleteWords(ids)
     }
 }

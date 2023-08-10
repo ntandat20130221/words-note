@@ -128,7 +128,7 @@ class WordsViewModelTest {
     }
 
     @Test
-    fun startActionMode_ClickEditMenu_ClickEditMenuEventUpdateCorrectly() = runTest {
+    fun startActionMode_SelectAnyItem_ClickEditMenu_ClickEditMenuEventUpdateCorrectly() = runTest {
         createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
@@ -144,7 +144,7 @@ class WordsViewModelTest {
     }
 
     @Test
-    fun startActionMode_ClickDeleteMenu_CheckUiState() = runTest {
+    fun startActionMode_SelectSomeItems_ClickDeleteMenu_CheckUiState() = runTest {
         createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
         wordsViewModel.itemClicked(wordId = "2")
@@ -156,6 +156,22 @@ class WordsViewModelTest {
         assertThat(uiState.isActionMode).isFalse()
         assertThat(uiState.items).hasSize(1)
         assertThat(uiState.items[0].word.id).isEqualTo("1")
+    }
+
+    @Test
+    fun startActionMode_SelectSomeItems_ClickRemindMenu_CheckUiState() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+        wordsViewModel.itemLongClicked(wordId = "1")
+        wordsViewModel.itemClicked(wordId = "2")
+        wordsViewModel.itemClicked(wordId = "3")
+
+        wordsViewModel.onActionModeMenuRemind()
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.items).hasSize(3)
+        assertThat(uiState.items[0].word.isRemind).isTrue()
+        assertThat(uiState.items[1].word.isRemind).isTrue()
+        assertThat(uiState.items[2].word.isRemind).isTrue()
     }
 
     @Test

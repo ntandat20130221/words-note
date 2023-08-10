@@ -160,6 +160,7 @@ class WordsFragment : Fragment() {
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = when (item.itemId) {
             R.id.menu_edit -> wordsViewModel.onActionModeMenuEdit()
             R.id.menu_delete -> wordsViewModel.onActionModeMenuDelete()
+            R.id.menu_remind -> wordsViewModel.onActionModeMenuRemind()
             R.id.menu_select_all -> wordsViewModel.onActionModeMenuSelectAll()
             else -> false
         }

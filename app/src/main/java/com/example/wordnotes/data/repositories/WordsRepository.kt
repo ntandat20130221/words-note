@@ -20,5 +20,7 @@ interface WordsRepository {
 
     suspend fun updateWord(word: Word)
 
-    suspend fun deleteWords(id: List<String>)
+    suspend fun remindWords(ids: List<String>)
+
+    suspend fun deleteWords(ids: List<String>)
 }
