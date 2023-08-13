@@ -9,4 +9,4 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:titleCentered="true"
-    app:titleTextColor="?colorOnSurfaceVariant" />
+    app:titleTextAppearance="@style/TitleTextAppearance" />

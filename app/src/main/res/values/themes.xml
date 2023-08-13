@@ -9,6 +9,8 @@
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeCloseButtonStyle">@style/ActionModeCloseButtonStyle</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <!-- Overflow button -->
+        <item name="actionOverflowButtonStyle">@style/OverflowButton</item>
     </style>
 
     <style name="Theme.WordNotes" parent="Base.AppTheme">
@@ -49,7 +51,7 @@
         <item name="android:textColor">?colorOnSurfaceVariant</item>
     </style>
 
-    <!-- BottomSheetStyle -->
+    <!-- BottomSheet style -->
     <style name="BottomSheetDialogStyle" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>
@@ -62,5 +64,16 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">16dp</item>
         <item name="cornerSizeTopLeft">16dp</item>
+    </style>
+
+    <!-- Overflow button style -->
+    <style name="OverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">?colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Toolbar title style -->
+    <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="titleTextColor">?colorOnSurfaceVariant</item>
     </style>
 </resources>

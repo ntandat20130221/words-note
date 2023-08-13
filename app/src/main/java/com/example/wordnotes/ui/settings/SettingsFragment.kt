@@ -14,7 +14,6 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
-import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.setUpToolbar
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
@@ -50,11 +49,6 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             toolbar,
             AppBarConfiguration(setOf(R.id.words_fragment, R.id.settings_fragment))
         )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     override fun onResume() {

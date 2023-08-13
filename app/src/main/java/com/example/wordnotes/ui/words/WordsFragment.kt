@@ -1,5 +1,6 @@
 package com.example.wordnotes.ui.words
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -7,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
@@ -29,15 +30,21 @@ import kotlinx.coroutines.launch
 // TODO: Add dialog delete items
 // TODO: Add empty screen
 // TODO: Implement search
-// TODO: Optimize observe UI (update the action mode only changes)
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
 
     private val wordsViewModel: WordsViewModel by activityViewModels { WordViewModelFactory }
+    private lateinit var mainActivity: MainActivity
     private lateinit var wordsAdapter: WordsAdapter
     private var actionMode: ActionMode? = null
     private var selectedCount = 0
+    private var isBottomNavVisible = true
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainActivity = requireActivity() as MainActivity
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordsBinding.inflate(inflater, container, false)
@@ -50,11 +57,6 @@ class WordsFragment : Fragment() {
         setUpRecyclerView()
         setUpFab()
         observeUiState()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     override fun onDestroyView() {
@@ -76,6 +78,22 @@ class WordsFragment : Fragment() {
                 onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) }
             )
                 .also { wordsAdapter = it }
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (actionMode == null) {
+                        if (dy > 10 && isBottomNavVisible) {
+                            binding.fabAddWord.shrink()
+                            mainActivity.slideOutBottomNav(binding.fabAddWord)
+                            isBottomNavVisible = false
+                        } else if (dy < -10 && !isBottomNavVisible) {
+                            binding.fabAddWord.extend()
+                            mainActivity.slideInBottomNav(binding.fabAddWord)
+                            isBottomNavVisible = true
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -111,37 +129,45 @@ class WordsFragment : Fragment() {
     private fun updateActionMode(uiState: WordsUiState) {
         if (uiState.isActionMode) {
             if (actionMode == null) {
-                startActionMode()
+                onStartActionMode()
             }
             selectedCount = uiState.selectedCount
             actionMode?.invalidate()
         } else {
-            stopActionMode()
+            onStopActionMode()
         }
     }
 
-    private fun startActionMode() {
-        actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
-        binding.fabAddWord.hide()
+    private fun onStartActionMode() {
+        actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
+
+        binding.fabAddWord.apply {
+            visibility = View.GONE
+            if (!isExtended) extend()
+        }
+        mainActivity.setBottomNavVisibility(View.GONE)
+        mainActivity.resetBottomNavAnimation(binding.fabAddWord)
+        isBottomNavVisible = false
+
         // Change status bar color
         requireActivity().window.apply {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurfaceContainer)
         }
-        // Hide bottom nav
-        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.GONE)
     }
 
-    private fun stopActionMode() {
+    private fun onStopActionMode() {
         actionMode?.finish()
-        binding.fabAddWord.show()
+
+        binding.fabAddWord.visibility = View.VISIBLE
+        mainActivity.setBottomNavVisibility(View.VISIBLE)
+        isBottomNavVisible = true
+
         // Reset status bar color
         requireActivity().window.apply {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurface)
         }
-        // Show bottom nav
-        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {

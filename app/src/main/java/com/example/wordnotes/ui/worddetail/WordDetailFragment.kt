@@ -15,7 +15,6 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
-import com.example.wordnotes.ui.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
@@ -39,11 +38,6 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         wordDetailViewModel.initializeWithWordId(args.wordId.also { wordId = it })
         observeUiState()
         setActionListeners()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        (requireActivity() as? MainActivity)?.setBottomNavigationVisibility(View.VISIBLE)
     }
 
     override fun onDestroyView() {
