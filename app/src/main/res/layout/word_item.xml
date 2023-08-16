@@ -8,27 +8,12 @@
     android:foreground="?selectableItemBackground"
     android:padding="16dp">
 
-    <ViewSwitcher
-        android:id="@+id/view_switcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:animateFirstView="false"
-        android:inAnimation="@anim/flip_in"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:outAnimation="@anim/flip_out"
+    <FrameLayout
+        android:id="@+id/avatar_container"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/text_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_avatar"
-            android:gravity="center"
-            android:textColor="?colorOnPrimary"
-            android:textSize="28sp"
-            tools:text="A" />
 
         <ImageView
             android:id="@+id/image_avatar"
@@ -39,7 +24,17 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_check"
             app:tint="@color/white" />
-    </ViewSwitcher>
+
+        <TextView
+            android:id="@+id/text_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:textColor="?colorOnPrimary"
+            android:textSize="28sp"
+            tools:text="A" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/text_word"
@@ -50,8 +45,8 @@
         android:textColor="?colorOnSurface"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/text_timestamp"
-        app:layout_constraintStart_toEndOf="@id/view_switcher"
-        app:layout_constraintTop_toTopOf="@id/view_switcher"
+        app:layout_constraintStart_toEndOf="@id/avatar_container"
+        app:layout_constraintTop_toTopOf="@id/avatar_container"
         tools:text="consciously" />
 
     <TextView

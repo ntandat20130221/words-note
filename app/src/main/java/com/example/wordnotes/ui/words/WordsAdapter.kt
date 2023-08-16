@@ -1,9 +1,10 @@
 package com.example.wordnotes.ui.words
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -12,7 +13,6 @@ import com.example.wordnotes.databinding.WordItemBinding
 import com.example.wordnotes.utils.themeColor
 import com.example.wordnotes.utils.timeAgo
 
-// TODO: About payload
 class WordsAdapter(
     private var words: List<WordItem> = emptyList(),
     private val onItemClicked: (String) -> Unit,
@@ -28,9 +28,17 @@ class WordsAdapter(
         holder.bind(words[position], onItemClicked, onItemLongClicked)
     }
 
+    /**
+     * This implementation is only intended to explain how DiffUtil.Callback.getChangePayload() method works.
+     * Without it, the logic code still works properly.
+     */
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
         else holder.bind(words[position].copy(isSelected = payloads[0] as Boolean), onItemClicked, onItemLongClicked)
+    }
+
+    override fun onViewRecycled(holder: WordsViewHolder) {
+        holder.cancelAvatarFlipAnimation()
     }
 
     fun setData(words: List<WordItem>) {
@@ -41,14 +49,52 @@ class WordsAdapter(
 }
 
 class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding.root) {
+    private val flipRightAnimator: AnimatorSet = AnimatorSet()
+    private val flipLeftAnimator: AnimatorSet = AnimatorSet()
+    private var isShowingBack = false
+
+    init {
+        val rightOut = AnimatorInflater.loadAnimator(binding.root.context, R.animator.flip_right_out)
+        val rightIn = AnimatorInflater.loadAnimator(binding.root.context, R.animator.flip_right_in)
+        rightOut.setTarget(binding.textAvatar)
+        rightIn.setTarget(binding.imageAvatar)
+        flipRightAnimator.playTogether(rightOut, rightIn)
+
+        val leftOut = AnimatorInflater.loadAnimator(binding.root.context, R.animator.flip_left_out)
+        val leftIn = AnimatorInflater.loadAnimator(binding.root.context, R.animator.flip_left_in)
+        leftOut.setTarget(binding.imageAvatar)
+        leftIn.setTarget(binding.textAvatar)
+        flipLeftAnimator.playTogether(leftOut, leftIn)
+    }
+
+    fun cancelAvatarFlipAnimation() {
+        isShowingBack = false
+    }
+
     fun bind(wordUiState: WordItem, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
         val word = wordUiState.word
         binding.apply {
-            viewSwitcher.apply {
-                findViewById<TextView>(R.id.text_avatar).text = word.word[0].uppercase()
-                // TODO: Fix bug animation start and end of recyclerview when scrolling
-                displayedChild = if (wordUiState.isSelected) 1 else 0
+            if (wordUiState.isSelected && !isShowingBack) {
+                flipRightAnimator.start()
+                if (flipLeftAnimator.isRunning) {
+                    flipRightAnimator.currentPlayTime = flipRightAnimator.totalDuration - flipLeftAnimator.currentPlayTime
+                    flipLeftAnimator.cancel()
+                }
+                binding.textAvatar.setHasTransientState(true)
+                binding.imageAvatar.setHasTransientState(true)
+                isShowingBack = true
+            } else if (isShowingBack) {
+                flipLeftAnimator.start()
+                if (flipRightAnimator.isRunning) {
+                    flipLeftAnimator.currentPlayTime = flipLeftAnimator.totalDuration - flipRightAnimator.currentPlayTime
+                    flipRightAnimator.cancel()
+                }
+                binding.textAvatar.setHasTransientState(true)
+                binding.imageAvatar.setHasTransientState(true)
+                isShowingBack = false
             }
+
+            textAvatar.text = word.word[0].uppercase()
             textWord.text = word.word
             textIpa.text = word.ipa
             textTimestamp.text = timeAgo(root.context, word.timestamp)
