@@ -1,9 +1,11 @@
 package com.example.wordnotes.ui.addeditword
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -120,6 +122,13 @@ class AddEditWordFragment : Fragment() {
                 isChecked = uiState.word.isRemind
                 jumpDrawablesToCurrentState()
             }
+        }
+
+        if (uiState.isInputFocus) {
+            binding.inputWord.requestFocus()
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.inputWord, InputMethodManager.SHOW_IMPLICIT)
+            addEditWordViewModel.gainedFocus()
         }
 
         partsOfSpeechAdapter.setSelectedIndex(uiState.currentPosIndex)

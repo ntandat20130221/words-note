@@ -10,10 +10,13 @@ import com.example.wordnotes.ui.MainActivity
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class InitSomeWordItemsRule : TestWatcher() {
+class AddSomeWordItemsRule : TestWatcher() {
+
     override fun starting(description: Description) {
         super.starting(description)
-        launchActivity<MainActivity>()
+
+        val activityScenario = launchActivity<MainActivity>()
+
         onView(withId(R.id.fab_add_word)).perform(click())
         onView(withId(R.id.input_word)).perform(click(), typeText("word"))
         onView(withId(R.id.input_ipa)).perform(click(), typeText("ipa"))
@@ -28,5 +31,7 @@ class InitSomeWordItemsRule : TestWatcher() {
         onView(withId(R.id.fab_add_word)).perform(click())
         onView(withId(R.id.input_word)).perform(click(), typeText("word3"))
         onView(withId(R.id.menu_save)).perform(click())
+
+        activityScenario.close()
     }
 }

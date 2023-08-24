@@ -10,19 +10,23 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isFocused
+import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.isNotSelected
 import androidx.test.espresso.matcher.ViewMatchers.isSelected
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import com.example.wordnotes.R
-import com.example.wordnotes.testutils.InitSomeWordItemsRule
+import com.example.wordnotes.testutils.AddSomeWordItemsRule
 import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.ui.words.WordsViewHolder
+import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.not
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
@@ -34,7 +38,14 @@ class AddEditWordFragmentTest {
     companion object {
         @get:ClassRule
         @JvmStatic
-        val initSomeWordItemsRule = InitSomeWordItemsRule()
+        val addSomeWordItemsRule = AddSomeWordItemsRule()
+    }
+
+    @Test
+    fun addNewWord_AtInitial_InputWordGetFocus_SoftKeyboardShown() {
+        addNewWord()
+        onView(withId(R.id.input_word)).check(matches(isFocused()))
+        assertThat(isKeyboardOpenedShellCheck()).isTrue()
     }
 
     @Test
@@ -84,7 +95,7 @@ class AddEditWordFragmentTest {
         onView(withId(R.id.input_ipa)).check(matches(withText("ipa")))
         onView(withId(R.id.pos_recycler_view)).check(matches(atPosition(0, isSelected())))
         onView(withId(R.id.input_meaning)).check(matches(withText("meaning")))
-        onView(withId(R.id.check_remind)).check(matches(isChecked()))
+        onView(withId(R.id.check_remind)).check(matches(isNotChecked()))
     }
 
     @Test
@@ -96,7 +107,7 @@ class AddEditWordFragmentTest {
         onView(withId(R.id.add_edit_word_fragment_layout)).check(doesNotExist())
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, hasDescendant(withText("word updated")))))
         onView(withId(R.id.words_recycler_view))
-            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), not(isDisplayed()))))))
+            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), isDisplayed())))))
     }
 
     private fun editWord() {
@@ -106,5 +117,11 @@ class AddEditWordFragmentTest {
 
     private fun addNewWord() {
         onView(withId(R.id.fab_add_word)).perform(click())
+    }
+
+    private fun isKeyboardOpenedShellCheck(): Boolean {
+        val checkKeyboardCmd = "dumpsys input_method | grep mInputShown"
+        return UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            .executeShellCommand(checkKeyboardCmd).contains("mInputShown=true")
     }
 }

@@ -13,26 +13,24 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.example.wordnotes.testutils.InitSomeWordItemsRule
+import com.example.wordnotes.testutils.AddSomeWordItemsRule
 import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.testutils.withBackgroundColor
 import com.example.wordnotes.ui.MainActivity
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.allOf
-import org.junit.ClassRule
+import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 
 class WordsFragmentTest {
+
     @get:Rule
     val activityScenarioRule = activityScenarioRule<MainActivity>()
 
-    companion object {
-        @get:ClassRule
-        @JvmStatic
-        val initSomeWordItemsRule = InitSomeWordItemsRule()
-    }
+    @get:Rule
+    val addSomeWordItemsRule = AddSomeWordItemsRule()
 
     @Test
     fun openThenCloseActionMode_FabAndBottomNavDisplayCorrectly() {
@@ -81,8 +79,8 @@ class WordsFragmentTest {
         onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
-        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
     }
 
     @Test

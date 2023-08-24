@@ -45,6 +45,7 @@ class MainActivityTest {
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
         onView(withId(R.id.fab_add_word)).perform(click())
         onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
+        pressBack() // hide soft keyboard
         pressBack()
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
         onView(withId(R.id.settings_fragment)).perform(click())

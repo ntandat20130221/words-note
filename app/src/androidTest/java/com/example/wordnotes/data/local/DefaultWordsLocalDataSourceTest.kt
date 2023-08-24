@@ -2,7 +2,6 @@ package com.example.wordnotes.data.local
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
@@ -13,11 +12,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
 @SmallTest
-@RunWith(AndroidJUnit4::class)
 class DefaultWordsLocalDataSourceTest {
     private lateinit var wordsLocalDataSource: WordsLocalDataSource
     private lateinit var wordsDatabase: WordDatabase

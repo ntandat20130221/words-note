@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 data class AddEditWordUiState(
     val word: Word = Word(),
     val currentPosIndex: Int = 0,
+    val isInputFocus: Boolean = false,
     val isLoading: Boolean = false,
     val snackBarMessage: Int? = null
 )
@@ -46,7 +47,7 @@ class AddEditWordViewModel(
 
     private fun prepareForAddingWord() {
         isForAddingWord = true
-        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase())) }
+        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase(), isRemind = true), isInputFocus = true) }
     }
 
     private fun updateWithSavedState() {
@@ -127,6 +128,10 @@ class AddEditWordViewModel(
 
     fun snakeBarShown() {
         _uiState.update { it.copy(snackBarMessage = null) }
+    }
+
+    fun gainedFocus() {
+        _uiState.update { it.copy(isInputFocus = false) }
     }
 
     fun onPosItemClicked(selectedIndex: Int) {

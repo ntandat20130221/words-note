@@ -13,25 +13,25 @@ import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.example.wordnotes.testutils.InitSomeWordItemsRule
+import com.example.wordnotes.testutils.AddSomeWordItemsRule
 import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.ui.words.WordsViewHolder
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.not
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 
 class WordDetailFragmentTest {
+
     @get:Rule
     val activityScenarioRule = activityScenarioRule<MainActivity>()
 
     companion object {
         @get:ClassRule
         @JvmStatic
-        val initSomeWordItemsRule = InitSomeWordItemsRule()
+        val addSomeWordItemsRule = AddSomeWordItemsRule()
     }
 
     @Test
@@ -43,7 +43,7 @@ class WordDetailFragmentTest {
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_ipa))).check(matches(withText("ipa")))
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_pos))).check(matches(withText("verb")))
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_meaning))).check(matches(withText("meaning")))
-        onView(withId(R.id.text_remind)).check(matches(withText(R.string.stop_remind)))
+        onView(withId(R.id.text_remind)).check(matches(withText(R.string.pref_title_remind)))
     }
 
     @Test
@@ -72,6 +72,6 @@ class WordDetailFragmentTest {
 
         onView(withId(R.id.word_detail_fragment_layout)).check(doesNotExist())
         onView(withId(R.id.words_recycler_view))
-            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), not(isDisplayed()))))))
+            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), isDisplayed())))))
     }
 }
