@@ -99,7 +99,7 @@ class AddEditWordViewModel(
         }
     }
 
-    private fun Word.isValid() = word.isNotEmpty()
+    private fun Word.isValid() = word.isNotEmpty() and word.isNotBlank()
 
     fun saveWord() {
         if (_uiState.value.word.isValid()) onInputValid()
@@ -117,14 +117,16 @@ class AddEditWordViewModel(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordsRepository.saveWord(newWord.copy(timestamp = System.currentTimeMillis()))
+        wordsRepository.saveWord(newWord.copy(ipa = encloseWithSlashes(newWord.ipa), timestamp = System.currentTimeMillis()))
         _wordSavedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        wordsRepository.updateWord(word)
+        wordsRepository.updateWord(word.copy(ipa = encloseWithSlashes(word.ipa)))
         _wordSavedEvent.value = Event(Unit)
     }
+
+    private fun encloseWithSlashes(ipa: String): String = ipa.trim('/').let { "/$it/" }
 
     fun snakeBarShown() {
         _uiState.update { it.copy(snackBarMessage = null) }
