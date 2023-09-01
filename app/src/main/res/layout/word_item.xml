@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="?colorSurface"
     android:foreground="?selectableItemBackground"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:theme="@style/WordItemTheme">
 
     <FrameLayout
         android:id="@+id/avatar_container"
@@ -42,7 +43,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:includeFontPadding="false"
-        android:textColor="?colorOnSurface"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/text_timestamp"
         app:layout_constraintStart_toEndOf="@id/avatar_container"
@@ -78,7 +78,6 @@
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:lines="1"
-        android:textColor="?colorOnSurface"
         app:layout_constraintEnd_toStartOf="@+id/image_remind"
         app:layout_constraintStart_toStartOf="@id/text_word"
         app:layout_constraintTop_toBottomOf="@id/text_ipa"

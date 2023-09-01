@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "Word Notes"
 include ':app'
 include ':shared-test'
+include ':customviews'

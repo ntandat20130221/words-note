@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <View
+        android:id="@+id/scrim_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="#80000000" />
+
+    <LinearLayout
+        android:id="@+id/search_view_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="#FFF"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?actionBarItemBackground"
+                android:importantForAccessibility="no"
+                android:padding="16dp"
+                android:paddingHorizontal="16dp"
+                android:src="@drawable/ic_back" />
+
+            <EditText
+                android:id="@+id/input_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Search..."
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:lines="1"
+                android:paddingHorizontal="16dp"
+                android:textAlignment="viewStart"
+                android:textColor="#000"
+                android:textColorHint="#333333"
+                android:textCursorDrawable="@null" />
+
+            <ImageButton
+                android:id="@+id/button_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?actionBarItemBackground"
+                android:importantForAccessibility="no"
+                android:padding="16dp"
+                android:paddingHorizontal="16dp"
+                android:src="@drawable/ic_voice" />
+
+            <ImageButton
+                android:id="@+id/button_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?actionBarItemBackground"
+                android:importantForAccessibility="no"
+                android:paddingHorizontal="16dp"
+                android:src="@drawable/ic_clear"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/content_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</merge>

@@ -26,16 +26,22 @@ data class WordsUiState(
     val items: List<WordItem> = emptyList(),
     val isLoading: Boolean = false,
     val isActionMode: Boolean = false,
-    val selectedCount: Int = 0
+    val selectedCount: Int = 0,
+    val isSearching: Boolean = false,
+    val searchResult: List<WordItem> = emptyList()
 )
 
-class WordsViewModel(
-    private val wordsRepository: WordsRepository
-) : ViewModel() {
+class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel() {
+    private val _clickItemEvent: MutableLiveData<Event<String>> = MutableLiveData()
+    val clickItemEvent: LiveData<Event<String>> = _clickItemEvent
 
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _isActionMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _selectedWordIds: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
+    private val _clickEditItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
+    val clickEditItemEvent: LiveData<Event<String?>> = _clickEditItemEvent
+
+    private val _isLoading = MutableStateFlow(false)
+    private val _isActionMode = MutableStateFlow(false)
+    private val _selectedWordIds = MutableStateFlow(emptySet<String>())
+    private val _isSearching = MutableStateFlow(false)
     private val _wordItemsResult: Flow<Result<List<WordItem>>> = combine(
         wordsRepository.getWordsStream(), _selectedWordIds
     ) { wordsResult, selectedWordId ->
@@ -45,16 +51,28 @@ class WordsViewModel(
             is Result.Loading -> wordsResult
         }
     }
+    private val _searchQuery = MutableStateFlow("")
+    private val _searchResult: Flow<List<WordItem>> = combine(
+        wordsRepository.getWordsStream(), _searchQuery
+    ) { wordsResult, searchQuery ->
+        when (wordsResult) {
+            is Result.Success -> filterSearch(wordsResult.data, searchQuery)
+            is Result.Error -> emptyList()
+            is Result.Loading -> emptyList()
+        }
+    }
 
     val uiState: StateFlow<WordsUiState> = combine(
-        _isLoading, _isActionMode, _wordItemsResult
-    ) { isLoading, isActionMode, wordsResult ->
+        _isLoading, _isActionMode, _wordItemsResult, _isSearching, _searchResult
+    ) { isLoading, isActionMode, wordsResult, isSearching, searchResult ->
         when (wordsResult) {
             is Result.Success -> WordsUiState(
                 items = wordsResult.data,
                 isLoading = isLoading,
                 isActionMode = isActionMode,
-                selectedCount = _selectedWordIds.value.size
+                selectedCount = _selectedWordIds.value.size,
+                isSearching = isSearching,
+                searchResult = searchResult
             )
 
             is Result.Loading -> WordsUiState(isLoading = true)
@@ -68,14 +86,21 @@ class WordsViewModel(
             initialValue = WordsUiState(isLoading = true)
         )
 
-    private val _clickItemEvent: MutableLiveData<Event<String>> = MutableLiveData()
-    val clickItemEvent: LiveData<Event<String>> = _clickItemEvent
-
-    private val _clickEditItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
-    val clickEditItemEvent: LiveData<Event<String?>> = _clickEditItemEvent
+    val selectedCount: Int get() = _selectedWordIds.value.count()
+    var isBottomNavVisible = false
 
     private fun resolveSelected(words: List<Word>, selectedWordId: Set<String>): List<WordItem> {
         return words.map { WordItem(word = it, isSelected = it.id in selectedWordId) }
+    }
+
+    private fun filterSearch(data: List<Word>, searchQuery: String): List<WordItem> {
+        if (searchQuery.isNotEmpty() && searchQuery.isNotBlank()) {
+            val searchResult = data.filter { it.word.contains(searchQuery) }
+            if (searchResult.isNotEmpty()) {
+                return searchResult.map { WordItem(word = it) }
+            }
+        }
+        return emptyList()
     }
 
     fun itemClicked(wordId: String) {
@@ -147,5 +172,21 @@ class WordsViewModel(
     fun destroyActionMode() {
         _isActionMode.update { false }
         _selectedWordIds.update { emptySet() }
+    }
+
+    fun startSearching() {
+        if (!_isSearching.value) {
+            _isSearching.value = true
+        }
+    }
+
+    fun stopSearching() {
+        if (_isSearching.value) {
+            _isSearching.value = false
+        }
+    }
+
+    fun search(text: String) {
+        _searchQuery.value = text
     }
 }

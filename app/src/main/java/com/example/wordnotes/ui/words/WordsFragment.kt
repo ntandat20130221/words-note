@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customviews.materialsearchview.MaterialSearchView
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
@@ -37,9 +38,8 @@ class WordsFragment : Fragment() {
     private val wordsViewModel: WordsViewModel by activityViewModels { WordViewModelFactory }
     private lateinit var mainActivity: MainActivity
     private lateinit var wordsAdapter: WordsAdapter
+    private lateinit var searchAdapter: WordsAdapter
     private var actionMode: ActionMode? = null
-    private var selectedCount = 0
-    private var isBottomNavVisible = true
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -55,7 +55,9 @@ class WordsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar()
         setUpRecyclerView()
+        setUpSearch()
         setUpFab()
+        setUpViewListeners()
         observeUiState()
     }
 
@@ -65,8 +67,9 @@ class WordsFragment : Fragment() {
     }
 
     private fun setUpToolbar() {
-        binding.toolbar.toolbar.apply {
+        binding.toolbar.apply {
             title = getString(R.string.words)
+            inflateMenu(R.menu.words_menu)
             findNavController().setUpToolbar(this)
         }
     }
@@ -82,18 +85,40 @@ class WordsFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (actionMode == null) {
-                        if (dy > 10 && isBottomNavVisible) {
+                        if (dy > 10 && wordsViewModel.isBottomNavVisible) {
                             binding.fabAddWord.shrink()
                             mainActivity.slideOutBottomNav(binding.fabAddWord)
-                            isBottomNavVisible = false
-                        } else if (dy < -10 && !isBottomNavVisible) {
+                            wordsViewModel.isBottomNavVisible = false
+                        } else if (dy < -10 && !wordsViewModel.isBottomNavVisible) {
                             binding.fabAddWord.extend()
                             mainActivity.slideInBottomNav(binding.fabAddWord)
-                            isBottomNavVisible = true
+                            wordsViewModel.isBottomNavVisible = true
                         }
                     }
                 }
             })
+        }
+    }
+
+    private fun setUpSearch() {
+        binding.searchRecyclerView.apply {
+            adapter = WordsAdapter(
+                onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
+                onItemLongClicked = { true }
+            )
+                .also { searchAdapter = it }
+        }
+
+        binding.searchView.addTransitionListener { _, _, newState ->
+            if (newState == MaterialSearchView.TransitionState.HIDDEN) {
+                wordsViewModel.stopSearching()
+            }
+        }
+
+        binding.searchView.setOnQueryTextListener { text ->
+            if (binding.searchView.isShowing()) {
+                wordsViewModel.search(text)
+            }
         }
     }
 
@@ -103,12 +128,25 @@ class WordsFragment : Fragment() {
         }
     }
 
+    private fun setUpViewListeners() {
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_search -> {
+                    wordsViewModel.startSearching()
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            false
+        }
+    }
+
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.uiState.collect { uiState ->
                     wordsAdapter.setData(uiState.items)
                     updateActionMode(uiState)
+                    updateSearching(uiState)
                 }
             }
         }
@@ -131,7 +169,6 @@ class WordsFragment : Fragment() {
             if (actionMode == null) {
                 onStartActionMode()
             }
-            selectedCount = uiState.selectedCount
             actionMode?.invalidate()
         } else {
             onStopActionMode()
@@ -147,7 +184,7 @@ class WordsFragment : Fragment() {
         }
         mainActivity.setBottomNavVisibility(View.GONE)
         mainActivity.resetBottomNavAnimation(binding.fabAddWord)
-        isBottomNavVisible = false
+        wordsViewModel.isBottomNavVisible = false
 
         // Change status bar color
         requireActivity().window.apply {
@@ -161,7 +198,7 @@ class WordsFragment : Fragment() {
 
         binding.fabAddWord.visibility = View.VISIBLE
         mainActivity.setBottomNavVisibility(View.VISIBLE)
-        isBottomNavVisible = true
+        wordsViewModel.isBottomNavVisible = true
 
         // Reset status bar color
         requireActivity().window.apply {
@@ -177,9 +214,9 @@ class WordsFragment : Fragment() {
         }
 
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-            // Can only edit one item at a time.
-            menu.findItem(R.id.menu_edit)?.isVisible = selectedCount < 2
-            mode.title = selectedCount.toString()
+            // User can only edit one item at a time.
+            menu.findItem(R.id.menu_edit)?.isVisible = wordsViewModel.selectedCount < 2
+            mode.title = wordsViewModel.selectedCount.toString()
             return true
         }
 
@@ -195,5 +232,26 @@ class WordsFragment : Fragment() {
             actionMode = null
             wordsViewModel.destroyActionMode()
         }
+    }
+
+    private fun updateSearching(uiState: WordsUiState) {
+        if (uiState.isSearching) {
+            if (!binding.searchView.isShowing()) {
+                startSearching()
+            }
+            searchAdapter.setData(uiState.searchResult)
+        } else if (binding.searchView.isShowing()) {
+            stopSearching()
+        }
+    }
+
+    private fun startSearching() {
+        mainActivity.setBottomNavVisibility(View.GONE)
+        binding.searchView.show()
+    }
+
+    private fun stopSearching() {
+        mainActivity.setBottomNavVisibility(View.VISIBLE)
+        binding.searchView.hide()
     }
 }

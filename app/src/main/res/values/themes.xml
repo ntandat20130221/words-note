@@ -11,6 +11,8 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <!-- Overflow button -->
         <item name="actionOverflowButtonStyle">@style/OverflowButton</item>
+        <!-- SearchView -->
+        <item name="materialSearchViewStyle">@style/SearchViewStyle</item>
     </style>
 
     <style name="Theme.WordNotes" parent="Base.AppTheme">
@@ -75,5 +77,33 @@
     <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textStyle">bold</item>
         <item name="titleTextColor">?colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Word item style -->
+    <style name="WordItemTheme">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">?colorOnSurface</item>
+    </style>
+
+    <!-- SearchView style -->
+    <style name="SearchViewStyle" parent="@style/Widget.Material3.SearchView">
+        <item name="android:textAppearance">@style/SearchViewTextAppearance</item>
+        <item name="materialThemeOverlay">@style/SearchViewThemeOverlay</item>
+    </style>
+
+    <style name="SearchViewThemeOverlay" parent="@style/ThemeOverlay.Material3.Search">
+        <item name="colorOutline">?colorSurfaceContainerHighest</item>
+        <item name="android:background">?colorSurfaceContainer</item>
+        <item name="toolbarNavigationButtonStyle">@style/NavigationButtonStyle</item>
+    </style>
+
+    <style name="NavigationButtonStyle" parent="@style/Widget.Material3.Search.Toolbar.Button.Navigation">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="SearchViewTextAppearance" parent="@style/TextAppearance.Material3.SearchView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="android:textColorHint">?colorOnSurfaceVariant</item>
     </style>
 </resources>
