@@ -1,5 +1,5 @@
 <resources>
-
+    <!-- Dark theme -->
     <style name="Theme.WordNotes" parent="Base.AppTheme">
         <!-- Primary brand color -->
         <item name="colorPrimary">@color/primary_80</item>

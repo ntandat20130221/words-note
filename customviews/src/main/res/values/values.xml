@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="materialSearchViewStyle" format="reference" />
+
+    <declare-styleable name="MaterialSearchView">
+        <attr name="searchVoiceIcon" format="reference" />
+        <attr name="searchClearIcon" format="reference" />
+        <attr name="searchBackIcon" format="reference" />
+        <attr name="searchBarHeight" format="dimension" />
+        <attr name="searchVoiceIconEnabled" format="boolean" />
+        <attr name="android:hint" />
+    </declare-styleable>
+
+    <string name="search_hint">Search&#8230;</string>
+
+    <dimen name="search_bar_height">64dp</dimen>
+
+    <style name="MaterialSearchViewStyle">
+        <item name="searchVoiceIcon">@drawable/ic_voice</item>
+        <item name="searchClearIcon">@drawable/ic_clear</item>
+        <item name="searchBackIcon">@drawable/ic_back</item>
+        <item name="searchBarHeight">@dimen/search_bar_height</item>
+        <item name="searchVoiceIconEnabled">true</item>
+        <item name="android:hint">@string/search_hint</item>
+    </style>
+</resources>

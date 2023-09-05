@@ -2,6 +2,9 @@ package com.example.customviews.materialsearchview
 
 import android.content.Context
 import android.content.Intent
+import android.os.Parcel
+import android.os.Parcelable
+import android.os.Parcelable.Creator
 import android.speech.RecognizerIntent
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -15,13 +18,19 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import com.example.customviews.R
+import com.google.android.material.theme.overlay.MaterialThemeOverlay
 
 class MaterialSearchView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+    defStyleAttr: Int = DEF_STYLE_ATTR,
+    defStyleRes: Int = DEF_STYLE_RES
+) : FrameLayout(MaterialThemeOverlay.wrap(context, attrs, defStyleAttr, defStyleRes), attrs, defStyleAttr, defStyleRes) {
+
+    companion object {
+        private val DEF_STYLE_ATTR = R.attr.materialSearchViewStyle
+        private val DEF_STYLE_RES = R.style.MaterialSearchViewStyle
+    }
 
     private var scrimView: View
     private var rootView: LinearLayout
@@ -48,8 +57,16 @@ class MaterialSearchView @JvmOverloads constructor(
 
     init {
         val themedContext = getContext()
-        val a = themedContext.obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, defStyleAttr, defStyleRes)
-        isVoiceIconEnabled = a.getBoolean(R.styleable.MaterialSearchView_voiceIconEnabled, true)
+        val a = themedContext.obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, defStyleAttr, 0)
+
+        val searchVoiceIcon = a.getResourceId(R.styleable.MaterialSearchView_searchVoiceIcon, R.drawable.ic_voice)
+        val searchClearIcon = a.getResourceId(R.styleable.MaterialSearchView_searchClearIcon, R.drawable.ic_clear)
+        val searchBackIcon = a.getResourceId(R.styleable.MaterialSearchView_searchBackIcon, R.drawable.ic_back)
+        val searchBarHeight =
+            a.getDimensionPixelSize(R.styleable.MaterialSearchView_searchBarHeight, resources.getDimension(R.dimen.search_bar_height).toInt())
+        isVoiceIconEnabled = a.getBoolean(R.styleable.MaterialSearchView_searchVoiceIconEnabled, true)
+        val hint = a.getString(R.styleable.MaterialSearchView_android_hint)
+
         a.recycle()
 
         LayoutInflater.from(themedContext).inflate(R.layout.material_search_view, this, true)
@@ -65,13 +82,18 @@ class MaterialSearchView @JvmOverloads constructor(
         buttonClear = findViewById(R.id.button_clear)
         contentContainer = findViewById(R.id.content_container)
 
+        buttonVoice.setImageResource(searchVoiceIcon)
+        buttonClear.setImageResource(searchClearIcon)
+        buttonBack.setImageResource(searchBackIcon)
+        searchBar.layoutParams.height = searchBarHeight
+        inputSearch.hint = hint
+
         buttonBack.setOnClickListener { onBackClicked() }
         buttonVoice.setOnClickListener { onVoiceClicked() }
         buttonClear.setOnClickListener { onClearClicked() }
 
-        setUpSearchInput()
-
         displayVoiceButton(true)
+        setUpSearchInput()
     }
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
@@ -101,7 +123,7 @@ class MaterialSearchView @JvmOverloads constructor(
     }
 
     private fun displayVoiceButton(display: Boolean) {
-        buttonVoice.visibility = if (display && isVoiceAvailable && isVoiceIconEnabled) VISIBLE else GONE
+        buttonVoice.visibility = if (display && isVoiceIconEnabled && isVoiceAvailable) VISIBLE else GONE
     }
 
     private fun displayClearButton(display: Boolean) {
@@ -124,7 +146,7 @@ class MaterialSearchView @JvmOverloads constructor(
 
     private fun requestFocusAndShowKeyboard(view: View) {
         view.requestFocus()
-        view.context.getSystemService(InputMethodManager::class.java)?.showSoftInput(view, 0)
+        view.context.getSystemService(InputMethodManager::class.java)?.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun clearFocusAndHideKeyboard(view: View) {
@@ -153,8 +175,13 @@ class MaterialSearchView @JvmOverloads constructor(
         inputSearch.text = null
     }
 
+    private fun setVisible(visible: Boolean) {
+        rootView.visibility = if (visible) VISIBLE else GONE
+        setTransitionState(if (visible) TransitionState.SHOWN else TransitionState.HIDDEN)
+    }
+
     fun setVoiceEnabled(enable: Boolean) {
-        isVoiceIconEnabled = enable
+        displayVoiceButton(enable)
     }
 
     fun setOnQueryTextListener(onQueryTextListener: OnQueryTextListener?) {
@@ -174,4 +201,52 @@ class MaterialSearchView @JvmOverloads constructor(
     }
 
     enum class TransitionState { HIDDEN, SHOWN }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return super.onSaveInstanceState()?.let {
+            val state = SavedState(it)
+            state.text = inputSearch.text.toString()
+            state.visibility = rootView.visibility
+            return state
+        }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable) {
+        when (state) {
+            is SavedState -> {
+                super.onRestoreInstanceState(state.superState)
+                inputSearch.setText(state.text)
+                setVisible(state.visibility == VISIBLE)
+            }
+
+            else -> super.onRestoreInstanceState(state)
+        }
+    }
+
+    class SavedState : BaseSavedState {
+        var text: String? = null
+        var visibility = 0
+
+        constructor(source: Parcel, classLoader: ClassLoader? = null) : super(source, classLoader) {
+            text = source.readString()
+            visibility = source.readInt()
+        }
+
+        constructor(superState: Parcelable) : super(superState)
+
+        override fun writeToParcel(dest: Parcel, flags: Int) {
+            super.writeToParcel(dest, flags)
+            dest.writeString(text)
+            dest.writeInt(visibility)
+        }
+
+        companion object {
+            @Suppress("unused")
+            @JvmField
+            val CREATOR: Creator<SavedState> = object : Creator<SavedState> {
+                override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
+                override fun newArray(size: Int): Array<SavedState> = newArray(size)
+            }
+        }
+    }
 }
