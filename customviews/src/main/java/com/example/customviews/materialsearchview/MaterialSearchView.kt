@@ -1,5 +1,6 @@
 package com.example.customviews.materialsearchview
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Parcel
@@ -11,6 +12,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -29,17 +31,19 @@ class MaterialSearchView @JvmOverloads constructor(
 
     companion object {
         private val DEF_STYLE_ATTR = R.attr.materialSearchViewStyle
-        private val DEF_STYLE_RES = R.style.MaterialSearchViewStyle
+        private val DEF_STYLE_RES = R.style.Widget_MaterialSearchView
     }
 
-    private var scrimView: View
-    private var rootView: LinearLayout
-    private var searchBar: LinearLayout
-    private var buttonBack: ImageButton
-    private var inputSearch: EditText
-    private var buttonVoice: ImageButton
-    private var buttonClear: ImageButton
-    private var contentContainer: FrameLayout
+    val scrimView: View
+    val rootView: LinearLayout
+    val searchBar: LinearLayout
+    val buttonBack: ImageButton
+    val inputSearch: EditText
+    val buttonVoice: ImageButton
+    val buttonClear: ImageButton
+    val divider: View
+    val contentContainer: FrameLayout
+    val window: Window = (getContext() as Activity).window
 
     private var layoutInflated = false
     private var isVoiceIconEnabled = false
@@ -47,6 +51,7 @@ class MaterialSearchView @JvmOverloads constructor(
 
     private var onQueryTextListener: OnQueryTextListener? = null
     private val transitionListeners = LinkedHashSet<TransitionListener>()
+    private val searchViewAnimationHelper: SearchViewAnimationHelper
 
     private val isVoiceAvailable: Boolean
         get() {
@@ -80,7 +85,10 @@ class MaterialSearchView @JvmOverloads constructor(
         inputSearch = findViewById(R.id.input_search)
         buttonVoice = findViewById(R.id.button_voice)
         buttonClear = findViewById(R.id.button_clear)
+        divider = findViewById(R.id.divider)
         contentContainer = findViewById(R.id.content_container)
+
+        searchViewAnimationHelper = SearchViewAnimationHelper(this)
 
         buttonVoice.setImageResource(searchVoiceIcon)
         buttonClear.setImageResource(searchClearIcon)
@@ -132,16 +140,14 @@ class MaterialSearchView @JvmOverloads constructor(
 
     fun show() {
         if (currentTransitionState == TransitionState.SHOWN) return
+        searchViewAnimationHelper.show()
         requestFocusAndShowKeyboard(inputSearch)
-        rootView.visibility = VISIBLE
-        setTransitionState(TransitionState.SHOWN)
     }
 
     fun hide() {
         if (currentTransitionState == TransitionState.HIDDEN) return
+        searchViewAnimationHelper.hide()
         clearFocusAndHideKeyboard(inputSearch)
-        rootView.visibility = GONE
-        setTransitionState(TransitionState.HIDDEN)
     }
 
     private fun requestFocusAndShowKeyboard(view: View) {
@@ -154,7 +160,7 @@ class MaterialSearchView @JvmOverloads constructor(
         view.context.getSystemService(InputMethodManager::class.java)?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun setTransitionState(state: TransitionState) {
+    fun setTransitionState(state: TransitionState) {
         if (currentTransitionState == state) return
 
         val previousState = currentTransitionState
@@ -200,7 +206,7 @@ class MaterialSearchView @JvmOverloads constructor(
         fun onStateChanged(searchView: MaterialSearchView, previousState: TransitionState, newState: TransitionState)
     }
 
-    enum class TransitionState { HIDDEN, SHOWN }
+    enum class TransitionState { HIDING, HIDDEN, SHOWING, SHOWN }
 
     override fun onSaveInstanceState(): Parcelable? {
         return super.onSaveInstanceState()?.let {

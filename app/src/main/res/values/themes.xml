@@ -2,6 +2,7 @@
 
     <!-- Base theme -->
     <style name="Base.AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">?colorSurface</item>
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="colorControlNormal">?colorOnSurfaceVariant</item>
         <!-- ActionMode -->
@@ -88,7 +89,7 @@
     </style>
 
     <!-- MaterialSearchView -->
-    <style name="SearchViewStyle" parent="@style/MaterialSearchViewStyle">
+    <style name="SearchViewStyle" parent="@style/Widget.MaterialSearchView">
         <item name="searchBarHeight">@dimen/toolbar_height</item>
         <!-- Specify overlaying attributes, e.g. colorContainer,etc. -->
         <!-- <item name="materialThemeOverlay">@style/SearchViewOverlay</item> -->

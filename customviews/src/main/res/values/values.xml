@@ -14,8 +14,9 @@
     <string name="search_hint">Search&#8230;</string>
 
     <dimen name="search_bar_height">64dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
 
-    <style name="MaterialSearchViewStyle">
+    <style name="Widget.MaterialSearchView" parent="">
         <item name="searchVoiceIcon">@drawable/ic_voice</item>
         <item name="searchClearIcon">@drawable/ic_clear</item>
         <item name="searchBackIcon">@drawable/ic_back</item>
