@@ -1,6 +1,5 @@
 package com.example.customviews.materialsearchview
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Parcel
@@ -12,7 +11,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -34,16 +32,14 @@ class MaterialSearchView @JvmOverloads constructor(
         private val DEF_STYLE_RES = R.style.Widget_MaterialSearchView
     }
 
-    val scrimView: View
-    val rootView: LinearLayout
-    val searchBar: LinearLayout
-    val buttonBack: ImageButton
-    val inputSearch: EditText
-    val buttonVoice: ImageButton
-    val buttonClear: ImageButton
-    val divider: View
-    val contentContainer: FrameLayout
-    val window: Window = (getContext() as Activity).window
+    private val scrimView: View
+    private val rootView: LinearLayout
+    private val searchBar: LinearLayout
+    private val buttonBack: ImageButton
+    private val inputSearch: EditText
+    private val buttonVoice: ImageButton
+    private val buttonClear: ImageButton
+    private val contentContainer: FrameLayout
 
     private var layoutInflated = false
     private var isVoiceIconEnabled = false
@@ -85,7 +81,6 @@ class MaterialSearchView @JvmOverloads constructor(
         inputSearch = findViewById(R.id.input_search)
         buttonVoice = findViewById(R.id.button_voice)
         buttonClear = findViewById(R.id.button_clear)
-        divider = findViewById(R.id.divider)
         contentContainer = findViewById(R.id.content_container)
 
         searchViewAnimationHelper = SearchViewAnimationHelper(this)
@@ -141,12 +136,14 @@ class MaterialSearchView @JvmOverloads constructor(
     fun show() {
         if (currentTransitionState == TransitionState.SHOWN) return
         searchViewAnimationHelper.show()
+        inputSearch.text = null
         requestFocusAndShowKeyboard(inputSearch)
     }
 
     fun hide() {
         if (currentTransitionState == TransitionState.HIDDEN) return
         searchViewAnimationHelper.hide()
+        inputSearch.text = null
         clearFocusAndHideKeyboard(inputSearch)
     }
 
@@ -174,7 +171,7 @@ class MaterialSearchView @JvmOverloads constructor(
     private fun onBackClicked() = hide()
 
     private fun onVoiceClicked() {
-
+        TODO()
     }
 
     private fun onClearClicked() {
@@ -186,17 +183,11 @@ class MaterialSearchView @JvmOverloads constructor(
         setTransitionState(if (visible) TransitionState.SHOWN else TransitionState.HIDDEN)
     }
 
-    fun setVoiceEnabled(enable: Boolean) {
-        displayVoiceButton(enable)
-    }
-
     fun setOnQueryTextListener(onQueryTextListener: OnQueryTextListener?) {
         this.onQueryTextListener = onQueryTextListener
     }
 
     fun addTransitionListener(listener: TransitionListener) = transitionListeners.add(listener)
-
-    fun removeTransitionListener(listener: TransitionListener) = transitionListeners.remove(listener)
 
     fun interface OnQueryTextListener {
         fun onQueryTextChanged(query: String)

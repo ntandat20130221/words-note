@@ -1,21 +1,22 @@
 package com.example.customviews.materialsearchview
 
 import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import com.example.customviews.R
 import com.example.customviews.materialsearchview.MaterialSearchView.TransitionState
 import kotlin.math.hypot
 
 class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
-    private val rootView = searchView.rootView
-    private val searchBar = searchView.searchBar
-    private val divider = searchView.divider
-    private val contentContainer = searchView.contentContainer
+    private val rootView = searchView.findViewById<View>(R.id.search_view_root)
+    private val searchBar = searchView.findViewById<View>(R.id.search_bar)
+    private val contentContainer = searchView.findViewById<View>(R.id.content_container)
+    private val window = (searchView.context as Activity).window
 
     private val colorSurface = searchView.context.resolveAttribute(android.R.attr.statusBarColor)
     private val colorSurfaceContainer = searchView.context.resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainer)
@@ -28,7 +29,7 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
         val statusBarAnimator = ValueAnimator.ofObject(ArgbEvaluator(), colorSurface, colorSurfaceContainer).apply {
             duration = CIRCLE_REVEAL_DURATION_MS
             addUpdateListener {
-                searchView.window.statusBarColor = it.animatedValue as Int
+                window.statusBarColor = it.animatedValue as Int
             }
         }
 
@@ -43,11 +44,6 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
             }
         }
 
-        divider.alpha = 0f
-        val dividerAnimator = ObjectAnimator.ofFloat(divider, "alpha", 1f).apply {
-            duration = CIRCLE_REVEAL_DURATION_MS
-        }
-
         val contentAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = CIRCLE_REVEAL_DURATION_MS
             interpolator = AccelerateDecelerateInterpolator()
@@ -58,7 +54,6 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
 
         statusBarAnimator.start()
         revealAnimator.start()
-        dividerAnimator.start()
         contentAnimator.start()
     }
 
@@ -70,7 +65,7 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
         val statusBarAnimator = ValueAnimator.ofObject(ArgbEvaluator(), colorSurfaceContainer, colorSurface).apply {
             duration = CIRCLE_REVEAL_DURATION_SHORT_MS
             addUpdateListener {
-                searchView.window.statusBarColor = it.animatedValue as Int
+                window.statusBarColor = it.animatedValue as Int
             }
         }
 
@@ -85,11 +80,6 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
             }
         }
 
-        divider.alpha = 1f
-        val dividerAnimator = ObjectAnimator.ofFloat(divider, "alpha", 0f).apply {
-            duration = CIRCLE_REVEAL_DURATION_SHORT_MS
-        }
-
         val contentAnimator = ValueAnimator.ofFloat(1f, 0f).apply {
             duration = CIRCLE_REVEAL_DURATION_MS
             interpolator = AccelerateDecelerateInterpolator()
@@ -100,7 +90,6 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
 
         statusBarAnimator.start()
         revealAnimator.start()
-        dividerAnimator.start()
         contentAnimator.start()
     }
 

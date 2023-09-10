@@ -87,7 +87,6 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         )
 
     val selectedCount: Int get() = _selectedWordIds.value.count()
-    var isBottomNavVisible = false
 
     private fun resolveSelected(words: List<Word>, selectedWordId: Set<String>): List<WordItem> {
         return words.map { WordItem(word = it, isSelected = it.id in selectedWordId) }
@@ -183,6 +182,7 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     fun stopSearching() {
         if (_isSearching.value) {
             _isSearching.value = false
+            search("")
         }
     }
 

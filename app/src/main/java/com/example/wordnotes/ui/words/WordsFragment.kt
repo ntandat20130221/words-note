@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 // TODO: Add loading UI
 // TODO: Add dialog delete items
 // TODO: Add empty screen
-// TODO: Implement search
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
@@ -39,7 +38,9 @@ class WordsFragment : Fragment() {
     private lateinit var mainActivity: MainActivity
     private lateinit var wordsAdapter: WordsAdapter
     private lateinit var searchAdapter: WordsAdapter
+
     private var actionMode: ActionMode? = null
+    private var search = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,7 +57,6 @@ class WordsFragment : Fragment() {
         setUpToolbar()
         setUpRecyclerView()
         setUpSearch()
-        setUpFab()
         setUpViewListeners()
         observeUiState()
     }
@@ -76,41 +76,41 @@ class WordsFragment : Fragment() {
 
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
-            adapter = WordsAdapter(
+            wordsAdapter = WordsAdapter(
                 onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) }
-            )
-                .also { wordsAdapter = it }
+                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) })
+            adapter = wordsAdapter
+            addOnScrollListener(OnScrollListener())
+        }
+    }
 
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (actionMode == null) {
-                        if (dy > 10 && wordsViewModel.isBottomNavVisible) {
-                            binding.fabAddWord.shrink()
-                            mainActivity.slideOutBottomNav(binding.fabAddWord)
-                            wordsViewModel.isBottomNavVisible = false
-                        } else if (dy < -10 && !wordsViewModel.isBottomNavVisible) {
-                            binding.fabAddWord.extend()
-                            mainActivity.slideInBottomNav(binding.fabAddWord)
-                            wordsViewModel.isBottomNavVisible = true
-                        }
-                    }
+    private inner class OnScrollListener : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (actionMode == null) {
+                if (dy > SCROLLING_THRESHOLD && binding.fabAddWord.isExtended) {
+                    binding.fabAddWord.shrink()
+                    mainActivity.slideOutBottomNav(binding.fabAddWord)
+                } else if (dy < -SCROLLING_THRESHOLD && !binding.fabAddWord.isExtended) {
+                    binding.fabAddWord.extend()
+                    mainActivity.slideInBottomNav(binding.fabAddWord)
                 }
-            })
+            }
         }
     }
 
     private fun setUpSearch() {
         binding.searchRecyclerView.apply {
-            adapter = WordsAdapter(
+            searchAdapter = WordsAdapter(
                 onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { true }
-            )
-                .also { searchAdapter = it }
+                onItemLongClicked = { true })
+            adapter = searchAdapter
         }
 
         binding.searchView.addTransitionListener { _, _, newState ->
-            if (newState == MaterialSearchView.TransitionState.HIDDEN) {
+            if (newState == MaterialSearchView.TransitionState.SHOWING) {
+                wordsViewModel.startSearching()
+            }
+            if (newState == MaterialSearchView.TransitionState.HIDING) {
                 wordsViewModel.stopSearching()
             }
         }
@@ -122,17 +122,15 @@ class WordsFragment : Fragment() {
         }
     }
 
-    private fun setUpFab() {
+    private fun setUpViewListeners() {
         binding.fabAddWord.setOnClickListener {
             findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(null))
         }
-    }
 
-    private fun setUpViewListeners() {
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_search -> {
-                    wordsViewModel.startSearching()
+                    binding.searchView.show()
                     return@setOnMenuItemClickListener true
                 }
             }
@@ -165,26 +163,22 @@ class WordsFragment : Fragment() {
     }
 
     private fun updateActionMode(uiState: WordsUiState) {
-        if (uiState.isActionMode) {
-            if (actionMode == null) {
-                onStartActionMode()
-            }
-            actionMode?.invalidate()
-        } else {
-            onStopActionMode()
+        if (uiState.isActionMode && actionMode == null) {
+            startActionMode()
+            return
         }
+        if (!uiState.isActionMode && actionMode != null) {
+            stopActionMode()
+            return
+        }
+        actionMode?.invalidate()
     }
 
-    private fun onStartActionMode() {
+    private fun startActionMode() {
         actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
 
-        binding.fabAddWord.apply {
-            visibility = View.GONE
-            if (!isExtended) extend()
-        }
+        binding.fabAddWord.visibility = View.GONE
         mainActivity.setBottomNavVisibility(View.GONE)
-        mainActivity.resetBottomNavAnimation(binding.fabAddWord)
-        wordsViewModel.isBottomNavVisible = false
 
         // Change status bar color
         requireActivity().window.apply {
@@ -193,12 +187,12 @@ class WordsFragment : Fragment() {
         }
     }
 
-    private fun onStopActionMode() {
+    private fun stopActionMode() {
         actionMode?.finish()
+        actionMode = null
 
         binding.fabAddWord.visibility = View.VISIBLE
         mainActivity.setBottomNavVisibility(View.VISIBLE)
-        wordsViewModel.isBottomNavVisible = true
 
         // Reset status bar color
         requireActivity().window.apply {
@@ -229,29 +223,35 @@ class WordsFragment : Fragment() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
-            actionMode = null
             wordsViewModel.destroyActionMode()
         }
     }
 
     private fun updateSearching(uiState: WordsUiState) {
-        if (uiState.isSearching) {
-            if (!binding.searchView.isShowing()) {
-                startSearching()
-            }
-            searchAdapter.setData(uiState.searchResult)
-        } else if (binding.searchView.isShowing()) {
-            stopSearching()
+        if (uiState.isSearching && !search) {
+            startSearching()
+            return
         }
+        if (!uiState.isSearching && search) {
+            stopSearching()
+            return
+        }
+        searchAdapter.setData(uiState.searchResult)
     }
 
     private fun startSearching() {
-        mainActivity.setBottomNavVisibility(View.GONE)
         binding.searchView.show()
+        mainActivity.setBottomNavVisibility(View.GONE)
+        search = true
     }
 
     private fun stopSearching() {
-        mainActivity.setBottomNavVisibility(View.VISIBLE)
         binding.searchView.hide()
+        mainActivity.setBottomNavVisibility(View.VISIBLE)
+        search = false
+    }
+
+    companion object {
+        const val SCROLLING_THRESHOLD = 8
     }
 }

@@ -21,7 +21,7 @@
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/search_bar_height"
-            android:background="?colorSurfaceContainer"
+            android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -68,12 +68,6 @@
                 android:visibility="gone"
                 app:tint="?colorOnSurfaceVariant" />
         </LinearLayout>
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_height"
-            android:background="?colorOutlineVariant" />
 
         <FrameLayout
             android:id="@+id/content_container"
