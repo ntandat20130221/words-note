@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun controlBottomNavVisibility() {
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
-            override fun onFragmentCreated(fm: FragmentManager, fragment: Fragment, savedInstanceState: Bundle?) {
+            override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
                 when (fragment) {
                     is AddEditWordFragment -> {
                         setBottomNavVisibility(View.GONE)
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun resetBottomNavAnimation(vararg relatedView: View) {
-        relatedView.forEach { it.translationY = 0f }
         binding.bottomNav.translationY = 0f
+        relatedView.forEach { it.translationY = 0f }
     }
 }

@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,13 +17,15 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customviews.materialsearchview.MaterialSearchView
+import com.example.customviews.materialsearchview.SearchViewAnimationHelper
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordsBinding
 import com.example.wordnotes.ui.MainActivity
+import com.example.wordnotes.utils.fadeInStatusBar
+import com.example.wordnotes.utils.fadeOutStatusBar
 import com.example.wordnotes.utils.setUpToolbar
-import com.example.wordnotes.utils.themeColor
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
@@ -102,7 +103,7 @@ class WordsFragment : Fragment() {
         binding.searchRecyclerView.apply {
             searchAdapter = WordsAdapter(
                 onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { true })
+                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) })
             adapter = searchAdapter
         }
 
@@ -163,42 +164,27 @@ class WordsFragment : Fragment() {
     }
 
     private fun updateActionMode(uiState: WordsUiState) {
-        if (uiState.isActionMode && actionMode == null) {
-            startActionMode()
-            return
-        }
-        if (!uiState.isActionMode && actionMode != null) {
+        if (uiState.isActionMode) {
+            if (actionMode == null) startActionMode()
+            actionMode?.invalidate()
+        } else if (actionMode != null) {
             stopActionMode()
-            return
         }
-        actionMode?.invalidate()
     }
 
     private fun startActionMode() {
         actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
-
         binding.fabAddWord.visibility = View.GONE
         mainActivity.setBottomNavVisibility(View.GONE)
-
-        // Change status bar color
-        requireActivity().window.apply {
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurfaceContainer)
-        }
+        if (!search) requireActivity().window.fadeInStatusBar()
     }
 
     private fun stopActionMode() {
         actionMode?.finish()
         actionMode = null
-
         binding.fabAddWord.visibility = View.VISIBLE
         mainActivity.setBottomNavVisibility(View.VISIBLE)
-
-        // Reset status bar color
-        requireActivity().window.apply {
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            statusBarColor = context.themeColor(com.google.android.material.R.attr.colorSurface)
-        }
+        if (!search) requireActivity().window.fadeOutStatusBar()
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {
@@ -228,25 +214,24 @@ class WordsFragment : Fragment() {
     }
 
     private fun updateSearching(uiState: WordsUiState) {
-        if (uiState.isSearching && !search) {
-            startSearching()
-            return
-        }
-        if (!uiState.isSearching && search) {
+        if (uiState.isSearching) {
+            if (!search) startSearching()
+            searchAdapter.setData(uiState.searchResult)
+        } else if (search) {
             stopSearching()
-            return
         }
-        searchAdapter.setData(uiState.searchResult)
     }
 
     private fun startSearching() {
         binding.searchView.show()
+        requireActivity().window.fadeInStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
         mainActivity.setBottomNavVisibility(View.GONE)
         search = true
     }
 
     private fun stopSearching() {
         binding.searchView.hide()
+        requireActivity().window.fadeOutStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
         mainActivity.setBottomNavVisibility(View.VISIBLE)
         search = false
     }

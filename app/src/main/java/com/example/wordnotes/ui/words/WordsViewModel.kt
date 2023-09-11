@@ -53,10 +53,10 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     }
     private val _searchQuery = MutableStateFlow("")
     private val _searchResult: Flow<List<WordItem>> = combine(
-        wordsRepository.getWordsStream(), _searchQuery
-    ) { wordsResult, searchQuery ->
+        wordsRepository.getWordsStream(), _searchQuery, _selectedWordIds
+    ) { wordsResult, searchQuery, selectedWordIds ->
         when (wordsResult) {
-            is Result.Success -> filterSearch(wordsResult.data, searchQuery)
+            is Result.Success -> resolveSelected(filterSearch(wordsResult.data, searchQuery), selectedWordIds)
             is Result.Error -> emptyList()
             is Result.Loading -> emptyList()
         }
@@ -92,14 +92,8 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         return words.map { WordItem(word = it, isSelected = it.id in selectedWordId) }
     }
 
-    private fun filterSearch(data: List<Word>, searchQuery: String): List<WordItem> {
-        if (searchQuery.isNotEmpty() && searchQuery.isNotBlank()) {
-            val searchResult = data.filter { it.word.contains(searchQuery) }
-            if (searchResult.isNotEmpty()) {
-                return searchResult.map { WordItem(word = it) }
-            }
-        }
-        return emptyList()
+    private fun filterSearch(data: List<Word>, searchQuery: String): List<Word> {
+        return if (searchQuery.isNotEmpty() && searchQuery.isNotBlank()) data.filter { it.word.contains(searchQuery) } else emptyList()
     }
 
     fun itemClicked(wordId: String) {

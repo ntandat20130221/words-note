@@ -1,8 +1,6 @@
 package com.example.customviews.materialsearchview
 
-import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -16,22 +14,11 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
     private val rootView = searchView.findViewById<View>(R.id.search_view_root)
     private val searchBar = searchView.findViewById<View>(R.id.search_bar)
     private val contentContainer = searchView.findViewById<View>(R.id.content_container)
-    private val window = (searchView.context as Activity).window
-
-    private val colorSurface = searchView.context.resolveAttribute(android.R.attr.statusBarColor)
-    private val colorSurfaceContainer = searchView.context.resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainer)
 
     fun show() {
         val cx = searchBar.width
         val cy = searchBar.height / 2
         val finalRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
-
-        val statusBarAnimator = ValueAnimator.ofObject(ArgbEvaluator(), colorSurface, colorSurfaceContainer).apply {
-            duration = CIRCLE_REVEAL_DURATION_MS
-            addUpdateListener {
-                window.statusBarColor = it.animatedValue as Int
-            }
-        }
 
         val revealAnimator = ViewAnimationUtils.createCircularReveal(searchBar, cx, cy, 0f, finalRadius).apply {
             duration = CIRCLE_REVEAL_DURATION_MS
@@ -52,7 +39,6 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
             }
         }
 
-        statusBarAnimator.start()
         revealAnimator.start()
         contentAnimator.start()
     }
@@ -62,15 +48,8 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
         val cy = searchBar.height / 2
         val initialRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
 
-        val statusBarAnimator = ValueAnimator.ofObject(ArgbEvaluator(), colorSurfaceContainer, colorSurface).apply {
-            duration = CIRCLE_REVEAL_DURATION_SHORT_MS
-            addUpdateListener {
-                window.statusBarColor = it.animatedValue as Int
-            }
-        }
-
         val revealAnimator = ViewAnimationUtils.createCircularReveal(searchBar, cx, cy, initialRadius, 0f).apply {
-            duration = CIRCLE_REVEAL_DURATION_SHORT_MS
+            duration = CIRCLE_REVEAL_DURATION_MS
             doOnStart {
                 searchView.setTransitionState(TransitionState.HIDING)
             }
@@ -88,13 +67,11 @@ class SearchViewAnimationHelper(private val searchView: MaterialSearchView) {
             }
         }
 
-        statusBarAnimator.start()
         revealAnimator.start()
         contentAnimator.start()
     }
 
     companion object {
         const val CIRCLE_REVEAL_DURATION_MS = 200L
-        const val CIRCLE_REVEAL_DURATION_SHORT_MS = 100L
     }
 }
