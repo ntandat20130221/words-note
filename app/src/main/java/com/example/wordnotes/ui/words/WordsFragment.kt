@@ -42,7 +42,9 @@ class WordsFragment : Fragment() {
     private lateinit var searchAdapter: WordsAdapter
 
     private var actionMode: ActionMode? = null
-    private var search = false
+    private var inSearching = false
+
+    private var backPressedCallback: OnBackPressedCallback? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -91,10 +93,10 @@ class WordsFragment : Fragment() {
             if (actionMode == null) {
                 if (dy > SCROLLING_THRESHOLD && binding.fabAddWord.isExtended) {
                     binding.fabAddWord.shrink()
-                    mainActivity.slideOutBottomNav(binding.fabAddWord)
+                    mainActivity.slideOutBottomNav(relatedView = arrayOf(binding.fabAddWord))
                 } else if (dy < -SCROLLING_THRESHOLD && !binding.fabAddWord.isExtended) {
                     binding.fabAddWord.extend()
-                    mainActivity.slideInBottomNav(binding.fabAddWord)
+                    mainActivity.slideInBottomNav(relatedView = arrayOf(binding.fabAddWord))
                 }
             }
         }
@@ -123,18 +125,10 @@ class WordsFragment : Fragment() {
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (search) {
-                        wordsViewModel.stopSearching()
-                    } else {
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-                    isEnabled = false
-                }
-            }
-        )
+        backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() = wordsViewModel.stopSearching()
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback!!)
     }
 
     private fun setUpViewListeners() {
@@ -189,7 +183,7 @@ class WordsFragment : Fragment() {
     private fun startActionMode() {
         actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
         binding.fabAddWord.visibility = View.GONE
-        if (!search) {
+        if (!inSearching) {
             mainActivity.setBottomNavVisibility(View.GONE)
             requireActivity().window.fadeInStatusBar()
         }
@@ -199,7 +193,7 @@ class WordsFragment : Fragment() {
         actionMode?.finish()
         actionMode = null
         binding.fabAddWord.visibility = View.VISIBLE
-        if (!search) {
+        if (!inSearching) {
             mainActivity.setBottomNavVisibility(View.VISIBLE)
             requireActivity().window.fadeOutStatusBar()
         }
@@ -233,10 +227,12 @@ class WordsFragment : Fragment() {
 
     private fun updateSearching(uiState: WordsUiState) {
         if (uiState.isSearching) {
-            if (!search) startSearching()
+            if (!inSearching) startSearching()
             searchAdapter.setData(uiState.searchResult)
-        } else if (search) {
+            backPressedCallback?.isEnabled = true
+        } else if (inSearching) {
             stopSearching()
+            backPressedCallback?.isEnabled = false
         }
     }
 
@@ -244,14 +240,14 @@ class WordsFragment : Fragment() {
         binding.searchView.show()
         requireActivity().window.fadeInStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
         mainActivity.setBottomNavVisibility(View.GONE)
-        search = true
+        inSearching = true
     }
 
     private fun stopSearching() {
         binding.searchView.hide()
         requireActivity().window.fadeOutStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
         mainActivity.setBottomNavVisibility(View.VISIBLE)
-        search = false
+        inSearching = false
     }
 
     companion object {

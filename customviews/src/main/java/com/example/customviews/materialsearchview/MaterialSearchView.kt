@@ -9,7 +9,6 @@ import android.speech.RecognizerIntent
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import com.example.customviews.R
-import com.google.android.material.search.SearchView
 import com.google.android.material.theme.overlay.MaterialThemeOverlay
 
 class MaterialSearchView @JvmOverloads constructor(
@@ -61,7 +59,7 @@ class MaterialSearchView @JvmOverloads constructor(
 
     init {
         val themedContext = getContext()
-        val a = themedContext.obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, defStyleAttr, 0)
+        val a = themedContext.obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, defStyleAttr, defStyleRes)
 
         val searchVoiceIcon = a.getResourceId(R.styleable.MaterialSearchView_searchVoiceIcon, R.drawable.ic_voice)
         val searchClearIcon = a.getResourceId(R.styleable.MaterialSearchView_searchClearIcon, R.drawable.ic_clear)
@@ -76,7 +74,7 @@ class MaterialSearchView @JvmOverloads constructor(
 
         LayoutInflater.from(themedContext).inflate(R.layout.material_search_view, this, true)
         layoutInflated = true
-        elevation = 100f
+        elevation = resources.getInteger(R.integer.search_view_elevation).toFloat()
 
         scrimView = findViewById(R.id.scrim_view)
         rootView = findViewById(R.id.search_view_root)

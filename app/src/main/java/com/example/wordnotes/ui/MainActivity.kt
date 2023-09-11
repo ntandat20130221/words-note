@@ -58,9 +58,9 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.visibility = visibility
     }
 
-    fun slideOutBottomNav(vararg relatedView: View) {
+    fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {
         ValueAnimator.ofInt(binding.bottomNav.height, 0).apply {
-            duration = 200
+            setDuration(duration)
             addUpdateListener { updatedAnimation ->
                 val translationAmount = binding.bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
                 binding.bottomNav.translationY = translationAmount
@@ -70,9 +70,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun slideInBottomNav(vararg relatedView: View) {
+    fun slideInBottomNav(duration: Long = 200, vararg relatedView: View) {
         ValueAnimator.ofInt(0, binding.bottomNav.height).apply {
-            duration = 200
+            setDuration(duration)
             addUpdateListener { updatedAnimation ->
                 val translationAmount = binding.bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
                 binding.bottomNav.translationY = translationAmount
