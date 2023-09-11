@@ -8,6 +8,8 @@ import android.os.Parcelable.Creator
 import android.speech.RecognizerIntent
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import com.example.customviews.R
+import com.google.android.material.search.SearchView
 import com.google.android.material.theme.overlay.MaterialThemeOverlay
 
 class MaterialSearchView @JvmOverloads constructor(
@@ -67,6 +70,7 @@ class MaterialSearchView @JvmOverloads constructor(
             a.getDimensionPixelSize(R.styleable.MaterialSearchView_searchBarHeight, resources.getDimension(R.dimen.search_bar_height).toInt())
         isVoiceIconEnabled = a.getBoolean(R.styleable.MaterialSearchView_searchVoiceIconEnabled, true)
         val hint = a.getString(R.styleable.MaterialSearchView_android_hint)
+        val textSize = a.getDimensionPixelSize(R.styleable.MaterialSearchView_android_textSize, resources.getDimension(R.dimen.text_size).toInt())
 
         a.recycle()
 
@@ -90,6 +94,7 @@ class MaterialSearchView @JvmOverloads constructor(
         buttonBack.setImageResource(searchBackIcon)
         searchBar.layoutParams.height = searchBarHeight
         inputSearch.hint = hint
+        inputSearch.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
 
         buttonBack.setOnClickListener { onBackClicked() }
         buttonVoice.setOnClickListener { onVoiceClicked() }

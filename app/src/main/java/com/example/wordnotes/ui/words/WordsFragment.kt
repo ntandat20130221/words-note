@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -121,6 +122,19 @@ class WordsFragment : Fragment() {
                 wordsViewModel.search(text)
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (search) {
+                        wordsViewModel.stopSearching()
+                    } else {
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+                    isEnabled = false
+                }
+            }
+        )
     }
 
     private fun setUpViewListeners() {
@@ -175,16 +189,20 @@ class WordsFragment : Fragment() {
     private fun startActionMode() {
         actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
         binding.fabAddWord.visibility = View.GONE
-        mainActivity.setBottomNavVisibility(View.GONE)
-        if (!search) requireActivity().window.fadeInStatusBar()
+        if (!search) {
+            mainActivity.setBottomNavVisibility(View.GONE)
+            requireActivity().window.fadeInStatusBar()
+        }
     }
 
     private fun stopActionMode() {
         actionMode?.finish()
         actionMode = null
         binding.fabAddWord.visibility = View.VISIBLE
-        mainActivity.setBottomNavVisibility(View.VISIBLE)
-        if (!search) requireActivity().window.fadeOutStatusBar()
+        if (!search) {
+            mainActivity.setBottomNavVisibility(View.VISIBLE)
+            requireActivity().window.fadeOutStatusBar()
+        }
     }
 
     inner class WordsActionModeCallback : ActionMode.Callback {

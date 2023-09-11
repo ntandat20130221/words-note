@@ -9,12 +9,14 @@
         <attr name="searchBarHeight" format="dimension" />
         <attr name="searchVoiceIconEnabled" format="boolean" />
         <attr name="android:hint" />
+        <attr name="android:textSize" />
     </declare-styleable>
 
     <string name="search_hint">Search&#8230;</string>
 
     <dimen name="search_bar_height">64dp</dimen>
     <dimen name="divider_height">1dp</dimen>
+    <dimen name="text_size">16sp</dimen>
 
     <style name="Widget.MaterialSearchView" parent="">
         <item name="searchVoiceIcon">@drawable/ic_voice</item>
@@ -23,5 +25,6 @@
         <item name="searchBarHeight">@dimen/search_bar_height</item>
         <item name="searchVoiceIconEnabled">true</item>
         <item name="android:hint">@string/search_hint</item>
+        <item name="android:textSize">@dimen/text_size</item>
     </style>
 </resources>

@@ -40,13 +40,15 @@ class MainActivity : AppCompatActivity() {
     private fun controlBottomNavVisibility() {
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
-                when (fragment) {
-                    is AddEditWordFragment -> {
-                        setBottomNavVisibility(View.GONE)
-                        resetBottomNavAnimation()
-                    }
+                if (fragment is AddEditWordFragment) {
+                    setBottomNavVisibility(View.GONE)
+                    resetBottomNavAnimation()
+                }
+            }
 
-                    else -> setBottomNavVisibility(View.VISIBLE)
+            override fun onFragmentStopped(fm: FragmentManager, fragment: Fragment) {
+                if (fragment is AddEditWordFragment) {
+                    setBottomNavVisibility(View.VISIBLE)
                 }
             }
         }, true)
