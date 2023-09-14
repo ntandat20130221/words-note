@@ -2,10 +2,12 @@ package com.example.customviews.materialsearchview
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
 import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -19,6 +21,9 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import com.example.customviews.R
+import com.example.customviews.materialsearchview.adapters.RecognitionAdapter
+import com.example.customviews.materialsearchview.utils.SearchViewAnimationHelper
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.theme.overlay.MaterialThemeOverlay
 
 class MaterialSearchView @JvmOverloads constructor(
@@ -46,7 +51,8 @@ class MaterialSearchView @JvmOverloads constructor(
     private var isVoiceIconEnabled = false
     private var currentTransitionState = TransitionState.HIDDEN
 
-    private var onQueryTextListener: OnQueryTextListener? = null
+    private var onQueryTextChanged: ((String) -> Unit)? = null
+    private var onVoiceClicked: (() -> Unit)? = null
     private val transitionListeners = LinkedHashSet<TransitionListener>()
     private val searchViewAnimationHelper: SearchViewAnimationHelper
 
@@ -117,7 +123,7 @@ class MaterialSearchView @JvmOverloads constructor(
     }
 
     private fun onTextChanged(newText: String) {
-        onQueryTextListener?.onQueryTextChanged(newText)
+        onQueryTextChanged?.let { onQueryTextChanged?.invoke(newText) }
 
         if (!TextUtils.isEmpty(newText)) {
             displayVoiceButton(false)
@@ -174,7 +180,73 @@ class MaterialSearchView @JvmOverloads constructor(
     private fun onBackClicked() = hide()
 
     private fun onVoiceClicked() {
-        TODO()
+        onVoiceClicked?.let {
+            onVoiceClicked?.invoke()
+            return
+        }
+
+        if (isVoiceIconEnabled && isVoiceAvailable) {
+            listenInput()
+        }
+    }
+
+    private fun listenInput() {
+        val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+        }
+
+        speechRecognizer.setRecognitionListener(object : RecognitionAdapter() {
+            private lateinit var waveform: CircularWaveform
+            private var dialog: BottomSheetDialog? = null
+
+            override fun onReadyForSpeech(params: Bundle?) {
+                dialog = BottomSheetDialog(context).apply {
+                    waveform = CircularWaveform(context, null)
+                    setContentView(waveform)
+                    setOnCancelListener { speechRecognizer.destroy() }
+                    show()
+                }
+
+                waveform.apply {
+                    setOnStopRecording { dialog?.cancel() }
+                    setText(resources.getString(R.string.listening))
+                }
+            }
+
+            override fun onRmsChanged(rmsdB: Float) {
+                waveform.setRms(rmsdB)
+            }
+
+            override fun onPartialResults(partialResults: Bundle?) {
+                val text = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.get(0)
+                text?.let {
+                    waveform.setText(it)
+                }
+            }
+
+            override fun onError(error: Int) {
+                speechRecognizer.destroy()
+            }
+
+            override fun onResults(results: Bundle?) {
+                val text = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.get(0)
+                text?.let {
+                    waveform.setText(it)
+                    if (waveform.viewTreeObserver.isAlive) {
+                        waveform.viewTreeObserver.addOnDrawListener {
+                            inputSearch.setText(it)
+                            dialog?.cancel()
+                        }
+                    }
+                }
+                speechRecognizer.destroy()
+            }
+        })
+
+        speechRecognizer.startListening(intent)
     }
 
     private fun onClearClicked() {
@@ -186,15 +258,15 @@ class MaterialSearchView @JvmOverloads constructor(
         setTransitionState(if (visible) TransitionState.SHOWN else TransitionState.HIDDEN)
     }
 
-    fun setOnQueryTextListener(onQueryTextListener: OnQueryTextListener?) {
-        this.onQueryTextListener = onQueryTextListener
+    fun setOnQueryTextListener(onQueryTextChanged: (String) -> Unit) {
+        this.onQueryTextChanged = onQueryTextChanged
+    }
+
+    fun setOnVoiceClickedListener(onVoiceClicked: () -> Unit) {
+        this.onVoiceClicked = onVoiceClicked
     }
 
     fun addTransitionListener(listener: TransitionListener) = transitionListeners.add(listener)
-
-    fun interface OnQueryTextListener {
-        fun onQueryTextChanged(query: String)
-    }
 
     fun interface TransitionListener {
         fun onStateChanged(searchView: MaterialSearchView, previousState: TransitionState, newState: TransitionState)

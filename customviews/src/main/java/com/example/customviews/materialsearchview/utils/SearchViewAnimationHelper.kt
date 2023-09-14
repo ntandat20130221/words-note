@@ -1,4 +1,4 @@
-package com.example.customviews.materialsearchview
+package com.example.customviews.materialsearchview.utils
 
 import android.animation.ValueAnimator
 import android.view.View
@@ -7,6 +7,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.example.customviews.R
+import com.example.customviews.materialsearchview.MaterialSearchView
 import com.example.customviews.materialsearchview.MaterialSearchView.TransitionState
 import kotlin.math.hypot
 

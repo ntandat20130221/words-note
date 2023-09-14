@@ -29,4 +29,34 @@
         <item name="android:hint">@string/search_hint</item>
         <item name="android:textSize">@dimen/text_size</item>
     </style>
+
+    <attr name="circularWaveformStyle" format="reference" />
+
+    <dimen name="result_text_size">22sp</dimen>
+
+    <string name="listening">Listening&#8230;</string>
+
+    <color name="waveform_background">#1E1F23</color>
+    <color name="voice_icon_color">#333333</color>
+    <color name="rms_color">#546C7CF1</color>
+    <color name="stop_button_color">#6C7CF1</color>
+    <color name="text_color">#fff</color>
+
+    <declare-styleable name="CircularWaveform">
+        <attr name="backgroundColor" />
+        <attr name="voiceIconColor" format="reference|color" />
+        <attr name="rmsColor" format="reference|color" />
+        <attr name="stopButtonColor" format="reference|color" />
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+    </declare-styleable>
+
+    <style name="Widget.CircularWaveform" parent="">
+        <item name="backgroundColor">@color/waveform_background</item>
+        <item name="voiceIconColor">@color/voice_icon_color</item>
+        <item name="rmsColor">@color/rms_color</item>
+        <item name="stopButtonColor">@color/stop_button_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">@dimen/result_text_size</item>
+    </style>
 </resources>

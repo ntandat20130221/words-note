@@ -18,7 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customviews.materialsearchview.MaterialSearchView
-import com.example.customviews.materialsearchview.SearchViewAnimationHelper
+import com.example.customviews.materialsearchview.utils.SearchViewAnimationHelper
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
