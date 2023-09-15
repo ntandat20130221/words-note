@@ -92,7 +92,7 @@ class AddEditWordFragmentTest {
         editWord()
         onView(withId(R.id.add_edit_word_fragment_layout)).check(matches(isDisplayed()))
         onView(withId(R.id.input_word)).check(matches(withText("word")))
-        onView(withId(R.id.input_ipa)).check(matches(withText("ipa")))
+        onView(withId(R.id.input_ipa)).check(matches(withText("/ipa/")))
         onView(withId(R.id.pos_recycler_view)).check(matches(atPosition(0, isSelected())))
         onView(withId(R.id.input_meaning)).check(matches(withText("meaning")))
         onView(withId(R.id.check_remind)).check(matches(isNotChecked()))

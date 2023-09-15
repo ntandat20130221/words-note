@@ -185,4 +185,42 @@ class WordsViewModelTest {
         assertThat(uiState.isActionMode).isTrue()
         assertThat(uiState.items.filter { it.isSelected }).hasSize(3)
     }
+
+    @Test
+    fun startSearching_EmptyResult() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+
+        wordsViewModel.startSearching()
+
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isSearching).isTrue()
+        assertThat(uiState.searchResult).isEmpty()
+    }
+
+    @Test
+    fun search_WithQuery_CheckSearchResult() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+
+        wordsViewModel.startSearching()
+        wordsViewModel.search("w")
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.searchResult).hasSize(3)
+
+        wordsViewModel.search("word2")
+        val uiState2 = wordsViewModel.uiState.value
+        assertThat(uiState2.searchResult).hasSize(1)
+    }
+
+    @Test
+    fun stopSearching_EmptyResult() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+
+        wordsViewModel.startSearching()
+        wordsViewModel.search("w")
+        wordsViewModel.stopSearching()
+
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isSearching).isFalse()
+        assertThat(uiState.searchResult).isEmpty()
+    }
 }

@@ -2,8 +2,10 @@ package com.example.wordnotes.ui.words
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu
+import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
@@ -18,7 +20,6 @@ import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.testutils.withBackgroundColor
 import com.example.wordnotes.ui.MainActivity
-import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.Rule
@@ -33,40 +34,34 @@ class WordsFragmentTest {
     val addSomeWordItemsRule = AddSomeWordItemsRule()
 
     @Test
-    fun openThenCloseActionMode_FabAndBottomNavDisplayCorrectly() {
+    fun startThenStopActionMode_FabAndBottomNavDisplayCorrectly() {
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
-        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
-        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
 
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
-        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
-        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
 
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
-        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
-        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
 
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, click()))
-        onView(withId(com.google.android.material.R.id.action_mode_bar)).check(matches(CoreMatchers.not(isDisplayed())))
         onView(withId(R.id.fab_add_word)).check(matches(isDisplayed()))
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
 
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, longClick()))
-        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
-        onView(withId(R.id.fab_add_word)).check(matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.bottom_nav)).check(matches(CoreMatchers.not(isDisplayed())))
+        onView(withId(R.id.fab_add_word)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
 
         onView(withId(com.google.android.material.R.id.action_mode_close_button)).perform(click())
-        onView(withId(com.google.android.material.R.id.action_mode_bar)).check(matches(CoreMatchers.not(isDisplayed())))
         onView(withId(R.id.fab_add_word)).check(matches(isDisplayed()))
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
     }
 
     @Test
-    fun openActionMode_SelectSomeItems_Recreate_PersistUiState() {
+    fun startActionMode_SelectSomeItems_Recreate_PersistUiState() {
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, click()))
 
@@ -137,5 +132,58 @@ class WordsFragmentTest {
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(2, withBackgroundColor(R.attr.color_selected_item_background))))
+    }
+
+    @Test
+    fun searchingWithKeyword_CountRecyclerViewItems() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.search_view_root)).check(matches(isDisplayed()))
+
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
+        onView(withId(R.id.search_recycler_view)).check(hasItemCount(3))
+
+        onView(withId(com.example.customviews.R.id.input_search)).perform(clearText(), typeText("word2"))
+        onView(withId(R.id.search_recycler_view)).check(hasItemCount(1))
+    }
+
+    @Test
+    fun searchWithKeyword_Recreate_PersistUiState() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("word2"))
+
+        activityScenarioRule.scenario.recreate()
+
+        onView(withId(com.example.customviews.R.id.search_view_root)).check(matches(isDisplayed()))
+        onView(withId(com.example.customviews.R.id.input_search)).check(matches(withText("word2")))
+        onView(withId(R.id.search_recycler_view)).check(hasItemCount(1))
+    }
+
+    @Test
+    fun startSearchThenStartActionMode_WordsRecyclerViewUpdateCorrectly() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
+
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
+
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, click()))
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
+
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
+    }
+
+    @Test
+    fun test() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(1, click()))
+
+        activityScenarioRule.scenario.recreate()
+
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
     }
 }

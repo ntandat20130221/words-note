@@ -40,7 +40,7 @@ class WordDetailFragmentTest {
 
         onView(withId(R.id.word_detail_fragment_layout)).check(matches(isDisplayed()))
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_word))).check(matches(withText("word")))
-        onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_ipa))).check(matches(withText("ipa")))
+        onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_ipa))).check(matches(withText("/ipa/")))
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_pos))).check(matches(withText("verb")))
         onView(allOf(withParent(withId(R.id.word_detail_fragment_layout)), withId(R.id.text_meaning))).check(matches(withText("meaning")))
         onView(withId(R.id.text_remind)).check(matches(withText(R.string.pref_title_remind)))

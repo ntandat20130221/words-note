@@ -1,4 +1,4 @@
-package com.example.customviews.materialsearchview.adapters
+package com.example.customviews.materialsearchview
 
 import android.os.Bundle
 import android.speech.RecognitionListener

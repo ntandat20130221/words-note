@@ -37,7 +37,7 @@
     <string name="listening">Listening&#8230;</string>
 
     <color name="waveform_background">#1E1F23</color>
-    <color name="voice_icon_color">#333333</color>
+    <color name="voice_icon_color">#202020</color>
     <color name="rms_color">#546C7CF1</color>
     <color name="stop_button_color">#6C7CF1</color>
     <color name="text_color">#fff</color>

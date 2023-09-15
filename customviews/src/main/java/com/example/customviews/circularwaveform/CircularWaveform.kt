@@ -1,4 +1,4 @@
-package com.example.customviews.materialsearchview
+package com.example.customviews.circularwaveform
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,7 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import com.example.customviews.R
-import com.example.customviews.materialsearchview.utils.dp
+import com.example.customviews.dp
 
 class CircularWaveform @JvmOverloads constructor(
     context: Context,
@@ -68,6 +68,7 @@ class CircularWaveform @JvmOverloads constructor(
         val backgroundDrawable = ResourcesCompat.getDrawable(resources, R.drawable.bg_waveform, themedContext.theme)
         backgroundDrawable?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(backgroundColor, BlendModeCompat.SRC_ATOP)
         background = backgroundDrawable
+        voiceIcon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(voiceIconColor, BlendModeCompat.SRC_ATOP)
         buttonPaint.color = stopButtonColor
         rmsPaint.color = rmsColor
         textPaint.color = textColor

@@ -1,4 +1,4 @@
-package com.example.customviews.materialsearchview.utils
+package com.example.customviews
 
 import android.content.res.Resources
 import android.util.TypedValue

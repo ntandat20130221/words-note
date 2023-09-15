@@ -21,8 +21,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.core.widget.doOnTextChanged
 import com.example.customviews.R
-import com.example.customviews.materialsearchview.adapters.RecognitionAdapter
-import com.example.customviews.materialsearchview.utils.SearchViewAnimationHelper
+import com.example.customviews.circularwaveform.CircularWaveform
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.theme.overlay.MaterialThemeOverlay
 
