@@ -10,6 +10,8 @@ interface WordsRepository {
 
     fun getWordStream(wordId: String): Flow<Result<Word>>
 
+    suspend fun refreshWords()
+
     suspend fun getWords(): Result<List<Word>>
 
     suspend fun getWord(wordId: String): Result<Word>

@@ -2,15 +2,19 @@ package com.example.wordnotes.ui.words
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
@@ -135,6 +139,18 @@ class WordsFragmentTest {
     }
 
     @Test
+    fun startSearchThenSearchWithKeyword_BottomNavAndFabDisplayedCorrectly() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(R.id.bottom_nav)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        onView(withId(com.example.customviews.R.id.input_search)).perform(replaceText("word"))
+        onView(withId(R.id.bottom_nav)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        onView(withId(com.example.customviews.R.id.button_back)).perform(click())
+        onView(withId(R.id.bottom_nav)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    }
+
+    @Test
     fun searchingWithKeyword_CountRecyclerViewItems() {
         onView(withId(R.id.menu_search)).perform(click())
         onView(withId(com.example.customviews.R.id.search_view_root)).check(matches(isDisplayed()))
@@ -174,7 +190,7 @@ class WordsFragmentTest {
     }
 
     @Test
-    fun test() {
+    fun startSearchThenStartActionMode_Recreate_PersistUiState() {
         onView(withId(R.id.menu_search)).perform(click())
         onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
         onView(withId(R.id.search_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
@@ -185,5 +201,28 @@ class WordsFragmentTest {
         onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("2")))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
+    }
+
+    @Test
+    fun startSearchingThenStartActionMode_UiStateUpdatedCorrectly() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+
+        onView(withId(com.google.android.material.R.id.action_bar_title)).check(matches(withText("1")))
+        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, withBackgroundColor(R.attr.color_selected_item_background))))
+        onView(withId(R.id.bottom_nav)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+    }
+
+    @Test
+    fun startSearchingThenStartActionMode_BackBehaveCorrectly() {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(typeText("w"))
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+
+        pressBack() // Hide soft input
+        pressBack()
+        pressBack()
+        onView(withId(com.example.customviews.R.id.search_view_root)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
     }
 }

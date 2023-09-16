@@ -145,6 +145,10 @@ class WordsFragment : Fragment() {
             }
             false
         }
+
+        binding.swipeToRefresh.setOnRefreshListener {
+            wordsViewModel.refresh()
+        }
     }
 
     private fun observeUiState() {
@@ -154,6 +158,7 @@ class WordsFragment : Fragment() {
                     wordsAdapter.setData(uiState.items)
                     updateActionMode(uiState)
                     updateSearching(uiState)
+                    binding.swipeToRefresh.isRefreshing = uiState.isLoading
                 }
             }
         }

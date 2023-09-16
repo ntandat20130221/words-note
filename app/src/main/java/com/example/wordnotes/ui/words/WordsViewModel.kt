@@ -96,6 +96,14 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         return if (searchQuery.isNotEmpty() && searchQuery.isNotBlank()) data.filter { it.word.contains(searchQuery) } else emptyList()
     }
 
+    fun refresh() {
+        _isLoading.value = true
+        viewModelScope.launch {
+            wordsRepository.refreshWords()
+            _isLoading.value = false
+        }
+    }
+
     fun itemClicked(wordId: String) {
         if (!uiState.value.isActionMode) {
             _clickItemEvent.value = Event(wordId)

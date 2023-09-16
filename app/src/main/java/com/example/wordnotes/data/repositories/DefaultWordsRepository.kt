@@ -3,6 +3,7 @@ package com.example.wordnotes.data.repositories
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.local.WordsLocalDataSource
 import com.example.wordnotes.data.model.Word
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 class DefaultWordsRepository constructor(
@@ -12,6 +13,10 @@ class DefaultWordsRepository constructor(
     override fun getWordsStream(): Flow<Result<List<Word>>> = wordsLocalDataSource.getWordsStream()
 
     override fun getWordStream(wordId: String): Flow<Result<Word>> = wordsLocalDataSource.getWordStream(wordId)
+
+    override suspend fun refreshWords() {
+        delay(1000)
+    }
 
     override suspend fun getWords(): Result<List<Word>> = wordsLocalDataSource.getWords()
 
