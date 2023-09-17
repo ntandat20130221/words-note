@@ -1,6 +1,8 @@
 package com.example.wordnotes.ui.words
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,7 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.view.ActionMode
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -27,6 +32,7 @@ import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.fadeInStatusBar
 import com.example.wordnotes.utils.fadeOutStatusBar
 import com.example.wordnotes.utils.setUpToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 // TODO: Add loading UI
@@ -43,8 +49,8 @@ class WordsFragment : Fragment() {
 
     private var actionMode: ActionMode? = null
     private var inSearching = false
-
     private var backPressedCallback: OnBackPressedCallback? = null
+    private lateinit var voicePermissionLauncher: ActivityResultLauncher<String>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,6 +69,15 @@ class WordsFragment : Fragment() {
         setUpSearch()
         setUpViewListeners()
         observeUiState()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        voicePermissionLauncher = requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                binding.searchView.listenInput()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -125,10 +140,32 @@ class WordsFragment : Fragment() {
             }
         }
 
+        binding.searchView.setOnVoiceClickedListener {
+            when {
+                isVoicePermissionAllowed() -> binding.searchView.listenInput()
+                shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) -> showInContextUI()
+                else -> voicePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        }
+
         backPressedCallback = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() = wordsViewModel.stopSearching()
         }
         requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback!!)
+    }
+
+    private fun isVoicePermissionAllowed(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun showInContextUI() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.request_permission))
+            .setMessage(getString(R.string.permission_rationale))
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                voicePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+            .show()
     }
 
     private fun setUpViewListeners() {

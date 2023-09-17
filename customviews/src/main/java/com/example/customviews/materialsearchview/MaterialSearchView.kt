@@ -178,18 +178,13 @@ class MaterialSearchView @JvmOverloads constructor(
 
     private fun onBackClicked() = hide()
 
-    private fun onVoiceClicked() {
-        onVoiceClicked?.let {
-            onVoiceClicked?.invoke()
-            return
-        }
+    private fun onVoiceClicked() = onVoiceClicked?.let { onVoiceClicked?.invoke() }
 
-        if (isVoiceIconEnabled && isVoiceAvailable) {
-            listenInput()
-        }
-    }
+    fun listenInput() {
+        if (!isVoiceIconEnabled || !isVoiceAvailable) return
 
-    private fun listenInput() {
+        clearFocusAndHideKeyboard(inputSearch)
+
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
