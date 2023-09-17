@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.view.ActionMode
 import androidx.core.content.ContextCompat
@@ -50,7 +49,11 @@ class WordsFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private var inSearching = false
     private var backPressedCallback: OnBackPressedCallback? = null
-    private lateinit var voicePermissionLauncher: ActivityResultLauncher<String>
+    private val voicePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            binding.searchView.listenInput()
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,15 +72,6 @@ class WordsFragment : Fragment() {
         setUpSearch()
         setUpViewListeners()
         observeUiState()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        voicePermissionLauncher = requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                binding.searchView.listenInput()
-            }
-        }
     }
 
     override fun onDestroyView() {
