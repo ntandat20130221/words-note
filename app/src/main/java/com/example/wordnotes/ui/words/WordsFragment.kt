@@ -32,11 +32,9 @@ import com.example.wordnotes.utils.fadeInStatusBar
 import com.example.wordnotes.utils.fadeOutStatusBar
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-// TODO: Add loading UI
-// TODO: Add dialog delete items
-// TODO: Add empty screen
 class WordsFragment : Fragment() {
     private var _binding: FragmentWordsBinding? = null
     private val binding get() = _binding!!
@@ -186,7 +184,7 @@ class WordsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordsViewModel.uiState.collect { uiState ->
-                    wordsAdapter.setData(uiState.items)
+                    updateRecyclerView(uiState)
                     updateActionMode(uiState)
                     updateSearching(uiState)
                     binding.swipeToRefresh.isRefreshing = uiState.isLoading
@@ -205,6 +203,32 @@ class WordsFragment : Fragment() {
                 findNavController().navigate(WordsFragmentDirections.actionWordsFragmentToAddEditWordFragment(wordId))
             }
         )
+
+        wordsViewModel.showUndoEvent.observe(viewLifecycleOwner,
+            OneTimeEventObserver { amount ->
+                Snackbar.make(mainActivity.findViewById(android.R.id.content), getString(R.string.deleted_template, amount), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo) { wordsViewModel.undoDeletion() }
+                    .addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            if (DISMISS_EVENT_TIMEOUT == event) {
+                                wordsViewModel.undoDismissed()
+                            }
+                        }
+                    })
+                    .show()
+            }
+        )
+    }
+
+    private fun updateRecyclerView(uiState: WordsUiState) {
+        if (uiState.items.isEmpty()) {
+            binding.emptyListLayout.root.visibility = View.VISIBLE
+            binding.wordsRecyclerView.visibility = View.GONE
+        } else {
+            binding.emptyListLayout.root.visibility = View.GONE
+            binding.wordsRecyclerView.visibility = View.VISIBLE
+            wordsAdapter.setData(uiState.items)
+        }
     }
 
     private fun updateActionMode(uiState: WordsUiState) {

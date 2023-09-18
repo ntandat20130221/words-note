@@ -38,17 +38,32 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     private val _clickEditItemEvent: MutableLiveData<Event<String?>> = MutableLiveData()
     val clickEditItemEvent: LiveData<Event<String?>> = _clickEditItemEvent
 
+    private val _showUndoEvent: MutableLiveData<Event<Int>> = MutableLiveData()
+    val showUndoEvent: LiveData<Event<Int>> = _showUndoEvent
+
     private val _isLoading = MutableStateFlow(false)
     private val _isActionMode = MutableStateFlow(false)
     private val _selectedWordIds = MutableStateFlow(emptySet<String>())
     private val _isSearching = MutableStateFlow(false)
-    private val _wordItemsResult: Flow<Result<List<WordItem>>> = combine(
-        wordsRepository.getWordsStream(), _selectedWordIds
-    ) { wordsResult, selectedWordId ->
+
+    private val _tempDeleted = MutableStateFlow(emptySet<String>())
+    private val _temporalItems: Flow<Result<List<Word>>> = combine(
+        wordsRepository.getWordsStream(), _tempDeleted
+    ) { wordsResult, tempDeleted ->
         when (wordsResult) {
-            is Result.Success -> Result.Success(resolveSelected(wordsResult.data, selectedWordId))
+            is Result.Success -> Result.Success(notInSelected(wordsResult.data, tempDeleted))
             is Result.Error -> wordsResult
             is Result.Loading -> wordsResult
+        }
+    }
+
+    private val _wordItemsResult: Flow<Result<List<WordItem>>> = combine(
+        _temporalItems, _selectedWordIds
+    ) { temporalItems, selectedWordId ->
+        when (temporalItems) {
+            is Result.Success -> Result.Success(resolveSelected(temporalItems.data, selectedWordId))
+            is Result.Error -> temporalItems
+            is Result.Loading -> temporalItems
         }
     }
     private val _searchQuery = MutableStateFlow("")
@@ -87,6 +102,10 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         )
 
     val selectedCount: Int get() = _selectedWordIds.value.count()
+
+    private fun notInSelected(words: List<Word>, selectedWordId: Set<String>): List<Word> {
+        return words.filterNot { selectedWordId.contains(it.id) }
+    }
 
     private fun resolveSelected(words: List<Word>, selectedWordId: Set<String>): List<WordItem> {
         return words.map { WordItem(word = it, isSelected = it.id in selectedWordId) }
@@ -144,12 +163,22 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     fun onActionModeMenuDelete(): Boolean {
         if (uiState.value.isActionMode) {
             val selectedWords = uiState.value.items.filter { it.isSelected }
-            viewModelScope.launch {
-                wordsRepository.deleteWords(selectedWords.map { it.word.id })
-                destroyActionMode()
-            }
+            _showUndoEvent.value = Event(selectedWords.size)
+            _tempDeleted.update { _selectedWordIds.value }
+            destroyActionMode()
         }
         return true
+    }
+
+    fun undoDismissed() {
+        viewModelScope.launch {
+            wordsRepository.deleteWords(_tempDeleted.value.toList())
+            _tempDeleted.update { emptySet() }
+        }
+    }
+
+    fun undoDeletion() {
+        _tempDeleted.update { emptySet() }
     }
 
     fun onActionModeMenuRemind(): Boolean {

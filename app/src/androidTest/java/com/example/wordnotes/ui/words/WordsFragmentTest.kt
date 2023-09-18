@@ -21,6 +21,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
 import com.example.wordnotes.testutils.AddSomeWordItemsRule
 import com.example.wordnotes.testutils.atPosition
+import com.example.wordnotes.testutils.getString
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.testutils.withBackgroundColor
 import com.example.wordnotes.ui.MainActivity
@@ -112,6 +113,18 @@ class WordsFragmentTest {
         onView(withId(R.id.menu_delete)).perform(click())
         onView(withId(R.id.words_recycler_view)).check(hasItemCount(1))
         onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, hasDescendant(withText("word2")))))
+    }
+
+    @Test
+    fun openActionMode_DeleteItems_CheckSnackBar() {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(2, click()))
+        onView(withId(R.id.menu_delete)).perform(click())
+
+        onView(withId(com.google.android.material.R.id.snackbar_text)).check(matches(withText(getString(R.string.deleted_template, 2))))
+
+        onView(withText(R.string.undo)).perform(click())
+        onView(withId(R.id.words_recycler_view)).check(hasItemCount(3))
     }
 
     @Test

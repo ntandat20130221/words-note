@@ -32,6 +32,9 @@
     <string name="request_permission">Request permission</string>
     <string name="permission_rationale">You must allow permission to use this feature!</string>
     <string name="ok">OK</string>
+    <string name="no_words_yet">No words yet</string>
+    <string name="deleted_template">%d deleted</string>
+    <string name="undo">Undo</string>
 
     <plurals name="remind_times">
         <item quantity="one">%d time</item>

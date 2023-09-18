@@ -159,6 +159,34 @@ class WordsViewModelTest {
     }
 
     @Test
+    fun startActionMode_DeleteItems_Undo() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+        wordsViewModel.itemLongClicked(wordId = "1")
+        wordsViewModel.itemClicked(wordId = "2")
+        wordsViewModel.onActionModeMenuDelete()
+
+        wordsViewModel.undoDeletion()
+
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.items).hasSize(3)
+    }
+
+    @Test
+    fun startActionMode_DeleteItems_DismissUndo() = runTest {
+        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
+        wordsViewModel.itemLongClicked(wordId = "1")
+        wordsViewModel.itemClicked(wordId = "2")
+        wordsViewModel.onActionModeMenuDelete()
+
+        wordsViewModel.undoDismissed()
+
+        val uiState = wordsViewModel.uiState.value
+        assertThat(uiState.isActionMode).isFalse()
+        assertThat(uiState.items).hasSize(1)
+    }
+
+    @Test
     fun startActionMode_SelectSomeItems_ClickRemindMenu_CheckUiState() = runTest {
         createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
         wordsViewModel.itemLongClicked(wordId = "1")
