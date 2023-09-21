@@ -3,6 +3,7 @@ package com.example.wordnotes.data.repositories
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.local.FakeWordsLocalDataSource
 import com.example.wordnotes.data.model.Word
+import com.example.wordnotes.data.network.FakeWordsNetworkDataSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -18,12 +19,13 @@ class DefaultWordsRepositoryTest {
     )
 
     private lateinit var wordsLocalDataSource: FakeWordsLocalDataSource
+    private lateinit var wordsNetworkDataSource: FakeWordsNetworkDataSource
     private lateinit var wordRepository: DefaultWordsRepository
 
     @Before
     fun createRepository() {
         wordsLocalDataSource = FakeWordsLocalDataSource(data)
-        wordRepository = DefaultWordsRepository(wordsLocalDataSource)
+        wordRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
     }
 
     @Test

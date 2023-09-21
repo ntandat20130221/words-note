@@ -5,6 +5,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.database.PropertyName
 import java.util.UUID
 
 @Entity(tableName = "words")
@@ -14,7 +15,7 @@ data class Word(
     val pos: String = "",
     val ipa: String = "",
     val meaning: String = "",
-    @ColumnInfo(name = "learning") val isRemind: Boolean = false,
+    @PropertyName("remind") @ColumnInfo("remind") val isRemind: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 ) : Parcelable {
 

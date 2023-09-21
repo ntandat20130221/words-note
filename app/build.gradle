@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.devtools.ksp'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -90,6 +91,9 @@ dependencies {
     implementation 'androidx.room:room-ktx:2.5.2'
     ksp 'androidx.room:room-compiler:2.5.2'
 
+    // WorkManager
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+
     // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
 
@@ -98,4 +102,12 @@ dependencies {
 
     // SwipeToRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
 }

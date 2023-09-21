@@ -24,6 +24,7 @@ data class WordItem(
 
 data class WordsUiState(
     val items: List<WordItem> = emptyList(),
+    val firstEmit: Boolean = false,
     val isLoading: Boolean = false,
     val isActionMode: Boolean = false,
     val selectedCount: Int = 0,
@@ -98,10 +99,16 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = WordsUiState(isLoading = true)
+            initialValue = WordsUiState(firstEmit = true, isLoading = true)
         )
 
     val selectedCount: Int get() = _selectedWordIds.value.count()
+
+    init {
+        viewModelScope.launch {
+            wordsRepository.refreshWords()
+        }
+    }
 
     private fun notInSelected(words: List<Word>, selectedWordId: Set<String>): List<Word> {
         return words.filterNot { selectedWordId.contains(it.id) }

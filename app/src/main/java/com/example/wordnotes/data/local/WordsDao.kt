@@ -23,18 +23,24 @@ interface WordsDao {
     @Query("SELECT * FROM words WHERE id = :wordId")
     suspend fun getWord(wordId: String): Word
 
-    @Query("SELECT * FROM words WHERE learning = 1")
+    @Query("SELECT * FROM words WHERE remind = 1")
     suspend fun getRemindWords(): List<Word>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWords(words: List<Word>)
+
     @Update
     suspend fun updateWord(word: Word)
 
-    @Query("UPDATE words SET learning = 1 WHERE id IN (:ids)")
+    @Query("UPDATE words SET remind = 1 WHERE id IN (:ids)")
     suspend fun remindWords(ids: List<String>)
 
     @Query("DELETE FROM words WHERE id IN (:ids)")
     suspend fun deleteWords(ids: List<String>)
+
+    @Query("DELETE FROM words")
+    suspend fun clearWords()
 }

@@ -2,10 +2,13 @@ package com.example.wordnotes.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.example.wordnotes.data.local.DATABASE_NAME
 import com.example.wordnotes.data.local.DefaultWordsLocalDataSource
 import com.example.wordnotes.data.local.WordDatabase
 import com.example.wordnotes.data.local.WordsLocalDataSource
+import com.example.wordnotes.data.network.DefaultWordNetworkDataSource
+import com.example.wordnotes.data.network.WordsNetworkDataSource
 import com.example.wordnotes.data.repositories.DefaultWordsRepository
 import com.example.wordnotes.data.repositories.WordsRepository
 import com.example.wordnotes.ui.settings.WordPreferences
@@ -18,8 +21,9 @@ interface Factory<out T> {
 class AppContainer(val context: Context) {
     private val wordDatabase = Room.databaseBuilder(context.applicationContext, WordDatabase::class.java, DATABASE_NAME).build()
     private val wordsLocalDataSource: WordsLocalDataSource = DefaultWordsLocalDataSource(wordDatabase.wordDao())
+    private val wordsNetworkDataSource: WordsNetworkDataSource = DefaultWordNetworkDataSource(WorkManager.getInstance(context))
 
-    val wordsRepository: WordsRepository = DefaultWordsRepository(wordsLocalDataSource)
+    val wordsRepository: WordsRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
 
     val wordPreferencesFactory: Factory<WordPreferences> = object : Factory<WordPreferences> {
         override fun create() = WordPreferences(context)

@@ -221,6 +221,8 @@ class WordsFragment : Fragment() {
     }
 
     private fun updateRecyclerView(uiState: WordsUiState) {
+        if (uiState.firstEmit) return
+
         if (uiState.items.isEmpty()) {
             binding.emptyListLayout.root.visibility = View.VISIBLE
             binding.wordsRecyclerView.visibility = View.GONE
