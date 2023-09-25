@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/words_fragment">
+    app:startDestination="@id/routing_fragment">
     <fragment
         android:id="@+id/words_fragment"
         android:name="com.example.wordnotes.ui.words.WordsFragment"
@@ -41,4 +41,28 @@
             app:destination="@id/add_edit_word_fragment"
             app:popUpTo="@id/words_fragment" />
     </dialog>
+    <navigation
+        android:id="@+id/auth_flow"
+        app:startDestination="@id/auth_fragment">
+        <fragment
+            android:id="@+id/auth_fragment"
+            android:name="com.example.wordnotes.ui.auth.AuthFragment"
+            android:label="AuthFragment"
+            tools:layout="@layout/fragment_auth" />
+    </navigation>
+    <fragment
+        android:id="@+id/routing_fragment"
+        android:name="com.example.wordnotes.ui.RoutingFragment"
+        android:label="RoutingFragment">
+        <action
+            android:id="@+id/action_routing_fragment_to_words_fragment"
+            app:destination="@id/words_fragment"
+            app:popUpTo="@id/routing_fragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_routing_fragment_to_auth_flow"
+            app:destination="@id/auth_flow"
+            app:popUpTo="@id/routing_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

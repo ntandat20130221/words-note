@@ -42,6 +42,10 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
         _words?.put(word.id, word)
     }
 
+    override suspend fun saveWords(words: List<Word>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun updateWord(word: Word) {
         _words?.put(word.id, word)
     }
@@ -52,5 +56,9 @@ class FakeWordsLocalDataSource(initialWords: List<Word>? = emptyList()) : WordsL
 
     override suspend fun deleteWords(ids: List<String>) {
         _words?.keys?.removeAll(ids.toSet())
+    }
+
+    override suspend fun clearWords() {
+        TODO("Not yet implemented")
     }
 }

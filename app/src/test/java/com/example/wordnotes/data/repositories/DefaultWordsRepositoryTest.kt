@@ -25,6 +25,7 @@ class DefaultWordsRepositoryTest {
     @Before
     fun createRepository() {
         wordsLocalDataSource = FakeWordsLocalDataSource(data)
+        wordsNetworkDataSource = FakeWordsNetworkDataSource()
         wordRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
     }
 

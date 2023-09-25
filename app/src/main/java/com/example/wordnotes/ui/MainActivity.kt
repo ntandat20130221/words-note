@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -14,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
 import com.example.wordnotes.ui.addeditword.AddEditWordFragment
+import com.example.wordnotes.ui.auth.AuthFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
         setUpNavigation()
@@ -40,15 +43,19 @@ class MainActivity : AppCompatActivity() {
     private fun controlBottomNavVisibility() {
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
-                if (fragment is AddEditWordFragment) {
-                    setBottomNavVisibility(View.GONE)
-                    resetBottomNavAnimation()
+                when (fragment) {
+                    is AddEditWordFragment, is AuthFragment -> {
+                        setBottomNavVisibility(View.GONE)
+                        resetBottomNavAnimation()
+                    }
                 }
             }
 
             override fun onFragmentStopped(fm: FragmentManager, fragment: Fragment) {
-                if (fragment is AddEditWordFragment) {
-                    setBottomNavVisibility(View.VISIBLE)
+                when (fragment) {
+                    is AddEditWordFragment, is AuthFragment -> {
+                        setBottomNavVisibility(View.VISIBLE)
+                    }
                 }
             }
         }, true)

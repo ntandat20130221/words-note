@@ -90,24 +90,24 @@ class CircularWaveform @JvmOverloads constructor(
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         // Draw RMS
         val rmsRadius = buttonRadius + 3 * rms
-        canvas?.drawOval(cx - rmsRadius, cy - rmsRadius, cx + rmsRadius, cy + rmsRadius, rmsPaint)
+        canvas.drawOval(cx - rmsRadius, cy - rmsRadius, cx + rmsRadius, cy + rmsRadius, rmsPaint)
 
         // Draw stop button
-        canvas?.drawOval(cx - buttonRadius, cy - buttonRadius, cx + buttonRadius, cy + buttonRadius, buttonPaint)
+        canvas.drawOval(cx - buttonRadius, cy - buttonRadius, cx + buttonRadius, cy + buttonRadius, buttonPaint)
 
         // Draw voice icon
-        canvas?.let {
+        canvas.let {
             voiceIcon?.setBounds((cx - voiceSize).toInt(), (cy - voiceSize).toInt(), (cx + voiceSize).toInt(), (cy + voiceSize).toInt())
             voiceIcon?.draw(it)
         }
 
         // Draw text
-        canvas?.drawText(text, cx, cy + buttonRadius + 64.dp, textPaint)
+        canvas.drawText(text, cx, cy + buttonRadius + 64.dp, textPaint)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {

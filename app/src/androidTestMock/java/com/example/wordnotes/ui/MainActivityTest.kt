@@ -1,6 +1,10 @@
 package com.example.wordnotes.ui
 
+import androidx.core.content.edit
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
+import androidx.preference.PreferenceManager
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
@@ -9,15 +13,38 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
+import com.example.wordnotes.WordNotesApplication
 import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.not
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
 class MainActivityTest {
 
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            val context = ApplicationProvider.getApplicationContext<WordNotesApplication>()
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean("is_sign_in", true) }
+        }
+    }
+
     @get:Rule
     val activityScenarioRule = activityScenarioRule<MainActivity>()
+
+    @Test(expected = androidx.test.espresso.NoActivityResumedException::class)
+    fun navigateWithBottomNav_BottomNavBehaveCorrectly() {
+        onView(withId(R.id.words_fragment)).perform(click())
+        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.words_fragment)).perform(click())
+        onView(withId(R.id.settings_fragment)).perform(click())
+        pressBack()
+        pressBack()
+        assertThat(activityScenarioRule.scenario.state.isAtLeast(Lifecycle.State.DESTROYED))
+    }
 
     @Test
     fun multiClickSettingBottomNavItem_DestinationDidNotChange() {

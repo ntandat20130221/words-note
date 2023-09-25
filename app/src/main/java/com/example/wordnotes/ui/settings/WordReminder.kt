@@ -18,7 +18,7 @@ class WordReminder(
     private val alarmManager = context.applicationContext.getSystemService(AlarmManager::class.java)
 
     fun schedule(next: Boolean = false) {
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, getTriggerTime(next = next), getInterval(), getPendingIntent())
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, getTriggerTime(next = next), getInterval(), getPendingIntent()!!)
         enableBootReceiver()
     }
 

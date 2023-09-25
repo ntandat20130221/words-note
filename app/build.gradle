@@ -8,12 +8,14 @@ plugins {
 
 android {
     namespace 'com.example.wordnotes'
-    compileSdk 33
+    compileSdk 34
+
+    defaultPublishConfig 'mockDebug'
 
     defaultConfig {
         applicationId "com.example.wordnotes"
         minSdk 29
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -29,6 +31,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions = ["default"]
+    productFlavors {
+        mock {
+            dimension "default"
+        }
+        prod {
+            dimension "default"
         }
     }
 
@@ -110,4 +122,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.3.1')
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // SplashScreen
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 }

@@ -1,4 +1,10 @@
 <resources>
+    <!-- SplashScreen theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/neutral_6</item>
+        <item name="postSplashScreenTheme">@style/Theme.WordNotes</item>
+    </style>
+
     <!-- Dark theme -->
     <style name="Theme.WordNotes" parent="Base.AppTheme">
         <!-- Primary brand color -->

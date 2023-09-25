@@ -1,11 +1,11 @@
-package com.example.wordnotes.data.network
+package com.example.wordnotes.di
 
-import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
+import com.example.wordnotes.data.network.WordsNetworkDataSource
 
 class FakeWordsNetworkDataSource(var words: MutableList<Word>? = mutableListOf()) : WordsNetworkDataSource {
 
-    override suspend fun loadWords(onCompleted: (Result<List<Word>>) -> Unit) {
+    override suspend fun loadWords(onCompleted: (com.example.wordnotes.data.Result<List<Word>>) -> Unit) {
     }
 
     override suspend fun saveWords(words: List<Word>) {

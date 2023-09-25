@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'com.example.wordnotes.shared.test'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 29
-        targetSdk 33
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -21,6 +21,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // We need to create the same flavors as :app
+    flavorDimensions = ["default"]
+    productFlavors {
+        mock {
+            dimension "default"
+        }
+        prod {
+            dimension "default"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
