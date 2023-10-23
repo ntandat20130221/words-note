@@ -84,6 +84,7 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
         when (wordsResult) {
             is Result.Success -> WordsUiState(
                 items = wordsResult.data,
+                firstEmit = false,
                 isLoading = isLoading,
                 isActionMode = isActionMode,
                 selectedCount = _selectedWordIds.value.size,
@@ -91,9 +92,9 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
                 searchResult = searchResult
             )
 
-            is Result.Loading -> WordsUiState(isLoading = true)
+            is Result.Loading -> WordsUiState(firstEmit = false, isLoading = true)
 
-            is Result.Error -> WordsUiState()
+            is Result.Error -> WordsUiState(firstEmit = false, isLoading = false)
         }
     }
         .stateIn(
@@ -105,9 +106,7 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
     val selectedCount: Int get() = _selectedWordIds.value.count()
 
     init {
-        viewModelScope.launch {
-            wordsRepository.refreshWords()
-        }
+        refresh()
     }
 
     private fun notInSelected(words: List<Word>, selectedWordId: Set<String>): List<Word> {
@@ -190,9 +189,10 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
 
     fun onActionModeMenuRemind(): Boolean {
         if (uiState.value.isActionMode) {
-            val selectedWords = uiState.value.items.filter { it.isSelected }
             viewModelScope.launch {
-                wordsRepository.remindWords(selectedWords.map { it.word.id })
+                val selectedWords = uiState.value.items.filter { it.isSelected }
+                val updatedWords = selectedWords.map { it.word.copy(isRemind = true) }
+                wordsRepository.updateWords(updatedWords)
                 destroyActionMode()
             }
         }

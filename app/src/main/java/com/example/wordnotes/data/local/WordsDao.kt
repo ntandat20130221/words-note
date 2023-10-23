@@ -32,11 +32,8 @@ interface WordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWords(words: List<Word>)
 
-    @Update
-    suspend fun updateWord(word: Word)
-
-    @Query("UPDATE words SET remind = 1 WHERE id IN (:ids)")
-    suspend fun remindWords(ids: List<String>)
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateWords(words: List<Word>)
 
     @Query("DELETE FROM words WHERE id IN (:ids)")
     suspend fun deleteWords(ids: List<String>)

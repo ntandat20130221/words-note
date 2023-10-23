@@ -5,13 +5,11 @@ import com.example.wordnotes.data.model.Word
 
 interface WordsNetworkDataSource {
 
-    suspend fun loadWords(onCompleted: (Result<List<Word>>) -> Unit)
+    suspend fun loadWords(): Result<List<Word>>
 
-    suspend fun saveWords(words: List<Word>)
+    suspend fun saveWord(word: Word)
 
-    suspend fun updateWord(word: Word)
+    suspend fun updateWords(words: List<Word>)
 
     suspend fun deleteWords(ids: List<String>)
-
-    suspend fun remindWords(ids: List<String>)
 }

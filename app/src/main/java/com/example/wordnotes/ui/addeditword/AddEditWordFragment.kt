@@ -19,12 +19,12 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
+import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
-// TODO: Add loading UI
-class AddEditWordFragment : Fragment() {
+class AddEditWordFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
 
@@ -124,16 +124,16 @@ class AddEditWordFragment : Fragment() {
             }
         }
 
+        partsOfSpeechAdapter.setSelectedIndex(uiState.currentPosIndex)
+
+        uiState.snackBarMessage?.let { showSnackBar(it) }
+
         if (uiState.isInputFocus) {
             binding.inputWord.requestFocus()
             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.inputWord, InputMethodManager.SHOW_IMPLICIT)
             addEditWordViewModel.gainedFocus()
         }
-
-        partsOfSpeechAdapter.setSelectedIndex(uiState.currentPosIndex)
-
-        uiState.snackBarMessage?.let { showSnackBar(it) }
     }
 
     private fun showSnackBar(@StringRes messageResId: Int) {

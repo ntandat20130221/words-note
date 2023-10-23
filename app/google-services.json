@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1017922787321",
-    "project_id": "words-note-4c372",
-    "storage_bucket": "words-note-4c372.appspot.com"
+    "project_number": "738757659333",
+    "project_id": "word-notes-7a632",
+    "storage_bucket": "word-notes-7a632.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1017922787321:android:3dca05e41466823b444f28",
+        "mobilesdk_app_id": "1:738757659333:android:6f95b9114673dec9aebeac",
         "android_client_info": {
           "package_name": "com.example.wordnotes"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDQGKPfZlTOdD44ls2zwkQs7IXXkA17eXA"
+          "current_key": "AIzaSyD_45QQQtSjmBNhbiyZYeu1CUes-Ff2JrI"
         }
       ],
       "services": {

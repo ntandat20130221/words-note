@@ -85,7 +85,7 @@ class DefaultWordsLocalDataSourceTest {
         wordsLocalDataSource.saveWord(newWord)
 
         val updatingWord = Word(id = newWord.id, word = "word2", pos = "pos2", isRemind = true)
-        wordsLocalDataSource.updateWord(updatingWord)
+        wordsLocalDataSource.updateWords(listOf(updatingWord))
 
         val word = (wordsLocalDataSource.getWord(newWord.id) as Result.Success).data
         assertThat(word.id).isEqualTo(newWord.id)
@@ -106,7 +106,13 @@ class DefaultWordsLocalDataSourceTest {
         wordsLocalDataSource.saveWord(word2)
         wordsLocalDataSource.saveWord(word3)
 
-        wordsLocalDataSource.remindWords(listOf(word.id, word2.id, word3.id))
+        wordsLocalDataSource.updateWords(
+            listOf(
+                word.copy(isRemind = true),
+                word2.copy(isRemind = true),
+                word3.copy(isRemind = true),
+            )
+        )
         val words = (wordsLocalDataSource.getWords() as Result.Success).data
         assertThat(words).hasSize(3)
         assertThat(words[0].isRemind).isTrue()

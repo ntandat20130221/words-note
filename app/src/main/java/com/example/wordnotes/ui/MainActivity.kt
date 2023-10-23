@@ -14,8 +14,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
-import com.example.wordnotes.ui.addeditword.AddEditWordFragment
-import com.example.wordnotes.ui.auth.AuthFragment
+
+interface BottomNavHideable
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -43,19 +43,15 @@ class MainActivity : AppCompatActivity() {
     private fun controlBottomNavVisibility() {
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
-                when (fragment) {
-                    is AddEditWordFragment, is AuthFragment -> {
-                        setBottomNavVisibility(View.GONE)
-                        resetBottomNavAnimation()
-                    }
+                if (fragment is BottomNavHideable) {
+                    setBottomNavVisibility(View.GONE)
+                    resetBottomNavAnimation()
                 }
             }
 
             override fun onFragmentStopped(fm: FragmentManager, fragment: Fragment) {
-                when (fragment) {
-                    is AddEditWordFragment, is AuthFragment -> {
-                        setBottomNavVisibility(View.VISIBLE)
-                    }
+                if (fragment is BottomNavHideable) {
+                    setBottomNavVisibility(View.VISIBLE)
                 }
             }
         }, true)

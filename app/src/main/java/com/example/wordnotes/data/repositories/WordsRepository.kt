@@ -10,7 +10,7 @@ interface WordsRepository {
 
     fun getWordStream(wordId: String): Flow<Result<Word>>
 
-    suspend fun refreshWords()
+    suspend fun refreshWords(): Result<Unit>
 
     suspend fun getWords(): Result<List<Word>>
 
@@ -20,9 +20,7 @@ interface WordsRepository {
 
     suspend fun saveWord(word: Word)
 
-    suspend fun updateWord(word: Word)
-
-    suspend fun remindWords(ids: List<String>)
+    suspend fun updateWords(words: List<Word>)
 
     suspend fun deleteWords(ids: List<String>)
 }

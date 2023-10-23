@@ -46,7 +46,9 @@ class WordsFragment : Fragment() {
 
     private var actionMode: ActionMode? = null
     private var inSearching = false
-    private var backPressedCallback: OnBackPressedCallback? = null
+    private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = wordsViewModel.stopSearching()
+    }
     private val voicePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             binding.searchView.listenInput()
@@ -140,10 +142,7 @@ class WordsFragment : Fragment() {
             }
         }
 
-        backPressedCallback = object : OnBackPressedCallback(false) {
-            override fun handleOnBackPressed() = wordsViewModel.stopSearching()
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback!!)
+        requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback)
     }
 
     private fun isVoicePermissionAllowed(): Boolean {
@@ -220,6 +219,12 @@ class WordsFragment : Fragment() {
         )
     }
 
+    // TODO: Fix bug empty layout flickering when refreshing by
+    //  keeping sort of a isRefreshing variable in ViewModel (uiState.items.isEmpty() && isRefreshing)
+
+    // TODO: Test NetworkDataSources
+
+    // TODO: SignIn User Preferences
     private fun updateRecyclerView(uiState: WordsUiState) {
         if (uiState.firstEmit) return
 
@@ -291,10 +296,10 @@ class WordsFragment : Fragment() {
         if (uiState.isSearching) {
             if (!inSearching) startSearching()
             searchAdapter.setData(uiState.searchResult)
-            backPressedCallback?.isEnabled = true
+            backPressedCallback.isEnabled = true
         } else if (inSearching) {
             stopSearching()
-            backPressedCallback?.isEnabled = false
+            backPressedCallback.isEnabled = false
         }
     }
 

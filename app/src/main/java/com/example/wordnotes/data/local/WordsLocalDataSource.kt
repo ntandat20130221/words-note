@@ -20,9 +20,7 @@ interface WordsLocalDataSource {
 
     suspend fun saveWords(words: List<Word>)
 
-    suspend fun updateWord(word: Word)
-
-    suspend fun remindWords(ids: List<String>)
+    suspend fun updateWords(words: List<Word>)
 
     suspend fun deleteWords(ids: List<String>)
 

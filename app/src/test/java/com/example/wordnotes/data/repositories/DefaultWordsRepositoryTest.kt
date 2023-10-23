@@ -1,9 +1,9 @@
 package com.example.wordnotes.data.repositories
 
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.local.FakeWordsLocalDataSource
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.network.FakeWordsNetworkDataSource
+import com.example.wordnotes.sharedtest.FakeWordsLocalDataSource
+import com.example.wordnotes.sharedtest.FakeWordsNetworkDataSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,7 +25,7 @@ class DefaultWordsRepositoryTest {
     @Before
     fun createRepository() {
         wordsLocalDataSource = FakeWordsLocalDataSource(data)
-        wordsNetworkDataSource = FakeWordsNetworkDataSource()
+        wordsNetworkDataSource = FakeWordsNetworkDataSource(data)
         wordRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
     }
 
@@ -82,7 +82,7 @@ class DefaultWordsRepositoryTest {
     @Test
     fun updateWord_GetWord() = runTest {
         val updatingWord = Word(id = "1", word = "word2", pos = "pos2", ipa = "ipa", meaning = "meaning", isRemind = true)
-        wordRepository.updateWord(updatingWord)
+        wordRepository.updateWords(listOf(updatingWord))
 
         val words = (wordRepository.getWords() as Result.Success).data
         assertThat(words).hasSize(3)

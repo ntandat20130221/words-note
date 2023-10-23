@@ -31,7 +31,7 @@ class AddEditWordViewModel(
 
     val englishPartsOfSpeech: Array<String> = arrayOf("Verb", "Noun", "Adj.", "Adv.", "Pro.", "Prep.", "Conj.", "Interj.", "Det.")
 
-    private val _uiState: MutableStateFlow<AddEditWordUiState> = MutableStateFlow(AddEditWordUiState())
+    private val _uiState: MutableStateFlow<AddEditWordUiState> = MutableStateFlow(AddEditWordUiState(isLoading = true))
     val uiState: StateFlow<AddEditWordUiState> = _uiState.asStateFlow()
 
     private val _wordSavedEvent: MutableLiveData<Event<Unit>> = MutableLiveData<Event<Unit>>()
@@ -122,7 +122,7 @@ class AddEditWordViewModel(
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        wordsRepository.updateWord(word.copy(ipa = encloseWithSlashes(word.ipa)))
+        wordsRepository.updateWords(listOf(word.copy(ipa = encloseWithSlashes(word.ipa))))
         _wordSavedEvent.value = Event(Unit)
     }
 

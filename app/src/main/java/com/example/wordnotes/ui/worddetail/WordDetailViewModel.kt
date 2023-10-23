@@ -61,7 +61,7 @@ class WordDetailViewModel(
     }
 
     fun toggleRemind() = viewModelScope.launch {
-        wordsRepository.updateWord(uiState.value.copy(isRemind = !uiState.value.isRemind))
+        wordsRepository.updateWords(listOf(uiState.value.copy(isRemind = !uiState.value.isRemind)))
         _dismissEvent.value = Event(Unit)
     }
 }

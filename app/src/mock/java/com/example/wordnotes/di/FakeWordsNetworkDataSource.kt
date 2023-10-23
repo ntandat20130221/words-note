@@ -1,24 +1,42 @@
 package com.example.wordnotes.di
 
+import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.network.WordsNetworkDataSource
 
-class FakeWordsNetworkDataSource(var words: MutableList<Word>? = mutableListOf()) : WordsNetworkDataSource {
+class FakeWordsNetworkDataSource(
+    initialWords: List<Word>? = listOf(
+        Word(id = "1", word = "word", pos = "verb", ipa = "ipa", meaning = "meaning", isRemind = false),
+        Word(id = "2", word = "word2", pos = "verb", ipa = "ipa2", meaning = "meaning2", isRemind = true),
+        Word(id = "3", word = "word3", pos = "verb", ipa = "ipa3", meaning = "meaning3", isRemind = true),
+    )
+) : WordsNetworkDataSource {
 
-    override suspend fun loadWords(onCompleted: (com.example.wordnotes.data.Result<List<Word>>) -> Unit) {
+    private var _words: MutableMap<String, Word>? = null
+
+    var words: List<Word>?
+        get() = _words?.values?.toList()
+        set(value) {
+            _words = value?.associateBy { it.id }?.toMutableMap()
+        }
+
+    init {
+        words = initialWords
     }
 
-    override suspend fun saveWords(words: List<Word>) {
-        this.words = words.toMutableList()
+    override suspend fun loadWords(): Result<List<Word>> {
+        return words?.let { Result.Success(it) } ?: Result.Error(Exception("Word not found"))
     }
 
-    override suspend fun updateWord(word: Word) {
+    override suspend fun saveWord(word: Word) {
+        _words?.put(word.id, word)
+    }
 
+    override suspend fun updateWords(words: List<Word>) {
+        _words?.putAll(words.associateBy { it.id })
     }
 
     override suspend fun deleteWords(ids: List<String>) {
-    }
-
-    override suspend fun remindWords(ids: List<String>) {
+        _words?.keys?.removeAll(ids.toSet())
     }
 }

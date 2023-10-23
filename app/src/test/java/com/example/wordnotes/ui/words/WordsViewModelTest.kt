@@ -1,10 +1,10 @@
 package com.example.wordnotes.ui.words
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.wordnotes.data.MainCoroutineRule
-import com.example.wordnotes.data.createEmptyCollector
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.repositories.FakeWordsRepository
+import com.example.wordnotes.sharedtest.FakeWordsRepository
+import com.example.wordnotes.sharedtest.MainCoroutineRule
+import com.example.wordnotes.sharedtest.createEmptyCollector
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,11 +25,7 @@ class WordsViewModelTest {
 
     @Before
     fun setUpViewModel() {
-        wordsRepository = FakeWordsRepository().apply {
-            addWords(Word(id = "1", word = "word", pos = "adj.", ipa = "ipa", meaning = "meaning", isRemind = true))
-            addWords(Word(id = "2", word = "word2", pos = "noun", ipa = "ipa2", meaning = "meaning2", isRemind = true))
-            addWords(Word(id = "3", word = "word3", pos = "verb", ipa = "ipa3", meaning = "meaning3"))
-        }
+        wordsRepository = FakeWordsRepository()
         wordsViewModel = WordsViewModel(wordsRepository)
     }
 

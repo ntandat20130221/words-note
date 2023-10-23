@@ -1,8 +1,5 @@
 package com.example.wordnotes.ui.addeditword
 
-import androidx.core.content.edit
-import androidx.preference.PreferenceManager
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -23,36 +20,23 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.example.wordnotes.R
-import com.example.wordnotes.WordNotesApplication
-import com.example.wordnotes.testutils.AddSomeWordItemsRule
+import com.example.wordnotes.testutils.SignInRule
 import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.ui.words.WordsViewHolder
 import com.google.common.truth.Truth.assertThat
 import org.hamcrest.Matchers.allOf
-import org.junit.BeforeClass
-import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 
 class AddEditWordFragmentTest {
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            val context = ApplicationProvider.getApplicationContext<WordNotesApplication>()
-            PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean("is_sign_in", true) }
-        }
-
-        @get:ClassRule
-        @JvmStatic
-        val addSomeWordItemsRule = AddSomeWordItemsRule()
-    }
-
     @get:Rule
     val activityScenarioRule = activityScenarioRule<MainActivity>()
+
+    @get:Rule
+    val signInRule = SignInRule()
 
     @Test
     fun addNewWord_AtInitial_InputWordGetFocus_SoftKeyboardShown() {
@@ -105,7 +89,7 @@ class AddEditWordFragmentTest {
         editWord()
         onView(withId(R.id.add_edit_word_fragment_layout)).check(matches(isDisplayed()))
         onView(withId(R.id.input_word)).check(matches(withText("word")))
-        onView(withId(R.id.input_ipa)).check(matches(withText("/ipa/")))
+        onView(withId(R.id.input_ipa)).check(matches(withText("ipa")))
         onView(withId(R.id.pos_recycler_view)).check(matches(atPosition(0, isSelected())))
         onView(withId(R.id.input_meaning)).check(matches(withText("meaning")))
         onView(withId(R.id.check_remind)).check(matches(isNotChecked()))

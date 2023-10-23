@@ -4,11 +4,12 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.text.format.DateFormat
 import android.util.AttributeSet
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
+import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.time.LocalTime
@@ -63,12 +64,12 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         return when (key) {
             SettingsFragment.KEY_START_TIME -> {
                 val endTime = Formatter.parse(wordPreferences.getEndTime() ?: DEFAULT_END_TIME)
-                time.isBefore(endTime) || (time.compareTo(endTime) != 0)
+                time.isBefore(endTime) && (time.compareTo(endTime) != 0)
             }
 
             SettingsFragment.KEY_END_TIME -> {
                 val startTime = Formatter.parse(wordPreferences.getStartTime() ?: DEFAULT_START_TIME)
-                time.isAfter(startTime) || (time.compareTo(startTime) != 0)
+                time.isAfter(startTime) && (time.compareTo(startTime) != 0)
             }
 
             else -> false
@@ -79,14 +80,15 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         this.fragmentManager = fragmentManager
     }
 
-    // TODO: Replace toast with dialog.
     private fun showToast() {
-        val message = when (key) {
-            SettingsFragment.KEY_START_TIME -> "Start time must be sooner than End time!"
-            SettingsFragment.KEY_END_TIME -> "End time must be later than Start time!"
-            else -> "Error"
-        }
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.error)
+            .setMessage(
+                if (key == SettingsFragment.KEY_START_TIME) R.string.start_time_must_be_sooner_than_end_time
+                else R.string.end_time_must_be_later_than_start_time
+            )
+            .setPositiveButton(R.string.ok, null)
+            .show()
     }
 
     class Formatter {

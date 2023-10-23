@@ -60,12 +60,8 @@ class DefaultWordsLocalDataSource internal constructor(
         wordsDao.insertWords(words)
     }
 
-    override suspend fun updateWord(word: Word) = withContext(ioDispatcher) {
-        wordsDao.updateWord(word)
-    }
-
-    override suspend fun remindWords(ids: List<String>) {
-        wordsDao.remindWords(ids)
+    override suspend fun updateWords(words: List<Word>) {
+        wordsDao.updateWords(words)
     }
 
     override suspend fun deleteWords(ids: List<String>) = withContext(ioDispatcher) {

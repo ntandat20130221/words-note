@@ -43,12 +43,28 @@
     </dialog>
     <navigation
         android:id="@+id/auth_flow"
-        app:startDestination="@id/auth_fragment">
+        app:startDestination="@id/sign_in_fragment">
         <fragment
-            android:id="@+id/auth_fragment"
-            android:name="com.example.wordnotes.ui.auth.AuthFragment"
-            android:label="AuthFragment"
-            tools:layout="@layout/fragment_auth" />
+            android:id="@+id/sign_in_fragment"
+            android:name="com.example.wordnotes.ui.auth.SignInFragment"
+            android:label="SignInFragment"
+            tools:layout="@layout/fragment_sign_in">
+            <action
+                android:id="@+id/action_sign_in_fragment_to_sign_up_fragment"
+                app:destination="@id/sign_up_fragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/sign_up_fragment"
+            android:name="com.example.wordnotes.ui.auth.SignUpFragment"
+            android:label="SignUpFragment"
+            tools:layout="@layout/fragment_sign_up">
+            <action
+                android:id="@+id/action_sign_up_fragment_to_sign_in_fragment"
+                app:destination="@id/sign_in_fragment"
+                app:popUpTo="@id/sign_in_fragment"
+                app:popUpToInclusive="true" />
+        </fragment>
     </navigation>
     <fragment
         android:id="@+id/routing_fragment"

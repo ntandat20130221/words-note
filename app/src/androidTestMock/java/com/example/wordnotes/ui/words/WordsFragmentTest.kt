@@ -1,8 +1,5 @@
 package com.example.wordnotes.ui.words
 
-import androidx.core.content.edit
-import androidx.preference.PreferenceManager
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu
 import androidx.test.espresso.Espresso.pressBack
@@ -22,8 +19,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.example.wordnotes.WordNotesApplication
-import com.example.wordnotes.testutils.AddSomeWordItemsRule
+import com.example.wordnotes.testutils.SignInRule
 import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.getString
 import com.example.wordnotes.testutils.hasItemCount
@@ -31,26 +27,16 @@ import com.example.wordnotes.testutils.withBackgroundColor
 import com.example.wordnotes.ui.MainActivity
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
 class WordsFragmentTest {
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            val context = ApplicationProvider.getApplicationContext<WordNotesApplication>()
-            PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean("is_sign_in", true) }
-        }
-    }
-
     @get:Rule
     val activityScenarioRule = activityScenarioRule<MainActivity>()
 
     @get:Rule
-    val addSomeWordItemsRule = AddSomeWordItemsRule()
+    val signInRule = SignInRule()
 
     @Test
     fun startThenStopActionMode_FabAndBottomNavDisplayCorrectly() {
