@@ -20,6 +20,10 @@
         android:name="com.example.wordnotes.ui.settings.SettingsFragment"
         tools:layout="@layout/fragment_settings" />
     <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.example.wordnotes.ui.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
         android:id="@+id/add_edit_word_fragment"
         android:name="com.example.wordnotes.ui.addeditword.AddEditWordFragment"
         tools:layout="@layout/fragment_add_edit_word">
@@ -47,7 +51,6 @@
         <fragment
             android:id="@+id/sign_in_fragment"
             android:name="com.example.wordnotes.ui.auth.SignInFragment"
-            android:label="SignInFragment"
             tools:layout="@layout/fragment_sign_in">
             <action
                 android:id="@+id/action_sign_in_fragment_to_sign_up_fragment"
@@ -57,7 +60,6 @@
         <fragment
             android:id="@+id/sign_up_fragment"
             android:name="com.example.wordnotes.ui.auth.SignUpFragment"
-            android:label="SignUpFragment"
             tools:layout="@layout/fragment_sign_up">
             <action
                 android:id="@+id/action_sign_up_fragment_to_sign_in_fragment"

@@ -51,6 +51,7 @@
     <string name="start_time_must_be_sooner_than_end_time">Start time must be sooner than End time!</string>
     <string name="end_time_must_be_later_than_start_time">End time must be later than Start time!</string>
     <string name="error">Error!</string>
+    <string name="profile">Profile</string>
 
     <plurals name="remind_times">
         <item quantity="one">%d time</item>
