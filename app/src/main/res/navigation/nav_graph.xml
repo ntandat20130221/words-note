@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/routing_fragment">
+
+    <action
+        android:id="@+id/action_to_routing_fragment"
+        app:destination="@id/routing_fragment"
+        app:popUpTo="@id/words_fragment"
+        app:popUpToInclusive="true" />
+
     <fragment
         android:id="@+id/words_fragment"
         android:name="com.example.wordnotes.ui.words.WordsFragment"
@@ -16,13 +23,21 @@
             app:destination="@id/word_detail_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/settings_fragment"
-        android:name="com.example.wordnotes.ui.settings.SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        android:id="@+id/reminder_fragment"
+        android:name="com.example.wordnotes.ui.reminder.ReminderFragment"
+        tools:layout="@layout/fragment_reminder" />
     <fragment
-        android:id="@+id/profile_fragment"
-        android:name="com.example.wordnotes.ui.profile.ProfileFragment"
-        tools:layout="@layout/fragment_profile" />
+        android:id="@+id/account_fragment"
+        android:name="com.example.wordnotes.ui.account.AccountFragment"
+        tools:layout="@layout/fragment_account">
+        <action
+            android:id="@+id/action_account_fragment_to_edit_profile_fragment"
+            app:destination="@id/edit_profile_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_profile_fragment"
+        android:name="com.example.wordnotes.ui.account.EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile" />
     <fragment
         android:id="@+id/add_edit_word_fragment"
         android:name="com.example.wordnotes.ui.addeditword.AddEditWordFragment"

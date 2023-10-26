@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Word Notes</string>
     <string name="home">Home</string>
-    <string name="settings">Settings</string>
     <string name="search">Search</string>
     <string name="words">Words</string>
     <string name="ipa">IPA</string>
@@ -51,7 +50,20 @@
     <string name="start_time_must_be_sooner_than_end_time">Start time must be sooner than End time!</string>
     <string name="end_time_must_be_later_than_start_time">End time must be later than Start time!</string>
     <string name="error">Error!</string>
-    <string name="profile">Profile</string>
+    <string name="account">Account</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_gender">Choose gender</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="gender">Gender</string>
+    <string name="phone">Phone</string>
+    <string name="username">Username</string>
+
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 
     <plurals name="remind_times">
         <item quantity="one">%d time</item>

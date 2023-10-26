@@ -11,6 +11,7 @@ import androidx.work.WorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.wordnotes.data.Result
+import com.example.wordnotes.data.WORDS_PATH
 import com.example.wordnotes.data.model.Word
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
@@ -22,13 +23,10 @@ import kotlinx.coroutines.tasks.await
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
-const val WORDS_PATH = "words"
-const val USERS_PATH = "users"
+private const val DATA_KEY = "data_key"
+private const val WORK_KEY = "work_key"
 
-const val DATA_KEY = "data_key"
-const val WORK_KEY = "work"
-
-enum class WorkType { SAVE, UPDATE, DELETE }
+private enum class WorkType { SAVE, UPDATE, DELETE }
 
 class DefaultWordNetworkDataSource(private val workManager: WorkManager) : WordsNetworkDataSource {
 

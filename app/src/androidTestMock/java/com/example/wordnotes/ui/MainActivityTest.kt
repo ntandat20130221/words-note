@@ -27,10 +27,10 @@ class MainActivityTest {
     @Test(expected = androidx.test.espresso.NoActivityResumedException::class)
     fun navigateWithBottomNav_BottomNavBehaveCorrectly() {
         onView(withId(R.id.words_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
         onView(withId(R.id.words_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
         pressBack()
         pressBack()
         assertThat(activityScenarioRule.scenario.state.isAtLeast(Lifecycle.State.DESTROYED))
@@ -38,20 +38,20 @@ class MainActivityTest {
 
     @Test
     fun multiClickSettingBottomNavItem_DestinationDidNotChange() {
-        onView(withId(R.id.settings_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment_layout)).check(matches(isDisplayed()))
-        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.settings_fragment) }
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment_layout)).check(matches(isDisplayed()))
+        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.reminder_fragment) }
 
-        onView(withId(R.id.settings_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
-        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.settings_fragment) }
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.reminder_fragment) }
     }
 
     @Test
     fun multiClickSettingBottomNavItem_PressBack_ReturnWordsFragment() {
-        onView(withId(R.id.settings_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
-        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
         pressBack()
         onView(withId(R.id.words_fragment)).check(matches(isDisplayed()))
         withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.words_fragment) }
@@ -68,7 +68,7 @@ class MainActivityTest {
         pressBack()
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.settings_fragment)).perform(click())
+        onView(withId(R.id.reminder_fragment)).perform(click())
         onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
 
         onView(withId(R.id.words_fragment)).perform(click())

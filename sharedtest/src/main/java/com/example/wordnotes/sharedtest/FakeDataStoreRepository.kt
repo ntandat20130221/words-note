@@ -13,6 +13,10 @@ class FakeDataStoreRepository : DataStoreRepository {
         return _dataStore[key] as String?
     }
 
+    override suspend fun removeString(key: String) {
+        _dataStore.remove(key)
+    }
+
     override suspend fun putBoolean(key: String, value: Boolean) {
         _dataStore[key] = value
     }

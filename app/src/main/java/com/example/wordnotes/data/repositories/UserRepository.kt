@@ -4,6 +4,12 @@ import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
 
 interface UserRepository {
+
     suspend fun signUp(user: User): Result<User>
+
     suspend fun signIn(user: User): Result<User>
+
+    suspend fun logOut()
+
+    suspend fun getUser(): User
 }

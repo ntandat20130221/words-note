@@ -14,8 +14,8 @@ import com.example.wordnotes.data.repositories.DefaultUserRepository
 import com.example.wordnotes.data.repositories.DefaultWordsRepository
 import com.example.wordnotes.data.repositories.UserRepository
 import com.example.wordnotes.data.repositories.WordsRepository
-import com.example.wordnotes.ui.settings.WordPreferences
-import com.example.wordnotes.ui.settings.WordReminder
+import com.example.wordnotes.ui.reminder.WordPreferences
+import com.example.wordnotes.ui.reminder.WordReminder
 
 interface Factory<out T> {
     fun create(): T

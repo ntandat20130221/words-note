@@ -36,4 +36,12 @@ class FakeUserRepository(
         }
             ?: Result.Error(Exception("The user doesn't exist."))
     }
+
+    override suspend fun logOut() {
+
+    }
+
+    override suspend fun getUser(): User {
+        return User()
+    }
 }

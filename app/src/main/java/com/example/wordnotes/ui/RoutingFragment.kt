@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
-import com.example.wordnotes.data.repositories.KEY_IS_SIGNED_IN
+import com.example.wordnotes.data.KEY_IS_SIGNED_IN
 import kotlinx.coroutines.runBlocking
 
 class RoutingFragment : Fragment(), BottomNavHideable {
@@ -15,8 +15,10 @@ class RoutingFragment : Fragment(), BottomNavHideable {
         runBlocking {
             when ((requireContext().applicationContext as WordNotesApplication).appContainer.dataStoreRepository.getBoolean(KEY_IS_SIGNED_IN)) {
                 true -> {
-                    findNavController().graph.setStartDestination(R.id.words_fragment)
-                    findNavController().navigate(RoutingFragmentDirections.actionRoutingFragmentToWordsFragment())
+                    findNavController().apply {
+                        graph.setStartDestination(R.id.words_fragment)
+                        navigate(RoutingFragmentDirections.actionRoutingFragmentToWordsFragment())
+                    }
                 }
 
                 else -> findNavController().navigate(RoutingFragmentDirections.actionRoutingFragmentToAuthFlow())

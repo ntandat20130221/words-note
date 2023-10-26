@@ -99,4 +99,10 @@
         <!-- Specify overlaying attributes, e.g. colorContainer,etc. -->
         <!-- <item name="materialThemeOverlay">@style/SearchViewOverlay</item> -->
     </style>
+
+    <!-- Rounded ImageView-->
+    <style name="RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
