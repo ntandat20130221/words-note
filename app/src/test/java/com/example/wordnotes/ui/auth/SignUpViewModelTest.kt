@@ -20,7 +20,7 @@ class SignUpViewModelTest {
 
     @Before
     fun setUpViewModel() {
-        userRepository = FakeUserRepository()
+        userRepository = FakeUserRepository(testDispatcher = mainCoroutineRule.testDispatcher)
         signUpViewModel = SignUpViewModel(userRepository)
     }
 

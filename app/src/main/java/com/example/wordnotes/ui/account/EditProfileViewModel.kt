@@ -2,6 +2,7 @@ package com.example.wordnotes.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +20,10 @@ class EditProfileViewModel(private val userRepository: UserRepository) : ViewMod
 
     init {
         viewModelScope.launch {
-            userRepository.getUser().let { user ->
-                _uiState.update { it.copy(user = user) }
+            userRepository.getUser().let { result ->
+                if (result is Result.Success) {
+                    _uiState.update { it.copy(user = result.data) }
+                }
             }
         }
     }

@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val DOB_FORMAT = "dd/MM/yyyy"
+
 class EditProfileFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
@@ -82,7 +84,7 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
         binding.inputDob.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker().build().apply {
                 addOnPositiveButtonClickListener {
-                    val dateString = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(it))
+                    val dateString = SimpleDateFormat(DOB_FORMAT, Locale.getDefault()).format(Date(it))
                     editProfileViewModel.updateProfile { currentUser -> currentUser.copy(dob = dateString) }
                 }
             }

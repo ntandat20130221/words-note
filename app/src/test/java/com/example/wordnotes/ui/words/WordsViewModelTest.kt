@@ -7,6 +7,7 @@ import com.example.wordnotes.sharedtest.MainCoroutineRule
 import com.example.wordnotes.sharedtest.createEmptyCollector
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -31,8 +32,7 @@ class WordsViewModelTest {
 
     @Test
     fun checkSizeAtInitialState() = runTest {
-        createEmptyCollector(backgroundScope, testScheduler, wordsViewModel.uiState)
-        assertThat(wordsViewModel.uiState.value.items).hasSize(3)
+        assertThat(wordsViewModel.uiState.first().items).hasSize(3)
     }
 
     @Test

@@ -48,7 +48,7 @@ class DefaultUserRepository(
         scope.launch { removeUserInfo() }
     }
 
-    override suspend fun getUser(): User = withContext(ioDispatcher) {
+    override suspend fun getUser(): Result<User> = withContext(ioDispatcher) {
         val id = async { dataStoreRepository.getString(KEY_USER_ID) }
         val username = async { dataStoreRepository.getString(KEY_USER_NAME) }
         val email = async { dataStoreRepository.getString(KEY_USER_EMAIL) }
@@ -57,14 +57,16 @@ class DefaultUserRepository(
         val gender = async { dataStoreRepository.getString(KEY_USER_GENDER) }
         val dob = async { dataStoreRepository.getString(KEY_USER_DOB) }
 
-        User(
-            id = id.await() ?: "",
-            username = username.await() ?: "",
-            email = email.await() ?: "",
-            password = password.await() ?: "",
-            phone = phone.await() ?: "",
-            gender = gender.await() ?: "",
-            dob = dob.await() ?: "",
+        Result.Success(
+            User(
+                id = id.await() ?: "",
+                username = username.await() ?: "",
+                email = email.await() ?: "",
+                password = password.await() ?: "",
+                phone = phone.await() ?: "",
+                gender = gender.await() ?: "",
+                dob = dob.await() ?: "",
+            )
         )
     }
 
