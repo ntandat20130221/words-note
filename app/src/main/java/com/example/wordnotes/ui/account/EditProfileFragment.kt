@@ -25,6 +25,8 @@ import java.util.Locale
 
 private const val DOB_FORMAT = "dd/MM/yyyy"
 
+// TODO: Styling all layout file, config change: auth & profile package
+
 class EditProfileFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
@@ -112,8 +114,8 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
                         if (inputUsername.text.toString() != uiState.user.username) inputUsername.setText(uiState.user.username)
                         if (inputEmail.text.toString() != uiState.user.email) inputEmail.setText(uiState.user.email)
                         if (inputPhone.text.toString() != uiState.user.phone) inputPhone.setText(uiState.user.phone)
-                        if (inputGender.text.toString() != uiState.user.gender) inputPhone.setText(uiState.user.gender)
-                        if (inputDob.text.toString() != uiState.user.dob) inputPhone.setText(uiState.user.dob)
+                        if (inputGender.text.toString() != uiState.user.gender) inputGender.setText(uiState.user.gender)
+                        if (inputDob.text.toString() != uiState.user.dob) inputDob.setText(uiState.user.dob)
                     }
                 }
             }

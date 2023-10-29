@@ -50,210 +50,167 @@
                 app:shapeAppearanceOverlay="@style/RoundedImageView"
                 app:srcCompat="@drawable/profile" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <View
+                android:id="@+id/background_view"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/bg_edit_profile"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="24dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_dob"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_avatar_outline">
+                app:layout_constraintTop_toBottomOf="@id/view_avatar_outline"
+                app:layout_constraintVertical_bias="0.0" />
 
-                <TextView
-                    android:id="@+id/text_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/username"
-                    android:textColor="#8C8C8C"
-                    android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/text_username"
+                style="@style/ProfileTextViewStyle"
+                android:text="@string/username"
+                app:layout_constraintStart_toStartOf="@id/background_view"
+                app:layout_constraintTop_toTopOf="@id/background_view" />
 
-                <EditText
-                    android:id="@+id/input_username"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="@null"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_username"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/text_username"
-                    app:layout_constraintTop_toTopOf="@+id/text_username"
-                    tools:ignore="LabelFor"
-                    tools:text="John Wick" />
+            <EditText
+                android:id="@+id/input_username"
+                style="@style/ProfileEditTextStyle"
+                android:layout_marginStart="16dp"
+                android:hint="@string/your_username"
+                android:importantForAutofill="no"
+                app:layout_constraintBottom_toBottomOf="@+id/text_username"
+                app:layout_constraintEnd_toEndOf="@id/background_view"
+                app:layout_constraintStart_toEndOf="@+id/text_username"
+                app:layout_constraintTop_toTopOf="@+id/text_username"
+                tools:ignore="LabelFor"
+                tools:text="John Wick" />
 
-                <View
-                    android:id="@+id/d1"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="24dp"
-                    android:background="?colorOutlineVariant"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_username" />
+            <View
+                android:id="@+id/d1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?colorOutlineVariant"
+                app:layout_constraintEnd_toEndOf="@+id/input_username"
+                app:layout_constraintStart_toStartOf="@+id/text_username"
+                app:layout_constraintTop_toBottomOf="@id/text_username" />
 
-                <TextView
-                    android:id="@+id/text_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/email"
-                    android:textColor="#8C8C8C"
-                    android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/d1" />
+            <TextView
+                android:id="@+id/text_email"
+                style="@style/ProfileTextViewStyle"
+                android:text="@string/email"
+                app:layout_constraintStart_toStartOf="@+id/background_view"
+                app:layout_constraintTop_toBottomOf="@id/d1" />
 
-                <EditText
-                    android:id="@+id/input_email"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="@null"
-                    android:importantForAutofill="no"
-                    android:inputType="textEmailAddress"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_email"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/text_email"
-                    app:layout_constraintTop_toTopOf="@+id/text_email"
-                    tools:text="johnwick@gmail.com" />
+            <EditText
+                android:id="@+id/input_email"
+                style="@style/ProfileEditTextStyle"
+                android:hint="@string/your_email_address"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress"
+                app:layout_constraintBottom_toBottomOf="@+id/text_email"
+                app:layout_constraintEnd_toEndOf="@+id/background_view"
+                app:layout_constraintStart_toEndOf="@+id/text_email"
+                app:layout_constraintTop_toTopOf="@+id/text_email"
+                tools:ignore="LabelFor"
+                tools:text="johnwick@gmail.com" />
 
-                <View
-                    android:id="@+id/d2"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="24dp"
-                    android:background="?colorOutlineVariant"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_email" />
+            <View
+                android:id="@+id/d2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?colorOutlineVariant"
+                app:layout_constraintEnd_toEndOf="@+id/input_email"
+                app:layout_constraintStart_toStartOf="@+id/text_email"
+                app:layout_constraintTop_toBottomOf="@id/text_email" />
 
-                <TextView
-                    android:id="@+id/text_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/phone"
-                    android:textColor="#8C8C8C"
-                    android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/d2" />
+            <TextView
+                android:id="@+id/text_phone"
+                style="@style/ProfileTextViewStyle"
+                android:text="@string/phone"
+                app:layout_constraintStart_toStartOf="@+id/background_view"
+                app:layout_constraintTop_toBottomOf="@id/d2" />
 
-                <EditText
-                    android:id="@+id/input_phone"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="@null"
-                    android:importantForAutofill="no"
-                    android:inputType="phone"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_phone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/text_phone"
-                    app:layout_constraintTop_toTopOf="@+id/text_phone"
-                    tools:text="+84 44 888 777" />
+            <EditText
+                android:id="@+id/input_phone"
+                style="@style/ProfileEditTextStyle"
+                android:hint="@string/your_phone_number"
+                android:importantForAutofill="no"
+                android:inputType="phone"
+                app:layout_constraintBottom_toBottomOf="@+id/text_phone"
+                app:layout_constraintEnd_toEndOf="@+id/background_view"
+                app:layout_constraintStart_toEndOf="@+id/text_phone"
+                app:layout_constraintTop_toTopOf="@+id/text_phone"
+                tools:ignore="LabelFor"
+                tools:text="0976 877 899" />
 
-                <View
-                    android:id="@+id/d3"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="24dp"
-                    android:background="?colorOutlineVariant"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_phone" />
+            <View
+                android:id="@+id/d3"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?colorOutlineVariant"
+                app:layout_constraintEnd_toEndOf="@+id/input_phone"
+                app:layout_constraintStart_toStartOf="@+id/text_phone"
+                app:layout_constraintTop_toBottomOf="@id/text_phone" />
 
-                <TextView
-                    android:id="@+id/text_gender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/gender"
-                    android:textColor="#8C8C8C"
-                    android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/d3" />
+            <TextView
+                android:id="@+id/text_gender"
+                style="@style/ProfileTextViewStyle"
+                android:text="@string/gender"
+                app:layout_constraintStart_toStartOf="@+id/background_view"
+                app:layout_constraintTop_toBottomOf="@id/d3" />
 
-                <EditText
-                    android:id="@+id/input_gender"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:hint="@null"
-                    android:importantForAutofill="no"
-                    android:inputType="none"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_gender"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/text_gender"
-                    app:layout_constraintTop_toTopOf="@+id/text_gender"
-                    tools:text="Male" />
+            <EditText
+                android:id="@+id/input_gender"
+                style="@style/ProfileEditTextStyle"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:hint="@string/your_gender"
+                android:importantForAutofill="no"
+                android:inputType="none"
+                app:layout_constraintBottom_toBottomOf="@+id/text_gender"
+                app:layout_constraintEnd_toEndOf="@+id/background_view"
+                app:layout_constraintStart_toEndOf="@+id/text_gender"
+                app:layout_constraintTop_toTopOf="@+id/text_gender"
+                tools:ignore="LabelFor"
+                tools:text="Male" />
 
-                <View
-                    android:id="@+id/d4"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="24dp"
-                    android:background="?colorOutlineVariant"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_gender" />
+            <View
+                android:id="@+id/d4"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="?colorOutlineVariant"
+                app:layout_constraintEnd_toEndOf="@+id/input_gender"
+                app:layout_constraintStart_toStartOf="@+id/text_gender"
+                app:layout_constraintTop_toBottomOf="@id/text_gender" />
 
-                <TextView
-                    android:id="@+id/text_dob"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/date_of_birth"
-                    android:textColor="#8C8C8C"
-                    android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/d4" />
+            <TextView
+                android:id="@+id/text_dob"
+                style="@style/ProfileTextViewStyle"
+                android:layout_marginBottom="24dp"
+                android:text="@string/date_of_birth"
+                app:layout_constraintBottom_toBottomOf="@id/background_view"
+                app:layout_constraintStart_toStartOf="@+id/background_view"
+                app:layout_constraintTop_toBottomOf="@id/d4" />
 
-                <EditText
-                    android:id="@+id/input_dob"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:hint="@null"
-                    android:importantForAutofill="no"
-                    android:inputType="date"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="0dp"
-                    android:textAlignment="textEnd"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_dob"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/text_dob"
-                    app:layout_constraintTop_toTopOf="@+id/text_dob"
-                    tools:text="30/12/2002" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <EditText
+                android:id="@+id/input_dob"
+                style="@style/ProfileEditTextStyle"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:hint="@string/your_date_of_birth"
+                android:importantForAutofill="no"
+                android:inputType="date"
+                app:layout_constraintBottom_toBottomOf="@+id/text_dob"
+                app:layout_constraintEnd_toEndOf="@+id/background_view"
+                app:layout_constraintStart_toEndOf="@+id/text_dob"
+                app:layout_constraintTop_toTopOf="@+id/text_dob"
+                tools:ignore="LabelFor"
+                tools:text="30/12/2002" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>
