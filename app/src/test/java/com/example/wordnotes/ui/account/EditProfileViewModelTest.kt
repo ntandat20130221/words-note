@@ -1,5 +1,6 @@
 package com.example.wordnotes.ui.account
 
+import androidx.lifecycle.SavedStateHandle
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.sharedtest.FakeUserRepository
 import com.example.wordnotes.sharedtest.MainCoroutineRule
@@ -10,11 +11,15 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
 class EditProfileViewModelTest {
     private lateinit var userRepository: FakeUserRepository
     private lateinit var editProfileViewModel: EditProfileViewModel
+    private lateinit var savedStateHandle: SavedStateHandle
 
     private val user = User(id = "1", username = "user1", email = "user1@gmail.com", password = "123456")
 
@@ -25,7 +30,8 @@ class EditProfileViewModelTest {
     fun createViewModel() = runTest {
         userRepository = FakeUserRepository(testDispatcher = mainCoroutineRule.testDispatcher)
         userRepository.signIn(user)
-        editProfileViewModel = EditProfileViewModel(userRepository)
+        savedStateHandle = SavedStateHandle()
+        editProfileViewModel = EditProfileViewModel(userRepository, savedStateHandle)
     }
 
     @Test

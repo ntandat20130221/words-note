@@ -1,8 +1,8 @@
 package com.example.wordnotes.sharedtest
 
+import android.net.Uri
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
-import com.example.wordnotes.data.network.NetworkUser
 import com.example.wordnotes.data.repositories.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -43,14 +43,23 @@ class FakeUserRepository(
             ?: Result.Error(Exception("The user doesn't exist."))
     }
 
+    override suspend fun resetPassword(email: String): Result<Unit> = withContext(testDispatcher) {
+        _users.values.find { it.email == email }?.let { foundUser ->
+            _users[foundUser.id] = foundUser.copy(password = "123456")
+            Result.Success(Unit)
+        }
+            ?: Result.Error()
+    }
+
     override suspend fun logOut() {
         withContext(testDispatcher) {
             currentUser = null
         }
     }
 
-    override suspend fun setUser(networkUser: NetworkUser): Result<User> {
-        TODO("Not yet implemented")
+    override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(testDispatcher) {
+        currentUser = user
+        Result.Success(user)
     }
 
     override suspend fun getUser(): Result<User> = withContext(testDispatcher) {

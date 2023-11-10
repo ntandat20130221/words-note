@@ -1,10 +1,15 @@
 package com.example.wordnotes.ui.account
 
+import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
@@ -23,10 +28,12 @@ import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 class EditProfileFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentEditProfileBinding? = null
@@ -65,6 +72,7 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         binding.viewImage.setOnClickListener {
             pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -78,8 +86,8 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
             editProfileViewModel.updateProfile { currentUser -> currentUser.copy(username = text.toString()) }
         }
 
-        binding.inputEmail.doOnTextChanged { text, _, _, _ ->
-            editProfileViewModel.updateProfile { currentUser -> currentUser.copy(email = text.toString()) }
+        binding.inputEmail.setOnClickListener {
+            Snackbar.make(binding.root, R.string.cant_change_email_address, Snackbar.LENGTH_SHORT).show()
         }
 
         binding.inputPhone.doOnTextChanged { text, _, _, _ ->
@@ -120,6 +128,22 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
                 else -> false
             }
         }
+
+        binding.touchInterceptor.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val view = requireActivity().currentFocus
+                if (view is EditText) {
+                    val outRect = Rect()
+                    view.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                        view.clearFocus()
+                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
+                    }
+                }
+            }
+            true
+        }
     }
 
     private fun observeUiState() {
@@ -150,9 +174,7 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
                         }
 
                         if (uiState.imageUri != Uri.EMPTY) {
-                            imageProfile.load(uiState.imageUri) {
-                                transformations(CircleCropTransformation())
-                            }
+                            imageProfile.load(uiState.imageUri)
                         } else if (uiState.user.profileImageUrl.isNotBlank()) {
                             imageProfile.load(uiState.user.profileImageUrl) {
                                 crossfade(true)

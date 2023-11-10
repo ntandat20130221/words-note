@@ -10,6 +10,7 @@ import com.example.wordnotes.data.repositories.WordsRepository
 import com.example.wordnotes.ui.account.AccountViewModel
 import com.example.wordnotes.ui.account.EditProfileViewModel
 import com.example.wordnotes.ui.addeditword.AddEditWordViewModel
+import com.example.wordnotes.ui.auth.ForgotPasswordViewModel
 import com.example.wordnotes.ui.auth.SignInViewModel
 import com.example.wordnotes.ui.auth.SignUpViewModel
 import com.example.wordnotes.ui.worddetail.WordDetailViewModel
@@ -28,6 +29,7 @@ val WordViewModelFactory = object : ViewModelProvider.Factory {
             isAssignableFrom(WordDetailViewModel::class.java) -> WordDetailViewModel(wordsRepository)
             isAssignableFrom(SignUpViewModel::class.java) -> SignUpViewModel(userRepository)
             isAssignableFrom(SignInViewModel::class.java) -> SignInViewModel(userRepository)
+            isAssignableFrom(ForgotPasswordViewModel::class.java) -> ForgotPasswordViewModel(userRepository, extras.createSavedStateHandle())
             isAssignableFrom(AccountViewModel::class.java) -> AccountViewModel(userRepository)
             isAssignableFrom(EditProfileViewModel::class.java) -> EditProfileViewModel(userRepository, extras.createSavedStateHandle())
             else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

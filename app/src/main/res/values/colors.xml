@@ -27,4 +27,6 @@
     <color name="primary_opacity_12_dark">#1FD0BCFF</color>
     <color name="hint_highlight">#1C1B1F</color>
     <color name="hint_highlight_dark">#B1ADBD</color>
+    <color name="no_internet">#D9424242</color>
+    <color name="no_internet_dark">#E6BAB3BA</color>
 </resources>

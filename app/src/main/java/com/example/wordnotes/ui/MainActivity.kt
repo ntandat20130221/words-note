@@ -1,24 +1,24 @@
 package com.example.wordnotes.ui
 
 import android.animation.ValueAnimator
-import android.content.Context
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 interface BottomNavHideable
 
@@ -28,28 +28,14 @@ class MainActivity : AppCompatActivity() {
     @VisibleForTesting
     lateinit var navController: NavController
 
+    private var noInternetMessageJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
         setUpNavigation()
         controlBottomNavVisibility()
-    }
-
-    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            val view = currentFocus
-            if (view is EditText) {
-                val outRect = Rect()
-                view.getGlobalVisibleRect(outRect)
-                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
-                    view.clearFocus()
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event)
     }
 
     private fun setUpNavigation() {
@@ -109,5 +95,36 @@ class MainActivity : AppCompatActivity() {
     fun resetBottomNavAnimation(vararg relatedView: View) {
         binding.bottomNav.translationY = 0f
         relatedView.forEach { it.translationY = 0f }
+    }
+
+
+    fun showNoInternetMessage() {
+        noInternetMessageJob?.cancel()
+        if (binding.textNoInternet.visibility == View.VISIBLE) {
+            noInternetMessageJob = lifecycleScope.launch {
+                delay(2000)
+                binding.textNoInternet.visibility = View.INVISIBLE
+            }
+        } else {
+            binding.textNoInternet.apply {
+                alpha = 0f
+                scaleX = 0.8f
+                scaleY = 0.8f
+                visibility = View.VISIBLE
+            }
+            binding.textNoInternet.animate()
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(150)
+                .withEndAction {
+                    noInternetMessageJob = lifecycleScope.launch {
+                        delay(2000)
+                        binding.textNoInternet.visibility = View.INVISIBLE
+                    }
+                }
+                .start()
+        }
     }
 }

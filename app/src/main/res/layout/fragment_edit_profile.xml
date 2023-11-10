@@ -16,6 +16,7 @@
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/touch_interceptor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
@@ -125,6 +126,8 @@
             <EditText
                 android:id="@+id/input_email"
                 style="@style/ProfileEditTextStyle"
+                android:cursorVisible="false"
+                android:focusable="false"
                 android:hint="@string/your_email_address"
                 android:importantForAutofill="no"
                 android:inputType="textEmailAddress"

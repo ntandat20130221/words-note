@@ -35,6 +35,17 @@ class FirebaseUserNetworkDataSource : UserNetworkDataSource {
         }
     }
 
+    override suspend fun resetPassword(email: String): Result<Unit> {
+        return try {
+            Firebase.auth.sendPasswordResetEmail(email).await()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error()
+        }
+    }
+
+    override suspend fun signOut() = Firebase.auth.signOut()
+
     override suspend fun updateProfile(user: User): Result<User> {
         return try {
             Firebase.database.reference.child("$USERS_PATH/${user.id}").setValue(user).await()

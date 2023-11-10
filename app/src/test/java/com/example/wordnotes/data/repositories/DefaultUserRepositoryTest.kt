@@ -79,7 +79,7 @@ class DefaultUserRepositoryTest {
         userRepository.logOut()
         val currentUser = (userRepository.getUser() as Result.Success).data
         assertThat(currentUser).isEqualTo(
-            User(id = "", username = "", email = "", password = "", phone = "", gender = "", dob = "")
+            User(id = "", username = "", email = "", password = "", phone = "", gender = -1, dob = 0)
         )
     }
 }

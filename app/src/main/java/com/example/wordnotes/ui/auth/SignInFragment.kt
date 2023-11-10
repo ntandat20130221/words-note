@@ -49,6 +49,10 @@ class SignInFragment : Fragment(), BottomNavHideable {
             )
         }
 
+        binding.textForgotPassword.setOnClickListener {
+            navigateToForgotPasswordFragment()
+        }
+
         binding.textSignUp.setOnClickListener {
             navigateToSignUpFragment()
         }
@@ -81,6 +85,10 @@ class SignInFragment : Fragment(), BottomNavHideable {
             .setPopUpTo(R.id.sign_in_fragment, true)
             .build()
         findNavController().navigate(findNavController().graph.startDestinationId, null, navOptions)
+    }
+
+    private fun navigateToForgotPasswordFragment() {
+        findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToForgotPasswordFragment())
     }
 
     private fun navigateToSignUpFragment() {

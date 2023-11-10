@@ -10,6 +10,8 @@ interface UserRepository {
 
     suspend fun signIn(user: User): Result<User>
 
+    suspend fun resetPassword(email: String): Result<Unit>
+
     suspend fun logOut()
 
     suspend fun setUser(user: User, imageUri: Uri): Result<User>

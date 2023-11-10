@@ -18,8 +18,11 @@ import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAccountBinding
+import com.example.wordnotes.ui.MainActivity
+import com.example.wordnotes.utils.isNetworkAvailable
 import com.example.wordnotes.utils.setUpToolbar
 import kotlinx.coroutines.launch
+
 
 class AccountFragment : Fragment() {
     private var _binding: FragmentAccountBinding? = null
@@ -86,11 +89,19 @@ class AccountFragment : Fragment() {
         binding.layoutLogout.setOnTouchListener(OnTouchListener)
 
         binding.layoutEdit.setOnClickListener {
-            navigateToEditProfileFragment()
+            if (requireContext().isNetworkAvailable()) {
+                navigateToEditProfileFragment()
+            } else {
+                (requireActivity() as MainActivity).showNoInternetMessage()
+            }
         }
 
         binding.layoutLogout.setOnClickListener {
-            accountViewModel.logOut()
+            if (requireContext().isNetworkAvailable()) {
+                accountViewModel.logOut()
+            } else {
+                (requireActivity() as MainActivity).showNoInternetMessage()
+            }
         }
     }
 

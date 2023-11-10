@@ -1,7 +1,6 @@
 package com.example.wordnotes.data.repositories
 
 import android.net.Uri
-import com.example.wordnotes.data.KEY_IS_SIGNED_IN
 import com.example.wordnotes.data.KEY_USER_DOB
 import com.example.wordnotes.data.KEY_USER_EMAIL
 import com.example.wordnotes.data.KEY_USER_GENDER
@@ -30,7 +29,6 @@ class DefaultUserRepository(
     override suspend fun signUp(user: User): Result<User> = withContext(ioDispatcher) {
         userNetworkDataSource.signUp(user).also { result ->
             if (result is Result.Success) {
-                dataStoreRepository.putBoolean(KEY_IS_SIGNED_IN, true)
                 scope.launch { setUserInfo(result.data) }
             }
         }
@@ -39,16 +37,17 @@ class DefaultUserRepository(
     override suspend fun signIn(user: User): Result<User> = withContext(ioDispatcher) {
         userNetworkDataSource.signIn(user).also { result ->
             if (result is Result.Success) {
-                dataStoreRepository.putBoolean(KEY_IS_SIGNED_IN, true)
                 scope.launch { setUserInfo(result.data) }
             }
         }
     }
 
+    override suspend fun resetPassword(email: String): Result<Unit> = withContext(ioDispatcher) {
+        userNetworkDataSource.resetPassword(email)
+    }
+
     override suspend fun logOut(): Unit = withContext(ioDispatcher) {
-        // TODO: LogOut using FirebaseAuth to sync with Realtime Database Rule (auth != null)
-        //  One way to do this is disable log out when networking unavailable.
-        dataStoreRepository.putBoolean(KEY_IS_SIGNED_IN, false)
+        userNetworkDataSource.signOut()
         scope.launch { removeUserInfo() }
     }
 

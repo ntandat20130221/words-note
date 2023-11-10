@@ -10,6 +10,10 @@ interface UserNetworkDataSource {
 
     suspend fun signIn(user: User): Result<User>
 
+    suspend fun resetPassword(email: String): Result<Unit>
+
+    suspend fun signOut()
+
     suspend fun updateProfile(user: User): Result<User>
 
     suspend fun updateProfileImage(imageUri: Uri, user: User): Result<User>
