@@ -28,5 +28,6 @@
 
         <item name="color_selected_item_background">@color/selected_background_dark</item>
         <item name="color_pos_detail_background">@color/primary_opacity_12_dark</item>
+        <item name="color_hint_highlight">@color/hint_highlight_dark</item>
     </style>
 </resources>

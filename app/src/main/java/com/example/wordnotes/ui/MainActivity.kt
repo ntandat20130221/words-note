@@ -20,7 +20,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
 
-
 interface BottomNavHideable
 
 class MainActivity : AppCompatActivity() {

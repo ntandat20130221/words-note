@@ -89,8 +89,7 @@ class NetworkSyncWorker(context: Context, private val workerParams: WorkerParame
     private fun saveWord() {
         val type: Type = object : TypeToken<Word>() {}.type
         val word = Gson().fromJson<Word>(workerParams.inputData.getString(DATA_KEY), type)
-        Firebase.database.reference.child("$WORDS_PATH/${FirebaseAuth.getInstance().uid}")
-            .child(word.id).setValue(word)
+        Firebase.database.reference.child("$WORDS_PATH/${FirebaseAuth.getInstance().uid}/${word.id}").setValue(word)
     }
 
     private fun updateWords() {

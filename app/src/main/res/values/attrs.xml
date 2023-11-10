@@ -2,4 +2,5 @@
 <resources>
     <attr name="color_selected_item_background" format="color" />
     <attr name="color_pos_detail_background" format="color" />
+    <attr name="color_hint_highlight" format="color" />
 </resources>

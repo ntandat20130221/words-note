@@ -2,6 +2,7 @@ package com.example.wordnotes.sharedtest
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
+import com.example.wordnotes.data.network.NetworkUser
 import com.example.wordnotes.data.network.UserNetworkDataSource
 import java.util.UUID
 
@@ -42,5 +43,9 @@ class FakeUserNetworkDataSource(
             }
         }
             ?: Result.Error(Exception("The user doesn't exist."))
+    }
+
+    override suspend fun updateProfile(networkUser: NetworkUser): Result<User> {
+        TODO("Not yet implemented")
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -50,8 +51,9 @@
                 app:layout_constraintTop_toTopOf="@id/view_avatar_outline" />
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:id="@+id/image_profile"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
                 app:layout_constraintBottom_toBottomOf="@+id/view_avatar_outline"
                 app:layout_constraintEnd_toEndOf="@+id/view_avatar_outline"
                 app:layout_constraintStart_toStartOf="@+id/view_avatar_outline"
@@ -64,27 +66,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="John Wick"
                 android:textColor="?colorOnSurface"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/text_email"
                 app:layout_constraintEnd_toEndOf="@+id/view_avatar_outline"
                 app:layout_constraintStart_toStartOf="@+id/view_avatar_outline"
-                app:layout_constraintTop_toBottomOf="@+id/view_avatar_outline" />
+                app:layout_constraintTop_toBottomOf="@+id/view_avatar_outline"
+                tools:text="John Wick" />
 
             <TextView
                 android:id="@+id/text_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="johnwick@gmail.com"
                 android:textColor="?colorOnSurface"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/view_top"
                 app:layout_constraintEnd_toEndOf="@+id/text_name"
                 app:layout_constraintStart_toStartOf="@+id/text_name"
-                app:layout_constraintTop_toBottomOf="@+id/text_name" />
+                app:layout_constraintTop_toBottomOf="@+id/text_name"
+                tools:text="johnwick@gmail.com" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -118,7 +120,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:text="Edit Your Profile"
+                        android:text="@string/edit_your_profile"
                         android:textColor="?colorOnSurface"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -163,7 +165,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:text="Log Out"
+                        android:text="@string/sign_out"
                         android:textColor="?colorOnSurface"
                         android:textSize="16sp"
                         android:textStyle="bold"

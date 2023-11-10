@@ -224,7 +224,7 @@ class WordsFragment : Fragment() {
 
     // TODO: Test NetworkDataSources
 
-    // TODO: SignIn User Preferences
+    // TODO: Migrate setting preferences to DataStore
     private fun updateRecyclerView(uiState: WordsUiState) {
         if (uiState.firstEmit) return
 

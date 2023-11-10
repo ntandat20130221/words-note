@@ -64,7 +64,7 @@ class SignInFragment : Fragment(), BottomNavHideable {
                     uiState.message?.let { message ->
                         showSnackBar(message)
                     }
-                    if (uiState.isLoading) {
+                    if (uiState.isRequesting) {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.buttonSignIn.visibility = View.INVISIBLE
                     } else {

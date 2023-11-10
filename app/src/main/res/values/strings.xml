@@ -64,6 +64,8 @@
     <string name="your_date_of_birth">Your date of birth</string>
     <string name="your_username">Your username</string>
     <string name="your_email_address">Your email address</string>
+    <string name="edit_your_profile">Edit Your Profile</string>
+    <string name="sign_out">Sign Out</string>
 
     <string-array name="gender">
         <item>Male</item>

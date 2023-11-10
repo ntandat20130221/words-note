@@ -27,7 +27,7 @@ class SignInViewModelTest {
     @Test
     fun `check initial state`() = runTest {
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
-        assertThat(signInViewModel.uiState.value.isLoading).isFalse()
+        assertThat(signInViewModel.uiState.value.isRequesting).isFalse()
         assertThat(signInViewModel.uiState.value.message).isNull()
     }
 

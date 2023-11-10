@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAccountBinding
@@ -58,6 +60,11 @@ class AccountFragment : Fragment() {
         observeUiState()
     }
 
+    override fun onStart() {
+        super.onStart()
+        accountViewModel.loadUser()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -91,6 +98,18 @@ class AccountFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 accountViewModel.uiState.collect { uiState ->
+                    binding.apply {
+                        if (uiState.user.profileImageUrl.isNotBlank()) {
+                            imageProfile.load(uiState.user.profileImageUrl) {
+                                crossfade(true)
+                                placeholder(R.drawable.profile)
+                                transformations(CircleCropTransformation())
+                            }
+                        }
+                        textName.text = uiState.user.username
+                        textEmail.text = uiState.user.email
+                    }
+
                     if (uiState.isLogOut) {
                         navigateToRoutingFragment()
                     }

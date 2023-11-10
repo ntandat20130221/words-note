@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class SignInUiState(
     val isSignInSuccess: Boolean = false,
-    val isLoading: Boolean = false,
+    val isRequesting: Boolean = false,
     val message: Int? = null
 )
 
@@ -26,12 +26,12 @@ class SignInViewModel(private val userRepository: UserRepository) : ViewModel() 
 
     fun signIn(email: String, password: String) {
         if (checkValidity(email, password)) {
-            _uiState.update { SignInUiState(isLoading = true) }
+            _uiState.update { SignInUiState(isRequesting = true) }
             viewModelScope.launch {
                 when (userRepository.signIn(User(email = email, password = password))) {
-                    is Result.Success -> _uiState.update { SignInUiState(isSignInSuccess = true, isLoading = false) }
-                    is Result.Error -> _uiState.update { SignInUiState(message = R.string.authentication_failed, isLoading = false) }
-                    else -> _uiState.update { SignInUiState(isLoading = false) }
+                    is Result.Success -> _uiState.update { SignInUiState(isSignInSuccess = true, isRequesting = false) }
+                    is Result.Error -> _uiState.update { SignInUiState(message = R.string.authentication_failed, isRequesting = false) }
+                    else -> _uiState.update { SignInUiState(isRequesting = false) }
                 }
             }
         }

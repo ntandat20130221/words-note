@@ -24,29 +24,21 @@
 
         <EditText
             android:id="@+id/input_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/AuthEditTextStyle"
             android:layout_marginTop="32dp"
-            android:background="@drawable/bg_input_auth"
             android:hint="@string/email"
             android:importantForAutofill="no"
             android:inputType="textEmailAddress"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="@+id/text_title"
-            app:layout_constraintHorizontal_bias="0.501"
-            app:layout_constraintStart_toStartOf="@+id/text_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_title" />
 
         <EditText
             android:id="@+id/input_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_input_auth"
+            style="@style/AuthEditTextStyle"
             android:hint="@string/password"
             android:importantForAutofill="no"
             android:inputType="textPassword"
-            android:padding="16dp"
             app:layout_constraintEnd_toEndOf="@+id/input_email"
             app:layout_constraintStart_toStartOf="@+id/input_email"
             app:layout_constraintTop_toBottomOf="@id/input_email" />

@@ -2,6 +2,7 @@ package com.example.wordnotes.sharedtest
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
+import com.example.wordnotes.data.network.NetworkUser
 import com.example.wordnotes.data.repositories.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +47,10 @@ class FakeUserRepository(
         withContext(testDispatcher) {
             currentUser = null
         }
+    }
+
+    override suspend fun setUser(networkUser: NetworkUser): Result<User> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getUser(): Result<User> = withContext(testDispatcher) {

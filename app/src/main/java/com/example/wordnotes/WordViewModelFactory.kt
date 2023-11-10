@@ -29,7 +29,7 @@ val WordViewModelFactory = object : ViewModelProvider.Factory {
             isAssignableFrom(SignUpViewModel::class.java) -> SignUpViewModel(userRepository)
             isAssignableFrom(SignInViewModel::class.java) -> SignInViewModel(userRepository)
             isAssignableFrom(AccountViewModel::class.java) -> AccountViewModel(userRepository)
-            isAssignableFrom(EditProfileViewModel::class.java) -> EditProfileViewModel(userRepository)
+            isAssignableFrom(EditProfileViewModel::class.java) -> EditProfileViewModel(userRepository, extras.createSavedStateHandle())
             else -> IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     } as T

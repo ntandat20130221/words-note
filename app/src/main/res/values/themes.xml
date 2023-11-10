@@ -45,6 +45,8 @@
 
         <item name="color_selected_item_background">@color/selected_background</item>
         <item name="color_pos_detail_background">@color/primary_opacity_12</item>
+        <item name="color_hint_highlight">@color/hint_highlight</item>
+
     </style>
 
     <!-- ActionMode -->
@@ -106,6 +108,16 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <!-- Auth EditText -->
+    <style name="AuthEditTextStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:background">@drawable/bg_input_auth</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Profile TextView -->
     <style name="ProfileTextViewStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -121,6 +133,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:textColorHint">@drawable/focused_transparent_hint</item>
         <item name="android:background">@drawable/bg_edit_text_profile</item>
         <item name="android:inputType">text</item>
         <item name="android:padding">8dp</item>

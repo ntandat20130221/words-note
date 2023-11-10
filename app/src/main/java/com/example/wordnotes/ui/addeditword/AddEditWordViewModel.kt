@@ -41,7 +41,7 @@ class AddEditWordViewModel(
 
     fun initializeWithWordId(wordId: String?) {
         if (wordId == null) prepareForAddingWord()
-        else if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateWithSavedState()
+        else if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateFromSavedState()
         else loadWord(wordId)
     }
 
@@ -50,7 +50,7 @@ class AddEditWordViewModel(
         _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase(), isRemind = true), isInputFocus = true) }
     }
 
-    private fun updateWithSavedState() {
+    private fun updateFromSavedState() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY)?.let { savedWord ->
