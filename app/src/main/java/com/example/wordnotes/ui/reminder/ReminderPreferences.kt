@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 
-class WordPreferences(context: Context) {
+class ReminderPreferences(context: Context) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun isRemind(default: Boolean = false) = sharedPreferences.getBoolean(ReminderFragment.KEY_REMIND, default)

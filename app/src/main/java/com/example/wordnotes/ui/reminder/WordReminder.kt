@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 class WordReminder(
     private val context: Context,
-    private val wordPreferences: WordPreferences
+    private val reminderPreferences: ReminderPreferences
 ) {
     private val alarmManager = context.applicationContext.getSystemService(AlarmManager::class.java)
 
@@ -39,7 +39,7 @@ class WordReminder(
 
     private fun getTriggerTime(valueIfError: Long = System.currentTimeMillis(), next: Boolean = false): Long {
         return try {
-            val startTime = TimePickerPreference.Formatter.parse(wordPreferences.getStartTime()!!)
+            val startTime = TimePickerPreference.Formatter.parse(reminderPreferences.getStartTime()!!)
             SystemClock.elapsedRealtime()
                 .plus(ChronoUnit.MILLIS.between(LocalTime.now(), startTime))
                 .plus(if (next) TimeUnit.DAYS.toMillis(1) else 0)
@@ -50,9 +50,9 @@ class WordReminder(
 
     private fun getInterval(valueIfError: Long = AlarmManager.INTERVAL_HOUR): Long {
         return try {
-            val startTime = TimePickerPreference.Formatter.parse(wordPreferences.getStartTime()!!)
-            val endTime = TimePickerPreference.Formatter.parse(wordPreferences.getEndTime()!!)
-            val remindTimes = wordPreferences.getRemindTimes()
+            val startTime = TimePickerPreference.Formatter.parse(reminderPreferences.getStartTime()!!)
+            val endTime = TimePickerPreference.Formatter.parse(reminderPreferences.getEndTime()!!)
+            val remindTimes = reminderPreferences.getRemindTimes()
 
             val interval = ChronoUnit.MILLIS.between(startTime, endTime) / remindTimes
             if (interval < 0) throw IllegalStateException() else interval

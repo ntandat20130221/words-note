@@ -13,12 +13,13 @@ class WordNotesApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContainer = AppContainer(this)
-        createNotificationChannel()
+        createRemindNotificationChannel()
     }
 
-    private fun createNotificationChannel() {
+    private fun createRemindNotificationChannel() {
         val channel = NotificationChannel(CHANNEL_ID, getString(R.string.reminder), NotificationManager.IMPORTANCE_DEFAULT).apply {
             enableVibration(false)
+            vibrationPattern = longArrayOf(0)
         }
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)

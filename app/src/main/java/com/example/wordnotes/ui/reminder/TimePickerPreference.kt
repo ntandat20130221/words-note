@@ -50,7 +50,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
                 persistString(Formatter.format(LocalTime.of(timePicker.hour, timePicker.minute)))
                 notifyChanged()
             } else {
-                showToast()
+                showMessage()
             }
         }
 
@@ -59,7 +59,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
 
     private fun isValid(hour: Int, minute: Int): Boolean {
         val time = LocalTime.of(hour, minute)
-        val wordPreferences = (context.applicationContext as WordNotesApplication).appContainer.wordPreferencesFactory.create()
+        val wordPreferences = (context.applicationContext as WordNotesApplication).appContainer.reminderPreferencesFactory.create()
 
         return when (key) {
             ReminderFragment.KEY_START_TIME -> {
@@ -80,7 +80,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         this.fragmentManager = fragmentManager
     }
 
-    private fun showToast() {
+    private fun showMessage() {
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.error)
             .setMessage(

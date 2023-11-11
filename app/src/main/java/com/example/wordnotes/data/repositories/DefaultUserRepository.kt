@@ -1,21 +1,12 @@
 package com.example.wordnotes.data.repositories
 
 import android.net.Uri
-import com.example.wordnotes.data.KEY_USER_DOB
-import com.example.wordnotes.data.KEY_USER_EMAIL
-import com.example.wordnotes.data.KEY_USER_GENDER
-import com.example.wordnotes.data.KEY_USER_ID
-import com.example.wordnotes.data.KEY_USER_NAME
-import com.example.wordnotes.data.KEY_USER_PASSWORD
-import com.example.wordnotes.data.KEY_USER_PHONE
-import com.example.wordnotes.data.KEY_USER_PROFILE_IMAGE
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.data.network.UserNetworkDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -32,7 +23,7 @@ class DefaultUserRepository(
         userNetworkDataSource.signUp(user).also { result ->
             if (result is Result.Success) {
                 isSignedIn = true
-                scope.launch { setUserInfo(result.data) }
+                scope.launch { dataStoreRepository.setUser(result.data) }
             }
         }
     }
@@ -41,7 +32,7 @@ class DefaultUserRepository(
         userNetworkDataSource.signIn(user).also { result ->
             if (result is Result.Success) {
                 isSignedIn = true
-                scope.launch { setUserInfo(result.data) }
+                scope.launch { dataStoreRepository.setUser(result.data) }
             }
         }
     }
@@ -53,7 +44,7 @@ class DefaultUserRepository(
     override suspend fun logOut(): Unit = withContext(ioDispatcher) {
         userNetworkDataSource.signOut()
         isSignedIn = false
-        scope.launch { removeUserInfo() }
+        scope.launch { dataStoreRepository.clearUser() }
     }
 
     override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(ioDispatcher) {
@@ -63,54 +54,12 @@ class DefaultUserRepository(
             userNetworkDataSource.updateProfileImage(imageUri, user)
         }.also { result ->
             if (result is Result.Success) {
-                setUserInfo(result.data)
+                dataStoreRepository.setUser(result.data)
             }
         }
     }
 
     override suspend fun getUser(): Result<User> = withContext(ioDispatcher) {
-        val id = async { dataStoreRepository.getString(KEY_USER_ID) }
-        val username = async { dataStoreRepository.getString(KEY_USER_NAME) }
-        val profileImage = async { dataStoreRepository.getString(KEY_USER_PROFILE_IMAGE) }
-        val email = async { dataStoreRepository.getString(KEY_USER_EMAIL) }
-        val password = async { dataStoreRepository.getString(KEY_USER_PASSWORD) }
-        val phone = async { dataStoreRepository.getString(KEY_USER_PHONE) }
-        val gender = async { dataStoreRepository.getInt(KEY_USER_GENDER) }
-        val dob = async { dataStoreRepository.getLong(KEY_USER_DOB) }
-
-        Result.Success(
-            User(
-                id = id.await() ?: "",
-                username = username.await() ?: "",
-                profileImageUrl = profileImage.await() ?: "",
-                email = email.await() ?: "",
-                password = password.await() ?: "",
-                phone = phone.await() ?: "",
-                gender = gender.await() ?: -1,
-                dob = dob.await() ?: 0,
-            )
-        )
-    }
-
-    private suspend fun setUserInfo(user: User) {
-        dataStoreRepository.putString(KEY_USER_ID, user.id)
-        dataStoreRepository.putString(KEY_USER_NAME, user.username)
-        dataStoreRepository.putString(KEY_USER_PROFILE_IMAGE, user.profileImageUrl)
-        dataStoreRepository.putString(KEY_USER_EMAIL, user.email)
-        dataStoreRepository.putString(KEY_USER_PASSWORD, user.password)
-        dataStoreRepository.putString(KEY_USER_PHONE, user.phone)
-        dataStoreRepository.putInt(KEY_USER_GENDER, user.gender)
-        dataStoreRepository.putLong(KEY_USER_DOB, user.dob)
-    }
-
-    private suspend fun removeUserInfo() {
-        dataStoreRepository.removeString(KEY_USER_ID)
-        dataStoreRepository.removeString(KEY_USER_NAME)
-        dataStoreRepository.removeString(KEY_USER_PROFILE_IMAGE)
-        dataStoreRepository.removeString(KEY_USER_EMAIL)
-        dataStoreRepository.removeString(KEY_USER_PASSWORD)
-        dataStoreRepository.removeString(KEY_USER_PHONE)
-        dataStoreRepository.removeInt(KEY_USER_GENDER)
-        dataStoreRepository.removeLong(KEY_USER_DOB)
+        Result.Success(dataStoreRepository.getUser())
     }
 }

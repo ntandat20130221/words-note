@@ -61,17 +61,14 @@ class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             KEY_REMIND, KEY_REMIND_TIMES, KEY_START_TIME, KEY_END_TIME -> {
                 val wordReminder = (requireContext().applicationContext as WordNotesApplication).appContainer.wordReminderFactory.create()
-                sharedPreferences?.let {
-                    if (sharedPreferences.getBoolean(KEY_REMIND, false))
-                        wordReminder.schedule()
-                    else
-                        wordReminder.cancel()
-                }
-                    ?: wordReminder.cancel()
+                if (sharedPreferences.getBoolean(KEY_REMIND, false))
+                    wordReminder.schedule()
+                else
+                    wordReminder.cancel()
             }
         }
     }

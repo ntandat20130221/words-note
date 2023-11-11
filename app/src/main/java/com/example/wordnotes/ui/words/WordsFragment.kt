@@ -219,16 +219,8 @@ class WordsFragment : Fragment() {
         )
     }
 
-    // TODO: Fix bug empty layout flickering when refreshing by
-    //  keeping sort of a isRefreshing variable in ViewModel (uiState.items.isEmpty() && isRefreshing)
-
-    // TODO: Test NetworkDataSources
-
-    // TODO: Migrate setting preferences to DataStore
     private fun updateRecyclerView(uiState: WordsUiState) {
-        if (uiState.firstEmit) return
-
-        if (uiState.items.isEmpty()) {
+        if (uiState.items.isEmpty() && !uiState.firstEmit && !uiState.isLoading) {
             binding.emptyListLayout.root.visibility = View.VISIBLE
             binding.wordsRecyclerView.visibility = View.GONE
         } else {

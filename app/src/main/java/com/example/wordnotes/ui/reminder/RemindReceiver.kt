@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import androidx.work.Configuration
 import com.example.wordnotes.CHANNEL_ID
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
@@ -28,7 +29,7 @@ class RemindReceiver : BroadcastReceiver() {
         val wordReminder = appContainer.wordReminderFactory.create()
 
         try {
-            if (isTimeOut(appContainer.wordPreferencesFactory.create())) {
+            if (isTimeOut(appContainer.reminderPreferencesFactory.create())) {
                 wordReminder.schedule(next = true)
             } else {
                 val jobInfo = JobInfo.Builder(0, ComponentName(context, RemindJobService::class.java)).build()
@@ -40,19 +41,23 @@ class RemindReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun isTimeOut(wordPreferences: WordPreferences): Boolean {
-        val endTime = TimePickerPreference.Formatter.parse(wordPreferences.getEndTime()!!)
+    private fun isTimeOut(reminderPreferences: ReminderPreferences): Boolean {
+        val endTime = TimePickerPreference.Formatter.parse(reminderPreferences.getEndTime()!!)
         return LocalTime.now().isAfter(endTime)
     }
 }
 
 class RemindJobService : JobService() {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        Configuration.Builder().setJobSchedulerJobIdRange(0, Integer.MAX_VALUE).build()
+    }
 
     override fun onStartJob(params: JobParameters?): Boolean {
         val wordsRepository = (applicationContext as WordNotesApplication).appContainer.wordsRepository
 
-        coroutineScope.launch {
+        scope.launch {
             val result = wordsRepository.getRemindWords()
             if (result is Result.Success) {
                 result.data.randomOrNull()?.let { word ->
@@ -65,7 +70,7 @@ class RemindJobService : JobService() {
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
-        coroutineScope.cancel()
+        scope.cancel()
         return false
     }
 

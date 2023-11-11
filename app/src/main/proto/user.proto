@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.example.wordnotes.datastore";
+option java_multiple_files = true;
+
+message User {
+  string id = 1;
+  string username = 2;
+  string image_url = 3;
+  string email = 4;
+  string password = 5;
+  string phone = 6;
+  int32 gender = 7;
+  int64 dob = 8;
+}

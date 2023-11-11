@@ -1,26 +1,12 @@
 package com.example.wordnotes.data.repositories
 
+import com.example.wordnotes.data.model.User
+
 interface DataStoreRepository {
 
-    suspend fun putString(key: String, value: String)
+    suspend fun setUser(user: User)
 
-    suspend fun getString(key: String): String?
+    suspend fun getUser(): User
 
-    suspend fun removeString(key: String)
-
-    suspend fun putInt(key: String, value: Int)
-
-    suspend fun getInt(key: String): Int?
-
-    suspend fun removeInt(key: String)
-
-    suspend fun putLong(key: String, value: Long)
-
-    suspend fun getLong(key: String): Long?
-
-    suspend fun removeLong(key: String)
-
-    suspend fun putBoolean(key: String, value: Boolean)
-
-    suspend fun getBoolean(key: String): Boolean?
+    suspend fun clearUser()
 }
