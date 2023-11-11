@@ -27,7 +27,8 @@ class AppContainer(val context: Context) {
     private val wordsNetworkDataSource: WordsNetworkDataSource = FakeWordsNetworkDataSource()
     private val userNetworkDataSource: UserNetworkDataSource = FakeUserNetworkDataSource()
 
-    val dataStoreRepository: DataStoreRepository = DefaultDataStoreRepository(context)
+    private val dataStoreRepository: DataStoreRepository = DefaultDataStoreRepository(context)
+
     val wordsRepository: WordsRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
     val userRepository: UserRepository = DefaultUserRepository(userNetworkDataSource, dataStoreRepository)
 

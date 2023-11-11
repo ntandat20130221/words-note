@@ -4,6 +4,7 @@ const val WORDS_PATH = "words"
 const val USERS_PATH = "users"
 const val PROFILE_IMAGES_PATH = "profile_images"
 
+const val KEY_SIGNED_IN = "com.example.wordnotes.preference.signed_in"
 const val KEY_USER_ID = "com.example.wordnotes.preference.user_id"
 const val KEY_USER_NAME = "com.example.wordnotes.preference.user_name"
 const val KEY_USER_PROFILE_IMAGE = "com.example.wordnotes.preference.user_profile_image"

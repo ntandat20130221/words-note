@@ -26,9 +26,12 @@ class DefaultUserRepository(
 ) : UserRepository {
     private val scope = CoroutineScope(ioDispatcher)
 
+    var isSignedIn = false  // For testing
+
     override suspend fun signUp(user: User): Result<User> = withContext(ioDispatcher) {
         userNetworkDataSource.signUp(user).also { result ->
             if (result is Result.Success) {
+                isSignedIn = true
                 scope.launch { setUserInfo(result.data) }
             }
         }
@@ -37,6 +40,7 @@ class DefaultUserRepository(
     override suspend fun signIn(user: User): Result<User> = withContext(ioDispatcher) {
         userNetworkDataSource.signIn(user).also { result ->
             if (result is Result.Success) {
+                isSignedIn = true
                 scope.launch { setUserInfo(result.data) }
             }
         }
@@ -48,6 +52,7 @@ class DefaultUserRepository(
 
     override suspend fun logOut(): Unit = withContext(ioDispatcher) {
         userNetworkDataSource.signOut()
+        isSignedIn = false
         scope.launch { removeUserInfo() }
     }
 

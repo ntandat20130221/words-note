@@ -14,6 +14,14 @@ class FakeUserNetworkDataSource : UserNetworkDataSource {
         return Result.Success(user)
     }
 
+    override suspend fun resetPassword(email: String): Result<Unit> {
+        return Result.Success(Unit)
+    }
+
+    override suspend fun signOut() {
+        // Do nothing
+    }
+
     override suspend fun updateProfile(user: User): Result<User> {
         return Result.Success(user)
     }
