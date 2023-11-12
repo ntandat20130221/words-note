@@ -8,6 +8,5 @@ TODO: Add undo when deleting word at DetailWordFragment
 TODO: Test NetworkDataSources
 TODO: Migrate setting preferences to DataStore (Create setting screen from scratch)
 TODO: Sound at detail fragment
-TODO: Change logo -> SplashScreen
 TODO: Click notification
 TODO: Create IPA keyboard

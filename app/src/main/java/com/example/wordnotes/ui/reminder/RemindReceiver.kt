@@ -79,7 +79,7 @@ class RemindJobService : JobService() {
             .setSubText(getString(R.string.reminder))
             .setContentTitle("${word.word} ${word.ipa}")
             .setContentText("(${word.pos}) ${word.meaning}")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setShowWhen(true)
             .build()
         val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)

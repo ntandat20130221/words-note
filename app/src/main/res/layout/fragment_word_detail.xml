@@ -20,14 +20,17 @@
 
     <TextView
         android:id="@+id/text_word"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:lineHeight="22dp"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
         android:textColor="?colorOnSurface"
         android:textSize="22sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/image_speech"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/drag_handle"
         tools:text="consciously" />
@@ -36,6 +39,7 @@
         android:id="@+id/text_ipa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         android:textColor="?colorOnSurface"
         android:textSize="15sp"
@@ -44,6 +48,7 @@
         tools:text="/ˈkɑːnʃəsli/" />
 
     <ImageView
+        android:id="@+id/image_speech"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="24dp"

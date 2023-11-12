@@ -1,6 +1,7 @@
 package com.example.wordnotes.ui.worddetail
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,10 @@ import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
+import java.util.UUID
 
 class WordDetailFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentWordDetailBinding? = null
@@ -25,6 +29,7 @@ class WordDetailFragment : BottomSheetDialogFragment() {
     private val wordDetailViewModel: WordDetailViewModel by viewModels { WordViewModelFactory }
     private val args: WordDetailFragmentArgs by navArgs()
     private lateinit var wordId: String
+    private var tts: TextToSpeech? = null
 
     override fun getTheme() = R.style.BottomSheetDialogStyle
 
@@ -38,10 +43,13 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         wordDetailViewModel.initializeWithWordId(args.wordId.also { wordId = it })
         observeUiState()
         setActionListeners()
+        setUpTextToSpeech()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        tts?.shutdown()
+        tts = null
         _binding = null
     }
 
@@ -85,6 +93,23 @@ class WordDetailFragment : BottomSheetDialogFragment() {
 
         binding.actionRemind.setOnClickListener {
             wordDetailViewModel.toggleRemind()
+        }
+
+        binding.imageSpeech.setOnClickListener {
+            lifecycleScope.launch {
+                do {
+                    val result = tts?.speak(binding.textWord.text, TextToSpeech.QUEUE_FLUSH, null, UUID.randomUUID().toString())
+                    delay(200)
+                } while (result != TextToSpeech.SUCCESS)
+            }
+        }
+    }
+
+    private fun setUpTextToSpeech() {
+        tts = TextToSpeech(requireContext().applicationContext) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts?.language = Locale.US
+            }
         }
     }
 }
