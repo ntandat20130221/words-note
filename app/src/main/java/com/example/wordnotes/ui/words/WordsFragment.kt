@@ -81,7 +81,6 @@ class WordsFragment : Fragment() {
 
     private fun setUpToolbar() {
         binding.toolbar.apply {
-            title = getString(R.string.words)
             inflateMenu(R.menu.words_menu)
             findNavController().setUpToolbar(this)
         }

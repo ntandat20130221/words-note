@@ -2,6 +2,7 @@ package com.example.wordnotes.ui.reminder
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.job.JobInfo
 import android.app.job.JobParameters
 import android.app.job.JobScheduler
@@ -16,6 +17,7 @@ import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
+import com.example.wordnotes.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -75,12 +77,19 @@ class RemindJobService : JobService() {
     }
 
     private fun pushNotification(word: Word) {
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = Notification.Builder(applicationContext, CHANNEL_ID)
             .setSubText(getString(R.string.reminder))
             .setContentTitle("${word.word} ${word.ipa}")
             .setContentText("(${word.pos}) ${word.meaning}")
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setShowWhen(true)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
         val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
         notificationManager.notify(word.id.hashCode(), notification)

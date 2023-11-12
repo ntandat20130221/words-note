@@ -75,7 +75,6 @@ class AccountFragment : Fragment() {
 
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
-            title = getString(R.string.account)
             findNavController().setUpToolbar(
                 this,
                 AppBarConfiguration(setOf(R.id.words_fragment, R.id.reminder_fragment, R.id.account_fragment))

@@ -53,7 +53,6 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
 
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
-            title = if (args.wordId == null) getString(R.string.add_new_word) else getString(R.string.edit_word)
             inflateMenu(R.menu.add_edit_word_toolbar)
             findNavController().setUpToolbar(this)
         }

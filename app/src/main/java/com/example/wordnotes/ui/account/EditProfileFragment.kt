@@ -66,7 +66,6 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
 
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
-            title = getString(R.string.edit_profile)
             inflateMenu(R.menu.edit_profile)
             findNavController().setUpToolbar(this)
         }

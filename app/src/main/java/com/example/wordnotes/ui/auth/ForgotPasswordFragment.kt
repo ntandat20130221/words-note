@@ -39,7 +39,6 @@ class ForgotPasswordFragment : Fragment(), BottomNavHideable {
 
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
-            title = getString(R.string.forgot_password)
             findNavController().setUpToolbar(this)
         }
     }
