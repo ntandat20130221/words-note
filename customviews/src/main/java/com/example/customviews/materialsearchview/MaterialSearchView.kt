@@ -57,7 +57,6 @@ class MaterialSearchView @JvmOverloads constructor(
 
     private val isVoiceAvailable: Boolean
         get() {
-            @Suppress("DEPRECATION")
             val activities = context.packageManager.queryIntentActivities(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0)
             return activities.size > 0
         }

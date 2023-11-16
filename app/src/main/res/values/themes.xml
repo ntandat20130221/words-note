@@ -49,6 +49,9 @@
         <item name="color_pos_detail_background">@color/primary_opacity_12</item>
         <item name="color_hint_highlight">@color/hint_highlight</item>
         <item name="color_no_internet_message">@color/no_internet</item>
+
+        <!-- IPA Keyboard -->
+        <item name="ipaKeyboardStyle">@style/IPAKeyboardStyle</item>
     </style>
 
     <!-- ActionMode -->
@@ -144,5 +147,17 @@
         <item name="android:textColor">?colorOnSurface</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- IPA Keyboard -->
+    <style name="IPAKeyboardStyle">
+        <item name="materialThemeOverlay">@style/IPAKeyboardStyleOverlay</item>
+    </style>
+
+    <style name="IPAKeyboardStyleOverlay">
+        <item name="colorSurface">#D6D6D6</item>
+        <item name="colorSurfaceContainer">@color/white</item>
+        <item name="colorSurfaceContainerLow">#A5A5A5</item>
+        <item name="colorOnSurface">@color/black</item>
     </style>
 </resources>

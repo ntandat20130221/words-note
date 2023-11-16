@@ -9,3 +9,5 @@ TODO: Test NetworkDataSources
 TODO: Migrate setting preferences to DataStore (Create setting screen from scratch)
 TODO: Click notification -> deeplink to detail fragment
 TODO: Create IPA keyboard
+
+- BUG: Layout change while focusing on IPA input.

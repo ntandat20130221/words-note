@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
@@ -24,6 +26,7 @@ import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
+
 class AddEditWordFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
@@ -40,8 +43,7 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addEditWordViewModel.initializeWithWordId(args.wordId)
-        setUpToolbar()
-        setUpPartsOfSpeechRecyclerView()
+        setUpViews()
         setViewListeners()
         observeUiState()
     }
@@ -49,6 +51,12 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setUpViews() {
+        setUpToolbar()
+        setUpPartsOfSpeechRecyclerView()
+        binding.inputIpa.showSoftInputOnFocus = false
     }
 
     private fun setUpToolbar() {
@@ -70,6 +78,20 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     }
 
     private fun setViewListeners() {
+        binding.inputIpa.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                binding.ipaKeyboard.setInputConnection(binding.inputIpa.onCreateInputConnection(EditorInfo()))
+                requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+                val imm = requireContext().getSystemService(InputMethodManager::class.java)
+                imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                binding.ipaKeyboard.visibility = View.VISIBLE
+            } else {
+                @Suppress("DEPRECATION")
+                requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                binding.ipaKeyboard.visibility = View.GONE
+            }
+        }
+
         binding.apply {
             inputWord.doOnTextChanged { text, _, _, _ ->
                 addEditWordViewModel.onUpdateWord { it.copy(word = text.toString()) }
