@@ -8,285 +8,465 @@
     android:layout_gravity="bottom"
     android:background="?colorSurface"
     android:orientation="vertical"
-    android:paddingHorizontal="8dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="24dp"
+    android:paddingHorizontal="3dp"
+    android:paddingBottom="16dp"
     tools:ignore="HardcodedText">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <TextView
-            style="@style/IPAKeyStyle"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="i" />
+            android:paddingTop="16dp">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ɪ" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="i" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="ʊ" />
+            android:paddingTop="16dp">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="u" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ɪ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="e" />
+            android:paddingTop="16dp">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ə" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ʊ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="ɜ" />
+            android:paddingTop="16dp">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ɔ" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="u" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="æ" />
+            android:paddingTop="16dp">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_marginEnd="0dp"
+            <TextView
+                style="@style/IPAKey"
+                android:text="e" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="1"
-            android:text="ʌ" />
+            android:paddingTop="16dp">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ə" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1"
+            android:paddingTop="16dp">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ɜ" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1"
+            android:paddingTop="16dp">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ɔ" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1"
+            android:paddingTop="16dp">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="æ" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1"
+            android:paddingTop="16dp">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ʌ" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ɑ" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ɒ" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ɑ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="a" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="p" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ɒ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="b" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="t" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="a" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="d" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ʃ" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="p" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_marginEnd="0dp"
-            android:layout_weight="1"
-            android:text="ʒ" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="b" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="t" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="d" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ʃ" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ʒ" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="k" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="g" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="k" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="f" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="v" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="g" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="θ" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ð" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="f" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="s" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="z" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="v" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="m" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_marginEnd="0dp"
-            android:layout_weight="1"
-            android:text="n" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="θ" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="ð" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="s" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="z" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="m" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="n" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="[" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="]" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="[" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ŋ" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="h" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="]" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="l" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="r" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ŋ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="w" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="j" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="h" />
+        </FrameLayout>
 
-        <ImageView
-            style="@style/IPAKeyStyle"
-            android:layout_marginEnd="0dp"
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="l" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="r" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="w" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="j" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
             android:layout_weight="2"
-            android:importantForAccessibility="no"
-            android:src="@drawable/delete_key"
-            android:tag="delete"
-            app:tint="?colorOnSurface" />
+            tools:ignore="TooManyViews">
+
+            <ImageView
+                style="@style/IPAKey"
+                android:importantForAccessibility="no"
+                android:src="@drawable/delete_key"
+                android:tag="key_delete"
+                app:tint="?colorOnSurface" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ˈ" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ˌ" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ˈ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="ː" />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="4"
-            android:importantForAccessibility="no"
-            android:text=" " />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ˌ" />
+        </FrameLayout>
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_weight="1"
-            android:text="." />
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
 
-        <TextView
-            style="@style/IPAKeyStyle"
-            android:layout_marginEnd="0dp"
-            android:layout_weight="2"
-            android:src="@drawable/delete_key"
-            android:tag="done"
-            android:text="done"
-            android:textAllCaps="false"
-            android:textSize="16sp" />
+            <TextView
+                style="@style/IPAKey"
+                android:text="ː" />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="4">
+
+            <TextView
+                style="@style/IPAKey"
+                android:importantForAccessibility="no"
+                android:text=" " />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/IPAKey"
+                android:text="." />
+        </FrameLayout>
+
+        <FrameLayout
+            style="@style/IPAKeyContainer"
+            android:layout_weight="2">
+
+            <TextView
+                style="@style/IPAKey"
+                android:tag="key_done"
+                android:text="done"
+                android:textSize="18sp" />
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>

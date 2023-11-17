@@ -155,9 +155,9 @@
     </style>
 
     <style name="IPAKeyboardStyleOverlay">
-        <item name="colorSurface">#D6D6D6</item>
+        <item name="colorSurface">#ECEFF1</item>
         <item name="colorSurfaceContainer">@color/white</item>
-        <item name="colorSurfaceContainerLow">#A5A5A5</item>
+        <item name="colorSurfaceContainerLow">#BABABA</item>
         <item name="colorOnSurface">@color/black</item>
     </style>
 </resources>

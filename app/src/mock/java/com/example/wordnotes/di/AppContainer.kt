@@ -14,7 +14,7 @@ import com.example.wordnotes.data.repositories.DefaultUserRepository
 import com.example.wordnotes.data.repositories.DefaultWordsRepository
 import com.example.wordnotes.data.repositories.UserRepository
 import com.example.wordnotes.data.repositories.WordsRepository
-import com.example.wordnotes.ui.reminder.WordPreferences
+import com.example.wordnotes.ui.reminder.ReminderPreferences
 import com.example.wordnotes.ui.reminder.WordReminder
 
 interface Factory<out T> {
@@ -31,11 +31,11 @@ class AppContainer(val context: Context) {
     val wordsRepository: WordsRepository = DefaultWordsRepository(wordsLocalDataSource, wordsNetworkDataSource)
     val userRepository: UserRepository = DefaultUserRepository(userNetworkDataSource, dataStoreRepository)
 
-    val wordPreferencesFactory: Factory<WordPreferences> = object : Factory<WordPreferences> {
-        override fun create() = WordPreferences(context)
+    val reminderPreferencesFactory: Factory<ReminderPreferences> = object : Factory<ReminderPreferences> {
+        override fun create() = ReminderPreferences(context)
     }
 
     val wordReminderFactory: Factory<WordReminder> = object : Factory<WordReminder> {
-        override fun create() = WordReminder(context, wordPreferencesFactory.create())
+        override fun create() = WordReminder(context, reminderPreferencesFactory.create())
     }
 }

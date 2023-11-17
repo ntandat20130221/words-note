@@ -7,14 +7,18 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.theme.overlay.MaterialThemeOverlay
-
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class IPAKeyboard @JvmOverloads constructor(
     context: Context,
@@ -30,6 +34,8 @@ class IPAKeyboard @JvmOverloads constructor(
     private var ic: InputConnection? = null
     private var normalColor: Int? = null
     private var pressedColor: Int? = null
+    private var deletingJob: Job? = null
+    private var isPressingDelete: Boolean = false
 
     init {
         val themedContext = getContext()
@@ -54,29 +60,48 @@ class IPAKeyboard @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     private fun setKeyListeners(viewGroup: ViewGroup) {
         for (child in viewGroup.children) {
-            if (child is ViewGroup) {
+            if (child is LinearLayout) {
                 setKeyListeners(child)
             } else {
-                child.setOnTouchListener { key, event ->
+                val key = (child as FrameLayout).getChildAt(0)
+                child.setOnTouchListener { _, event ->
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
                             pressedColor?.let { key.backgroundTintList = ColorStateList.valueOf(it) }
+                            if (key.tag == "key_delete") {
+                                deletingJob = viewScope.launch {
+                                    delay(ViewConfiguration.getLongPressTimeout().toLong())
+                                    isPressingDelete = true
+                                    while (true) {
+                                        ic?.deleteSurroundingText(1, 0)
+                                        delay(50)
+                                    }
+                                }
+                            }
+                        }
+
+                        MotionEvent.ACTION_UP -> {
+                            normalColor?.let { key.backgroundTintList = ColorStateList.valueOf(it) }
+                            deletingJob?.cancel()
                             when (key.tag) {
-                                "key" -> {
+                                "key_normal" -> {
                                     if (key is TextView) {
                                         ic?.commitText(key.text, 1)
                                     }
                                 }
 
-                                "delete" -> ic?.deleteSurroundingText(1, 0)
+                                "key_delete" -> {
+                                    if (!isPressingDelete) {
+                                        ic?.deleteSurroundingText(1, 0)
+                                    }
+                                    isPressingDelete = false
+                                }
 
-                                "done" -> ic?.performEditorAction(EditorInfo.IME_ACTION_NEXT)
+                                "key_done" -> ic?.performEditorAction(EditorInfo.IME_ACTION_NEXT)
                             }
                         }
-
-                        MotionEvent.ACTION_UP -> normalColor?.let { key.backgroundTintList = ColorStateList.valueOf(it) }
                     }
-                    false
+                    super.onTouchEvent(event)
                 }
             }
         }

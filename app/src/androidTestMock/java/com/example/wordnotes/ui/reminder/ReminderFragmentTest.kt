@@ -42,7 +42,7 @@ class ReminderFragmentTest {
         }
 
         val appContainer = ApplicationProvider.getApplicationContext<WordNotesApplication>().appContainer
-        wordPreferences = appContainer.wordPreferencesFactory.create()
+        wordPreferences = appContainer.reminderPreferencesFactory.create()
         wordReminder = appContainer.wordReminderFactory.create()
     }
 
