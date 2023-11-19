@@ -22,10 +22,11 @@ import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.example.wordnotes.ui.BottomNavHideable
+import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
+import com.example.wordnotes.utils.showSoftKeyboard
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-
 
 class AddEditWordFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentAddEditWordBinding? = null
@@ -34,6 +35,7 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     private val addEditWordViewModel: AddEditWordViewModel by viewModels { WordViewModelFactory }
     private val args: AddEditWordFragmentArgs by navArgs()
     private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
+    private var originalSoftInputMode: Int? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAddEditWordBinding.inflate(inflater, container, false)
@@ -80,15 +82,27 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     private fun setViewListeners() {
         binding.inputIpa.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
+                // Connect to IPAKeyboard.
                 binding.ipaKeyboard.setInputConnection(binding.inputIpa.onCreateInputConnection(EditorInfo()))
+                // Prevent flaky effect when hiding system soft keyboard then showing IPAKeyboard.
+                originalSoftInputMode = requireActivity().window.attributes.softInputMode
                 requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-                val imm = requireContext().getSystemService(InputMethodManager::class.java)
-                imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                // Hide the system soft keyboard if it is showing.
+                requireContext().hideSoftKeyboard(view)
+                // Show the IPAKeyboard.
                 binding.ipaKeyboard.visibility = View.VISIBLE
             } else {
-                @Suppress("DEPRECATION")
-                requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                // Restore the original soft input method.
+                originalSoftInputMode?.let { requireActivity().window.setSoftInputMode(it) }
+                // Hide the IPAKeyboard.
                 binding.ipaKeyboard.visibility = View.GONE
+            }
+        }
+
+        // For fixing bug where soft keyboard was not showed after pressing the 'done' key on IPA keyboard.
+        binding.inputMeaning.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                requireContext().showSoftKeyboard(view)
             }
         }
 

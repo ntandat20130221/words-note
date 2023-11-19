@@ -1,10 +1,11 @@
 package com.example.wordnotes.utils
 
 import android.content.Context
-import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.TypedValue
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
@@ -34,4 +35,12 @@ fun Context.isNetworkAvailable(): Boolean {
     }
 }
 
-val Number.toPx get() = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics)
+fun Context.showSoftKeyboard(view: View, flags: Int = InputMethodManager.SHOW_IMPLICIT) {
+    val imm = getSystemService(InputMethodManager::class.java)
+    imm.showSoftInput(view, flags)
+}
+
+fun Context.hideSoftKeyboard(view: View, flags: Int = InputMethodManager.HIDE_NOT_ALWAYS) {
+    val imm = getSystemService(InputMethodManager::class.java)
+    imm.hideSoftInputFromWindow(view.windowToken, flags)
+}
