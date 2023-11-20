@@ -147,7 +147,8 @@ class WordsViewModel(private val wordsRepository: WordsRepository) : ViewModel()
 
     private fun selectItem(wordId: String) {
         val updatedWordIds = _selectedWordIds.value.toMutableSet()
-        if (!updatedWordIds.add(wordId)) updatedWordIds.remove(wordId)
+        if (!updatedWordIds.add(wordId))
+            updatedWordIds.remove(wordId)
 
         if (updatedWordIds.isEmpty()) {
             destroyActionMode()

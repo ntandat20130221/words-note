@@ -63,6 +63,9 @@ class WordDetailFragment : BottomSheetDialogFragment() {
                         textPos.text = uiState.pos
                         textMeaning.text = uiState.meaning
 
+                        textIpa.visibility = if (uiState.ipa.isNotEmpty()) View.VISIBLE else View.GONE
+                        textMeaning.visibility = if (uiState.meaning.isNotEmpty()) View.VISIBLE else View.GONE
+
                         imageRemind.setImageDrawable(
                             ContextCompat.getDrawable(
                                 requireContext(),

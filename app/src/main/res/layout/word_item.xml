@@ -75,10 +75,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:lines="1"
-        app:layout_constraintEnd_toStartOf="@+id/image_remind"
+        app:layout_constraintEnd_toEndOf="@+id/text_ipa"
         app:layout_constraintStart_toStartOf="@id/text_word"
         app:layout_constraintTop_toBottomOf="@id/text_ipa"
         tools:text="có ý thức; sự sáng suốt" />

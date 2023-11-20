@@ -1,13 +1,6 @@
 TODO: Fix bug empty layout flickering when refreshing by keeping sort of a isRefreshing
  variable in ViewModel (uiState.items.isEmpty() && isRefreshing)
-TODO: Fix bug empty IPA at list of words
 TODO: Fix bug toolbar color not changing when navigate to EditWordFragment when searching
 TODO: Fix bug deleting words when searching (the words not disappear until it actually delete after undo time)
 TODO: Fix bug snack bar show
 TODO: Add undo when deleting word at DetailWordFragment
-TODO: Test NetworkDataSources
-TODO: Migrate setting preferences to DataStore (Create setting screen from scratch)
-TODO: Click notification -> deeplink to detail fragment
-TODO: Create IPA keyboard
-
-- BUG: Layout change while focusing on IPA input.

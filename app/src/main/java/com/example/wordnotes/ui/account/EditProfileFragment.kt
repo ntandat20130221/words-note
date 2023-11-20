@@ -25,6 +25,7 @@ import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentEditProfileBinding
 import com.example.wordnotes.ui.BottomNavHideable
+import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -136,8 +137,7 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
                     view.getGlobalVisibleRect(outRect)
                     if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                         view.clearFocus()
-                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
+                        requireContext().hideSoftKeyboard(view, 0)
                     }
                 }
             }

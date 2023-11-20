@@ -1,13 +1,11 @@
 package com.example.wordnotes.ui.addeditword
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -84,7 +82,7 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
             if (hasFocus) {
                 // Connect to IPAKeyboard.
                 binding.ipaKeyboard.setInputConnection(binding.inputIpa.onCreateInputConnection(EditorInfo()))
-                // Prevent flaky effect when hiding system soft keyboard then showing IPAKeyboard.
+                // Prevent flickering effect when hiding system soft keyboard then showing IPAKeyboard.
                 originalSoftInputMode = requireActivity().window.attributes.softInputMode
                 requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
                 // Hide the system soft keyboard if it is showing.
@@ -165,8 +163,7 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
 
         if (uiState.isInputFocus) {
             binding.inputWord.requestFocus()
-            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.inputWord, InputMethodManager.SHOW_IMPLICIT)
+            requireContext().showSoftKeyboard(binding.inputWord)
             addEditWordViewModel.gainedFocus()
         }
     }

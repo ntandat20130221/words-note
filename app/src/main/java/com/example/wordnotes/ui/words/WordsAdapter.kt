@@ -71,10 +71,10 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
         isShowingBack = false
     }
 
-    fun bind(wordUiState: WordItem, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
-        val word = wordUiState.word
+    fun bind(wordItem: WordItem, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
+        val word = wordItem.word
         binding.apply {
-            if (wordUiState.isSelected && !isShowingBack) {
+            if (wordItem.isSelected && !isShowingBack) {
                 flipRightAnimator.start()
                 if (flipLeftAnimator.isRunning) {
                     flipRightAnimator.currentPlayTime = flipRightAnimator.totalDuration - flipLeftAnimator.currentPlayTime
@@ -102,12 +102,15 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             imageRemind.visibility = if (word.isRemind) View.VISIBLE else View.GONE
             root.apply {
                 setBackgroundColor(
-                    if (wordUiState.isSelected) context.themeColor(R.attr.color_selected_item_background)
+                    if (wordItem.isSelected) context.themeColor(R.attr.color_selected_item_background)
                     else context.themeColor(com.google.android.material.R.attr.colorSurface)
                 )
                 setOnClickListener { onItemClicked(word.id) }
                 setOnLongClickListener { onItemLongClicked(word.id) }
             }
+
+            textIpa.visibility = if (word.ipa.isNotEmpty()) View.VISIBLE else View.GONE
+            textMeaning.visibility = if (word.meaning.isNotEmpty()) View.VISIBLE else View.GONE
         }
     }
 }

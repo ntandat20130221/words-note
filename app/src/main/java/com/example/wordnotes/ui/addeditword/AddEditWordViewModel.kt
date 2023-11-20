@@ -74,7 +74,7 @@ class AddEditWordViewModel(
                         val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
                         _uiState.update {
                             it.copy(
-                                word = result.data,
+                                word = transformWordBeforeLoad(result.data),
                                 currentPosIndex = currentPartOfSpeechIndex,
                                 isLoading = false
                             )
@@ -117,16 +117,27 @@ class AddEditWordViewModel(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordsRepository.saveWord(newWord.copy(ipa = encloseWithSlashes(newWord.ipa), timestamp = System.currentTimeMillis()))
+        wordsRepository.saveWord(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis()))
         _wordSavedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        wordsRepository.updateWords(listOf(word.copy(ipa = encloseWithSlashes(word.ipa))))
+        wordsRepository.updateWords(listOf(transformWordBeforeSave(word)))
         _wordSavedEvent.value = Event(Unit)
     }
 
-    private fun encloseWithSlashes(ipa: String): String = ipa.trim('/').let { "/$it/" }
+    private fun transformWordBeforeLoad(word: Word): Word {
+        return word.copy(
+            ipa = if (word.ipa.isBlank()) "" else word.ipa.trim('/', ' '),
+        )
+    }
+
+    private fun transformWordBeforeSave(word: Word): Word {
+        return word.copy(
+            ipa = if (word.ipa.isBlank()) "" else word.ipa.trim('/', ' ').let { "/$it/" },
+            meaning = word.meaning.ifBlank { "" }
+        )
+    }
 
     fun snakeBarShown() {
         _uiState.update { it.copy(snackBarMessage = null) }
