@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.reminder
+package com.example.wordnotes.ui.account.reminder
 
 import android.content.Context
 import android.content.res.TypedArray

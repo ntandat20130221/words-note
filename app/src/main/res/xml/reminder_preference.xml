@@ -11,12 +11,12 @@
         app:key="pref_remind_times"
         app:title="@string/pref_title_number_of_reminds_a_day"
         app:useSimpleSummaryProvider="true" />
-    <com.example.wordnotes.ui.reminder.TimePickerPreference
+    <com.example.wordnotes.ui.account.reminder.TimePickerPreference
         app:defaultValue="06:00"
         app:iconSpaceReserved="false"
         app:key="pref_start_time"
         app:title="@string/pref_title_start_time" />
-    <com.example.wordnotes.ui.reminder.TimePickerPreference
+    <com.example.wordnotes.ui.account.reminder.TimePickerPreference
         app:defaultValue="22:00"
         app:iconSpaceReserved="false"
         app:key="pref_end_time"

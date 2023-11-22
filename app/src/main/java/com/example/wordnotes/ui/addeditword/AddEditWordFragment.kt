@@ -35,6 +35,11 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
     private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
     private var originalSoftInputMode: Int? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addEditWordViewModel.initializeWithWordId(args.wordId)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAddEditWordBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,7 +47,6 @@ class AddEditWordFragment : Fragment(), BottomNavHideable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addEditWordViewModel.initializeWithWordId(args.wordId)
         setUpViews()
         setViewListeners()
         observeUiState()

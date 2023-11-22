@@ -51,6 +51,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.words_fragment -> destination.label = getString(R.string.words)
                 R.id.add_edit_word_fragment -> destination.label = if (args?.getString("wordId") == null)
                     getString(R.string.add_new_word) else getString(R.string.edit_word)
+
+                R.id.learning_fragment -> destination.label = getString(R.string.learning)
+                R.id.flash_card_fragment -> destination.label = getString(R.string.learning)
                 R.id.reminder_fragment -> destination.label = getString(R.string.reminder)
                 R.id.account_fragment -> destination.label = getString(R.string.account)
                 R.id.edit_profile_fragment -> destination.label = getString(R.string.edit_profile)

@@ -27,12 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".ui.reminder.RemindReceiver" />
+        <receiver android:name=".ui.account.reminder.RemindReceiver" />
         <service
-            android:name=".ui.reminder.RemindJobService"
+            android:name=".ui.account.reminder.RemindJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <receiver
-            android:name=".ui.reminder.BootReceiver"
+            android:name=".ui.account.reminder.BootReceiver"
             android:enabled="false"
             android:exported="false">
             <intent-filter>

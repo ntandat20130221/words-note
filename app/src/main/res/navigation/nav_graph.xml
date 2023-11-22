@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/reminder_fragment"
-        android:name="com.example.wordnotes.ui.reminder.ReminderFragment"
+        android:name="com.example.wordnotes.ui.account.reminder.ReminderFragment"
         tools:layout="@layout/fragment_reminder" />
     <fragment
         android:id="@+id/account_fragment"
@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_account_fragment_to_edit_profile_fragment"
             app:destination="@id/edit_profile_fragment" />
+        <action
+            android:id="@+id/action_account_fragment_to_reminder_fragment"
+            app:destination="@id/reminder_fragment" />
     </fragment>
     <fragment
         android:id="@+id/edit_profile_fragment"
@@ -105,5 +108,22 @@
             app:destination="@id/auth_flow"
             app:popUpTo="@id/routing_fragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/learning_fragment"
+        android:name="com.example.wordnotes.ui.learning.LearningFragment"
+        tools:layout="@layout/fragment_learning">
+        <action
+            android:id="@+id/action_learning_fragment_to_flashCardFragment"
+            app:destination="@id/flash_card_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/flash_card_fragment"
+        android:name="com.example.wordnotes.ui.learning.FlashCardFragment"
+        tools:layout="@layout/fragment_flash_card">
+        <argument
+            android:name="type"
+            app:argType="integer"
+            app:nullable="false" />
     </fragment>
 </navigation>

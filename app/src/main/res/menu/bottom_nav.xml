@@ -7,9 +7,9 @@
         android:title="@string/home"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/reminder_fragment"
-        android:icon="@drawable/ic_alarm"
-        android:title="@string/reminder"
+        android:id="@+id/learning_fragment"
+        android:icon="@drawable/ic_book"
+        android:title="@string/learning"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/account_fragment"

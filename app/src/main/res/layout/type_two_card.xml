@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="32dp"
+        app:cardBackgroundColor="?colorSurfaceContainer"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?colorSurfaceContainer">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_meaning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textAlignment="center"
+                android:textColor="?colorOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="hello" />
+
+            <EditText
+                android:id="@+id/input_word"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/bg_input_learning"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="12dp"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_meaning"
+                tools:ignore="LabelFor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/result_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="-40dp"
+        android:background="@drawable/bg_learning_result"
+        android:outlineAmbientShadowColor="?colorSurface"
+        android:outlineSpotShadowColor="?colorSurface"
+        android:translationZ="5dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/card"
+        app:layout_constraintEnd_toEndOf="@id/card"
+        app:layout_constraintStart_toStartOf="@id/card" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_check"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="8dp"
+        android:translationZ="5dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/result_view"
+        app:layout_constraintEnd_toEndOf="@id/result_view"
+        app:layout_constraintStart_toStartOf="@id/result_view"
+        app:layout_constraintTop_toTopOf="@id/result_view"
+        app:shapeAppearanceOverlay="@style/RoundedImageView"
+        app:tint="@color/white"
+        tools:backgroundTint="@color/success"
+        tools:src="@drawable/ic_check" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.reminder
+package com.example.wordnotes.ui.account.reminder
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.wordnotes.R
 import com.example.wordnotes.WordNotesApplication
+import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
 
-class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
+class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener, BottomNavHideable {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.reminder_preference, rootKey)
@@ -44,10 +44,7 @@ class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar).findViewById<Toolbar>(R.id.toolbar)
-        findNavController().setUpToolbar(
-            toolbar,
-            AppBarConfiguration(setOf(R.id.words_fragment, R.id.reminder_fragment, R.id.account_fragment))
-        )
+        findNavController().setUpToolbar(toolbar)
     }
 
     override fun onResume() {

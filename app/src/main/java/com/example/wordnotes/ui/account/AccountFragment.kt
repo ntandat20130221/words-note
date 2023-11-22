@@ -23,7 +23,6 @@ import com.example.wordnotes.utils.isNetworkAvailable
 import com.example.wordnotes.utils.setUpToolbar
 import kotlinx.coroutines.launch
 
-
 class AccountFragment : Fragment() {
     private var _binding: FragmentAccountBinding? = null
     private val binding get() = _binding!!
@@ -85,6 +84,7 @@ class AccountFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         binding.layoutEdit.setOnTouchListener(OnTouchListener)
+        binding.layoutReminder.setOnTouchListener(OnTouchListener)
         binding.layoutLogout.setOnTouchListener(OnTouchListener)
 
         binding.layoutEdit.setOnClickListener {
@@ -93,6 +93,10 @@ class AccountFragment : Fragment() {
             } else {
                 (requireActivity() as MainActivity).showNoInternetMessage()
             }
+        }
+
+        binding.layoutReminder.setOnClickListener {
+            findNavController().navigate(AccountFragmentDirections.actionAccountFragmentToReminderFragment())
         }
 
         binding.layoutLogout.setOnClickListener {

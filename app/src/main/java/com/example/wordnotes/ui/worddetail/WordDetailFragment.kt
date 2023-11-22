@@ -1,7 +1,6 @@
 package com.example.wordnotes.ui.worddetail
 
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +15,9 @@ import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
+import com.example.wordnotes.ui.TextToSpeechService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
-import java.util.UUID
 
 class WordDetailFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentWordDetailBinding? = null
@@ -29,9 +26,14 @@ class WordDetailFragment : BottomSheetDialogFragment() {
     private val wordDetailViewModel: WordDetailViewModel by viewModels { WordViewModelFactory }
     private val args: WordDetailFragmentArgs by navArgs()
     private lateinit var wordId: String
-    private var tts: TextToSpeech? = null
+    private val ttsService: TextToSpeechService by lazy { TextToSpeechService(requireContext(), lifecycleScope) }
 
     override fun getTheme() = R.style.BottomSheetDialogStyle
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        wordDetailViewModel.initializeWithWordId(args.wordId.also { wordId = it })
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWordDetailBinding.inflate(inflater, container, false)
@@ -40,16 +42,13 @@ class WordDetailFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        wordDetailViewModel.initializeWithWordId(args.wordId.also { wordId = it })
         observeUiState()
         setActionListeners()
-        setUpTextToSpeech()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        tts?.shutdown()
-        tts = null
+        ttsService.shutdown()
         _binding = null
     }
 
@@ -63,8 +62,7 @@ class WordDetailFragment : BottomSheetDialogFragment() {
                         textPos.text = uiState.pos
                         textMeaning.text = uiState.meaning
 
-                        textIpa.visibility = if (uiState.ipa.isNotEmpty()) View.VISIBLE else View.GONE
-                        textMeaning.visibility = if (uiState.meaning.isNotEmpty()) View.VISIBLE else View.GONE
+                        uiState.ipa.ifEmpty { textIpa.visibility = View.GONE }
 
                         imageRemind.setImageDrawable(
                             ContextCompat.getDrawable(
@@ -99,20 +97,7 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         }
 
         binding.imageSpeech.setOnClickListener {
-            lifecycleScope.launch {
-                do {
-                    val result = tts?.speak(binding.textWord.text, TextToSpeech.QUEUE_FLUSH, null, UUID.randomUUID().toString())
-                    delay(200)
-                } while (result != TextToSpeech.SUCCESS)
-            }
-        }
-    }
-
-    private fun setUpTextToSpeech() {
-        tts = TextToSpeech(requireContext().applicationContext) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                tts?.language = Locale.US
-            }
+            ttsService.speak(binding.textWord.text.toString())
         }
     }
 }
