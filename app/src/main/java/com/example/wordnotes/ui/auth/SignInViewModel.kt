@@ -7,11 +7,13 @@ import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.data.repositories.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class SignInUiState(
     val isSignInSuccess: Boolean = false,
@@ -19,7 +21,8 @@ data class SignInUiState(
     val message: Int? = null
 )
 
-class SignInViewModel(private val userRepository: UserRepository) : ViewModel() {
+@HiltViewModel
+class SignInViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
     private val _uiState: MutableStateFlow<SignInUiState> = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
@@ -31,7 +34,6 @@ class SignInViewModel(private val userRepository: UserRepository) : ViewModel() 
                 when (userRepository.signIn(User(email = email, password = password))) {
                     is Result.Success -> _uiState.update { SignInUiState(isSignInSuccess = true, isRequesting = false) }
                     is Result.Error -> _uiState.update { SignInUiState(message = R.string.authentication_failed, isRequesting = false) }
-                    else -> _uiState.update { SignInUiState(isRequesting = false) }
                 }
             }
         }

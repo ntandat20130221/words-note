@@ -8,5 +8,5 @@ const val DATABASE_NAME = "words.db"
 
 @Database(entities = [Word::class], version = 1, exportSchema = false)
 abstract class WordDatabase : RoomDatabase() {
-    abstract fun wordDao(): WordsDao
+    abstract fun wordDao(): WordDao
 }

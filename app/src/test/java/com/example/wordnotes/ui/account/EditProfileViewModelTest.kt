@@ -1,9 +1,9 @@
 package com.example.wordnotes.ui.account
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.wordnotes.MainCoroutineRule
 import com.example.wordnotes.data.model.User
-import com.example.wordnotes.sharedtest.FakeUserRepository
-import com.example.wordnotes.sharedtest.MainCoroutineRule
+import com.example.wordnotes.fakes.FakeUserRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -11,10 +11,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
 class EditProfileViewModelTest {
     private lateinit var userRepository: FakeUserRepository

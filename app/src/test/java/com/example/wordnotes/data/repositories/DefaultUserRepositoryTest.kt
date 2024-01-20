@@ -2,8 +2,8 @@ package com.example.wordnotes.data.repositories
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
-import com.example.wordnotes.sharedtest.FakeDataStoreRepository
-import com.example.wordnotes.sharedtest.FakeUserNetworkDataSource
+import com.example.wordnotes.fakes.FakeDataStoreRepository
+import com.example.wordnotes.fakes.FakeUserRemoteDataSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -13,73 +13,68 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class DefaultUserRepositoryTest {
-    private lateinit var userNetworkDataSource: FakeUserNetworkDataSource
+    private lateinit var userRemoteDataSource: FakeUserRemoteDataSource
     private lateinit var dataStoreRepository: FakeDataStoreRepository
     private lateinit var userRepository: DefaultUserRepository
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
-    fun setUp() {
-        userNetworkDataSource = FakeUserNetworkDataSource()
+    fun createRepository() {
+        userRemoteDataSource = FakeUserRemoteDataSource()
         dataStoreRepository = FakeDataStoreRepository()
-        userRepository = DefaultUserRepository(userNetworkDataSource, dataStoreRepository, testDispatcher)
+        userRepository = DefaultUserRepository(userRemoteDataSource, dataStoreRepository, testDispatcher)
     }
 
     @Test
-    fun `test sign up`() = runTest(testDispatcher) {
-        val user = User(username = "user3", email = "user3@gmail.com", password = "123456")
+    fun `sign up should successfully`() = runTest(testDispatcher) {
+        val user = User(username = "user3", email = "user3@gmail.com", password = "333333")
         val result = userRepository.signUp(user)
         assertThat(result is Result.Success).isTrue()
     }
 
     @Test
-    fun `sign up with existing user then return error`() = runTest(testDispatcher) {
-        val user = User(username = "user1", email = "user1@gmail.com", password = "123456")
+    fun `sign up with existing user should return error`() = runTest(testDispatcher) {
+        val user = User(username = "user1", email = "user1@gmail.com", password = "111111")
         val result = userRepository.signUp(user)
         assertThat(result is Result.Error).isTrue()
     }
 
     @Test
-    fun `test sign in`() = runTest(testDispatcher) {
-        val user = User(username = "user1", email = "user1@gmail.com", password = "123456")
+    fun `sign in should successfully`() = runTest(testDispatcher) {
+        val user = User(username = "user1", email = "user1@gmail.com", password = "111111")
         val result = userRepository.signIn(user)
         assertThat(result is Result.Success).isTrue()
     }
 
     @Test
-    fun `sign in with non-existing user then return error`() = runTest(testDispatcher) {
-        val user = User(username = "user3", email = "user3@gmail.com", password = "123456")
+    fun `sign in with non-exist user should return error`() = runTest(testDispatcher) {
+        val user = User(username = "user3", email = "user3@gmail.com", password = "333333")
         val result = userRepository.signIn(user)
         assertThat(result is Result.Error).isTrue()
     }
 
     @Test
-    fun `sign up then check current user`() = runTest(testDispatcher) {
-        val user = User(username = "user3", email = "user3@gmail.com", password = "123456")
+    fun `sign up then check current user profile`() = runTest(testDispatcher) {
+        val user = User(username = "user3", email = "user3@gmail.com", password = "333333")
         val newUser = (userRepository.signUp(user) as Result.Success).data
-
         val currentUser = (userRepository.getUser() as Result.Success).data
         assertThat(currentUser).isEqualTo(newUser)
     }
 
     @Test
-    fun `sign in then check current user`() = runTest(testDispatcher) {
-        val user = User(username = "user1", email = "user1@gmail.com", password = "123456")
-        val signedInUser = (userRepository.signIn(user) as Result.Success).data
-
+    fun `sign in then check current user profile`() = runTest(testDispatcher) {
+        val user = User(username = "user1", email = "user1@gmail.com", password = "111111")
+        val loggedUser = (userRepository.signIn(user) as Result.Success).data
         val currentUser = (userRepository.getUser() as Result.Success).data
-        assertThat(currentUser).isEqualTo(signedInUser)
+        assertThat(currentUser).isEqualTo(loggedUser)
     }
 
     @Test
-    fun `log out then get user should return empty user`() = runTest(testDispatcher) {
-        val user = User(username = "user1", email = "user1@gmail.com", password = "123456")
+    fun `log out then get user should return error`() = runTest(testDispatcher) {
+        val user = User(username = "user1", email = "user1@gmail.com", password = "111111")
         userRepository.signIn(user)
         userRepository.logOut()
-        val currentUser = (userRepository.getUser() as Result.Success).data
-        assertThat(currentUser).isEqualTo(
-            User(id = "", username = "", email = "", password = "", phone = "", gender = -1, dob = 0)
-        )
+        assertThat(userRepository.getUser() is Result.Error).isTrue()
     }
 }

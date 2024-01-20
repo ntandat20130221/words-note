@@ -16,12 +16,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 interface BottomNavHideable
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, args ->
             when (destination.id) {
-                R.id.words_fragment -> destination.label = getString(R.string.words)
+                R.id.home_fragment -> destination.label = getString(R.string.words)
                 R.id.add_edit_word_fragment -> destination.label = if (args?.getString("wordId") == null)
                     getString(R.string.add_new_word) else getString(R.string.edit_word)
 

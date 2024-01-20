@@ -1,8 +1,8 @@
 package com.example.wordnotes.ui.auth
 
+import com.example.wordnotes.MainCoroutineRule
 import com.example.wordnotes.R
-import com.example.wordnotes.sharedtest.FakeUserRepository
-import com.example.wordnotes.sharedtest.MainCoroutineRule
+import com.example.wordnotes.fakes.FakeUserRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

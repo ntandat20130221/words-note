@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Dell\.android\avd\Pixel_3a_API_29.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-11-21T13:55:02.671526700Z" />
+    <value>
+      <entry key="MainActivityTest">
+        <State />
+      </entry>
+      <entry key="Tests in 'com.example.wordnotes.data'">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="pressBackShouldExitApp()">
+        <State />
+      </entry>
+      <entry key="testNavigationWithBottomNav()">
+        <State />
+      </entry>
+    </value>
   </component>
 </project>

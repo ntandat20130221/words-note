@@ -4,3 +4,40 @@ TODO: Fix bug toolbar color not changing when navigate to EditWordFragment when 
 TODO: Fix bug deleting words when searching (the words not disappear until it actually delete after undo time)
 TODO: Fix bug snack bar show
 TODO: Add undo when deleting word at DetailWordFragment
+
+
+Word ui state, ActionMode ui state, search ui state
+
+WordUiState(
+    val wordItems: List<WordItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val isShowEmptyScreen: Boolean = false
+)
+
+ActionModeUiState(
+    val isActive: Boolean,
+)
+
+private val _wordUiState: MutableStatedFlow<WordUiState> = MutableStatedFlow(WordUiState())
+val wordUiState: StatedFlow<WordUiState> = _wordUiState.asStatedFlow()
+
+val selectedWordIds = mutableListOf<String>()
+
+init {
+    viewModelScope.launch {
+        _wordUiState.update { it.copy(isLoading = true) }
+        wordRepository.getWordsStream().collect { words ->
+            if (words.isEmpty()) {
+                _wordUiState.update {
+                    it.copy(isShowEmptyScreen = true)
+                }
+            } else {
+                val wordItems = words.map { WordItem(word = it, isSelected = selectedWordIds.contains(it.id)) }
+                _wordUiState.update {
+                    it.copy(wordItems = words)
+                }
+            }
+            wordUiState.update { it.copy(isLoading = false) }
+        }
+    }
+}

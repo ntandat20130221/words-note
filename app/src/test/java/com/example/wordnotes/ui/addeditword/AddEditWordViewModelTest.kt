@@ -2,11 +2,11 @@ package com.example.wordnotes.ui.addeditword
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import com.example.wordnotes.MainCoroutineRule
 import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.sharedtest.FakeWordsRepository
-import com.example.wordnotes.sharedtest.MainCoroutineRule
+import com.example.wordnotes.fakes.FakeWordRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -17,7 +17,7 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class AddEditWordViewModelTest {
-    private lateinit var wordsRepository: FakeWordsRepository
+    private lateinit var wordsRepository: FakeWordRepository
     private lateinit var addEditWordViewModel: AddEditWordViewModel
     private lateinit var savedStateHandle: SavedStateHandle
 
@@ -29,7 +29,7 @@ class AddEditWordViewModelTest {
 
     @Before
     fun setUpViewModel() {
-        wordsRepository = FakeWordsRepository()
+        wordsRepository = FakeWordRepository()
         savedStateHandle = SavedStateHandle()
         addEditWordViewModel = AddEditWordViewModel(wordsRepository, savedStateHandle)
     }

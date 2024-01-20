@@ -17,20 +17,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
 import com.example.wordnotes.utils.showSoftKeyboard
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class AddEditWordFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
 
-    private val addEditWordViewModel: AddEditWordViewModel by viewModels { WordViewModelFactory }
+    private val addEditWordViewModel: AddEditWordViewModel by viewModels()
     private val args: AddEditWordFragmentArgs by navArgs()
     private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
     private var originalSoftInputMode: Int? = null

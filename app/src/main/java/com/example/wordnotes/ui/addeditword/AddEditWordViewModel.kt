@@ -9,12 +9,14 @@ import com.example.wordnotes.Event
 import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.repositories.WordsRepository
+import com.example.wordnotes.data.repositories.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AddEditWordUiState(
     val word: Word = Word(),
@@ -24,8 +26,9 @@ data class AddEditWordUiState(
     val snackBarMessage: Int? = null
 )
 
-class AddEditWordViewModel(
-    private val wordsRepository: WordsRepository,
+@HiltViewModel
+class AddEditWordViewModel @Inject constructor(
+    private val wordRepository: WordRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -68,7 +71,7 @@ class AddEditWordViewModel(
     private fun loadWord(wordId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            wordsRepository.getWord(wordId).let { result ->
+            wordRepository.getWord(wordId).let { result ->
                 when (result) {
                     is Result.Success -> {
                         val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
@@ -84,8 +87,6 @@ class AddEditWordViewModel(
                     }
 
                     is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
-
-                    is Result.Loading -> _uiState.update { it.copy(isLoading = true) }
                 }
             }
         }
@@ -117,12 +118,12 @@ class AddEditWordViewModel(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordsRepository.saveWord(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis()))
+        wordRepository.saveWord(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis()))
         _wordSavedEvent.value = Event(Unit)
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
-        wordsRepository.updateWords(listOf(transformWordBeforeSave(word)))
+        wordRepository.updateWords(listOf(transformWordBeforeSave(word)))
         _wordSavedEvent.value = Event(Unit)
     }
 

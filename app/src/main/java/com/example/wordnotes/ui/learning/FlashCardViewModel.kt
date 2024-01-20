@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.data.repositories.WordsRepository
+import com.example.wordnotes.data.repositories.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val KEY_WORDS = "KEY_WORDS"
 private const val KEY_POSITION = "KEY_POSITION"
@@ -22,8 +24,9 @@ data class FlashCardUiState(
     val okPositions: Set<Int> = emptySet()
 )
 
-class FlashCardViewModel(
-    private val wordsRepository: WordsRepository,
+@HiltViewModel
+class FlashCardViewModel @Inject constructor(
+    private val wordRepository: WordRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<FlashCardUiState> = MutableStateFlow(FlashCardUiState())
@@ -44,7 +47,7 @@ class FlashCardViewModel(
             }
         } else {
             viewModelScope.launch {
-                when (val result = wordsRepository.getWords()) {
+                when (val result = wordRepository.getWords()) {
                     is Result.Success -> {
                         _uiState.update {
                             it.copy(words = result.data).also {

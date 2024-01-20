@@ -14,42 +14,37 @@ import android.content.Intent
 import androidx.work.Configuration
 import com.example.wordnotes.CHANNEL_ID
 import com.example.wordnotes.R
-import com.example.wordnotes.WordNotesApplication
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
+import com.example.wordnotes.data.repositories.WordRepository
 import com.example.wordnotes.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.time.LocalTime
+import javax.inject.Inject
 
-class RemindReceiver : BroadcastReceiver() {
+@AndroidEntryPoint
+class RemindReceiver(private val wordReminder: WordReminder) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val appContainer = (context.applicationContext as WordNotesApplication).appContainer
-        val wordReminder = appContainer.wordReminderFactory.create()
-
-        try {
-            if (isTimeOut(appContainer.reminderPreferencesFactory.create())) {
-                wordReminder.schedule(next = true)
-            } else {
-                val jobInfo = JobInfo.Builder(0, ComponentName(context, RemindJobService::class.java)).build()
-                val jobScheduler = context.getSystemService(JobScheduler::class.java)
-                jobScheduler.schedule(jobInfo)
-            }
-        } catch (_: Exception) {
-            wordReminder.cancel()
+        if (wordReminder.isTimeOut()) {
+            wordReminder.schedule(next = true)
+        } else {
+            val jobInfo = JobInfo.Builder(0, ComponentName(context, RemindJobService::class.java)).build()
+            val jobScheduler = context.getSystemService(JobScheduler::class.java)
+            jobScheduler.schedule(jobInfo)
         }
-    }
-
-    private fun isTimeOut(reminderPreferences: ReminderPreferences): Boolean {
-        val endTime = TimePickerPreference.Formatter.parse(reminderPreferences.getEndTime()!!)
-        return LocalTime.now().isAfter(endTime)
     }
 }
 
+@AndroidEntryPoint
 class RemindJobService : JobService() {
+
+    @Inject
+    lateinit var wordRepository: WordRepository
+
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
@@ -57,10 +52,8 @@ class RemindJobService : JobService() {
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
-        val wordsRepository = (applicationContext as WordNotesApplication).appContainer.wordsRepository
-
         scope.launch {
-            val result = wordsRepository.getRemindWords()
+            val result = wordRepository.getRemindingWords()
             if (result is Result.Success) {
                 result.data.randomOrNull()?.let { word ->
                     pushNotification(word)

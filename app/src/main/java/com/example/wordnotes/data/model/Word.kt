@@ -20,13 +20,13 @@ data class Word(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readByte() != 0.toByte(),
-        parcel.readLong()
+        id = parcel.readString() ?: "",
+        word = parcel.readString() ?: "",
+        pos = parcel.readString() ?: "",
+        ipa = parcel.readString() ?: "",
+        meaning = parcel.readString() ?: "",
+        isRemind = parcel.readByte() != 0.toByte(),
+        timestamp = parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

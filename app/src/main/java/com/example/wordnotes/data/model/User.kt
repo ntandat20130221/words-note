@@ -15,14 +15,14 @@ data class User(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readInt(),
-        parcel.readLong()
+        id = parcel.readString() ?: "",
+        username = parcel.readString() ?: "",
+        profileImageUrl = parcel.readString() ?: "",
+        email = parcel.readString() ?: "",
+        password = parcel.readString() ?: "",
+        phone = parcel.readString() ?: "",
+        gender = parcel.readInt(),
+        dob = parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

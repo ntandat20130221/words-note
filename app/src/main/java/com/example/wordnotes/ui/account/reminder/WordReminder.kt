@@ -7,12 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.SystemClock
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class WordReminder(
-    private val context: Context,
+class WordReminder @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val reminderPreferences: ReminderPreferences
 ) {
     private val alarmManager = context.applicationContext.getSystemService(AlarmManager::class.java)
@@ -65,5 +67,10 @@ class WordReminder(
         val intent = Intent(context, RemindReceiver::class.java)
         val flags = if (forCanceling) PendingIntent.FLAG_NO_CREATE else PendingIntent.FLAG_IMMUTABLE
         return PendingIntent.getBroadcast(context.applicationContext, 0, intent, flags)
+    }
+
+    fun isTimeOut(): Boolean {
+        val endTime = TimePickerPreference.Formatter.parse(reminderPreferences.getEndTime()!!)
+        return LocalTime.now().isAfter(endTime)
     }
 }

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentEditProfileBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.hideSoftKeyboard
@@ -30,17 +28,18 @@ import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
+@AndroidEntryPoint
 class EditProfileFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val editProfileViewModel: EditProfileViewModel by viewModels { WordViewModelFactory }
+    private val editProfileViewModel: EditProfileViewModel by viewModels()
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {

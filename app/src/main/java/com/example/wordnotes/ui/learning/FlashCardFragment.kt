@@ -13,18 +13,19 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentFlashCardBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FlashCardFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentFlashCardBinding? = null
     private val binding get() = _binding!!
 
     private val args: FlashCardFragmentArgs by navArgs()
-    private val flashCardViewModel: FlashCardViewModel by viewModels { WordViewModelFactory }
+    private val flashCardViewModel: FlashCardViewModel by viewModels()
     private lateinit var cardPagerAdapter: CardPagerAdapter
     private var originalSoftInputMode: Int? = null
 

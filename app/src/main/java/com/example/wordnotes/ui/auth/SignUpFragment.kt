@@ -13,17 +13,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentSignUpBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
 
-    private val signUpViewModel: SignUpViewModel by viewModels { WordViewModelFactory }
+    private val signUpViewModel: SignUpViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)

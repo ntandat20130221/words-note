@@ -13,17 +13,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
 import com.example.wordnotes.ui.TextToSpeechService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class WordDetailFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentWordDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val wordDetailViewModel: WordDetailViewModel by viewModels { WordViewModelFactory }
+    private val wordDetailViewModel: WordDetailViewModel by viewModels()
     private val args: WordDetailFragmentArgs by navArgs()
     private lateinit var wordId: String
     private val ttsService: TextToSpeechService by lazy { TextToSpeechService(requireContext(), lifecycleScope) }

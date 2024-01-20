@@ -3,16 +3,15 @@ package com.example.wordnotes
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import com.example.wordnotes.di.AppContainer
+import dagger.hilt.android.HiltAndroidApp
 
 const val CHANNEL_ID = "com.example.wordnotes.remider"
 
+@HiltAndroidApp
 class WordNotesApplication : Application() {
-    lateinit var appContainer: AppContainer
 
     override fun onCreate() {
         super.onCreate()
-        appContainer = AppContainer(this)
         createRemindNotificationChannel()
     }
 

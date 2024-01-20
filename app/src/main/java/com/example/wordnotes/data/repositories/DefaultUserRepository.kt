@@ -3,55 +3,58 @@ package com.example.wordnotes.data.repositories
 import android.net.Uri
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
-import com.example.wordnotes.data.network.UserNetworkDataSource
+import com.example.wordnotes.data.remote.UserRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class DefaultUserRepository(
-    private val userNetworkDataSource: UserNetworkDataSource,
+    private val userRemoteDataSource: UserRemoteDataSource,
     private val dataStoreRepository: DataStoreRepository,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher
 ) : UserRepository {
-    private val scope = CoroutineScope(ioDispatcher)
 
-    var isSignedIn = false  // For testing
+    @Inject
+    constructor(
+        userRemoteDataSource: UserRemoteDataSource,
+        dataStoreRepository: DataStoreRepository
+    ) : this(userRemoteDataSource, dataStoreRepository, Dispatchers.IO)
 
-    override suspend fun signUp(user: User): Result<User> = withContext(ioDispatcher) {
-        userNetworkDataSource.signUp(user).also { result ->
+    private val scope = CoroutineScope(dispatcher)
+
+    override suspend fun signUp(user: User): Result<User> = withContext(dispatcher) {
+        userRemoteDataSource.signUp(user).also { result ->
             if (result is Result.Success) {
-                isSignedIn = true
                 scope.launch { dataStoreRepository.setUser(result.data) }
             }
         }
     }
 
-    override suspend fun signIn(user: User): Result<User> = withContext(ioDispatcher) {
-        userNetworkDataSource.signIn(user).also { result ->
+    override suspend fun signIn(user: User): Result<User> = withContext(dispatcher) {
+        userRemoteDataSource.signIn(user).also { result ->
             if (result is Result.Success) {
-                isSignedIn = true
                 scope.launch { dataStoreRepository.setUser(result.data) }
             }
         }
     }
 
-    override suspend fun resetPassword(email: String): Result<Unit> = withContext(ioDispatcher) {
-        userNetworkDataSource.resetPassword(email)
+    override suspend fun resetPassword(email: String): Result<Unit> = withContext(dispatcher) {
+        userRemoteDataSource.resetPassword(email)
     }
 
-    override suspend fun logOut(): Unit = withContext(ioDispatcher) {
-        userNetworkDataSource.signOut()
-        isSignedIn = false
+    override suspend fun logOut() = withContext<Unit>(dispatcher) {
+        userRemoteDataSource.signOut()
         scope.launch { dataStoreRepository.clearUser() }
     }
 
-    override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(ioDispatcher) {
+    override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(dispatcher) {
         if (imageUri == Uri.EMPTY) {
-            userNetworkDataSource.updateProfile(user)
+            userRemoteDataSource.updateProfile(user)
         } else {
-            userNetworkDataSource.updateProfileImage(imageUri, user)
+            userRemoteDataSource.updateProfileImage(imageUri, user)
         }.also { result ->
             if (result is Result.Success) {
                 dataStoreRepository.setUser(result.data)
@@ -59,7 +62,7 @@ class DefaultUserRepository(
         }
     }
 
-    override suspend fun getUser(): Result<User> = withContext(ioDispatcher) {
-        Result.Success(dataStoreRepository.getUser())
+    override suspend fun getUser(): Result<User> = withContext(dispatcher) {
+        dataStoreRepository.getUser()
     }
 }

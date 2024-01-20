@@ -3,8 +3,10 @@ package com.example.wordnotes.ui.account.reminder
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class ReminderPreferences(context: Context) {
+class ReminderPreferences @Inject constructor(@ApplicationContext context: Context) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun isRemind(default: Boolean = false) = sharedPreferences.getBoolean(ReminderFragment.KEY_REMIND, default)

@@ -10,20 +10,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentSignInBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SignInFragment : Fragment(), BottomNavHideable {
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
 
-    private val signInViewModel: SignInViewModel by viewModels { WordViewModelFactory }
+    private val signInViewModel: SignInViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSignInBinding.inflate(inflater, container, false)
@@ -63,7 +63,7 @@ class SignInFragment : Fragment(), BottomNavHideable {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 signInViewModel.uiState.collect { uiState ->
                     if (uiState.isSignInSuccess) {
-                        navigateToStartDestination()
+                        navigateToHome()
                     }
                     uiState.message?.let { message ->
                         showSnackBar(message)
@@ -80,11 +80,11 @@ class SignInFragment : Fragment(), BottomNavHideable {
         }
     }
 
-    private fun navigateToStartDestination() {
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.sign_in_fragment, true)
-            .build()
-        findNavController().navigate(findNavController().graph.startDestinationId, null, navOptions)
+    private fun navigateToHome() {
+        val navController = findNavController()
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
+        navGraph.setStartDestination(R.id.home_fragment)
+        navController.graph = navGraph
     }
 
     private fun navigateToForgotPasswordFragment() {

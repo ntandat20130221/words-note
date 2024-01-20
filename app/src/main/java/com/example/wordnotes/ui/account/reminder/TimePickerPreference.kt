@@ -8,14 +8,18 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
 import com.example.wordnotes.R
-import com.example.wordnotes.WordNotesApplication
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(context, attrs) {
+
+    @Inject
+    lateinit var wordPreferences: ReminderPreferences
+
     private var fragmentManager: FragmentManager? = null
     private var initialValue: String? = null
 
@@ -59,7 +63,6 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
 
     private fun isValid(hour: Int, minute: Int): Boolean {
         val time = LocalTime.of(hour, minute)
-        val wordPreferences = (context.applicationContext as WordNotesApplication).appContainer.reminderPreferencesFactory.create()
 
         return when (key) {
             ReminderFragment.KEY_START_TIME -> {

@@ -16,18 +16,19 @@ import androidx.navigation.ui.AppBarConfiguration
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
-import com.example.wordnotes.WordViewModelFactory
 import com.example.wordnotes.databinding.FragmentAccountBinding
 import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.isNetworkAvailable
 import com.example.wordnotes.utils.setUpToolbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class AccountFragment : Fragment() {
     private var _binding: FragmentAccountBinding? = null
     private val binding get() = _binding!!
 
-    private val accountViewModel: AccountViewModel by viewModels { WordViewModelFactory }
+    private val accountViewModel: AccountViewModel by viewModels()
 
     private object OnTouchListener : View.OnTouchListener {
         @SuppressLint("ClickableViewAccessibility")
@@ -76,7 +77,7 @@ class AccountFragment : Fragment() {
         binding.toolbar.toolbar.apply {
             findNavController().setUpToolbar(
                 this,
-                AppBarConfiguration(setOf(R.id.words_fragment, R.id.reminder_fragment, R.id.account_fragment))
+                AppBarConfiguration(setOf(R.id.home_fragment, R.id.reminder_fragment, R.id.account_fragment))
             )
         }
     }
@@ -125,7 +126,7 @@ class AccountFragment : Fragment() {
                     }
 
                     if (uiState.isLogOut) {
-                        navigateToRoutingFragment()
+                        navigateToSignInFragment()
                     }
                 }
             }
@@ -136,10 +137,12 @@ class AccountFragment : Fragment() {
         findNavController().navigate(AccountFragmentDirections.actionAccountFragmentToEditProfileFragment())
     }
 
-    private fun navigateToRoutingFragment() {
+    private fun navigateToSignInFragment() {
         findNavController().apply {
-            graph.setStartDestination(R.id.routing_fragment)
-            navigate(AccountFragmentDirections.actionToRoutingFragment())
+            val navGraph = navInflater.inflate(R.navigation.nav_graph)
+            navGraph.setStartDestination(R.id.auth_flow)
+            graph = navGraph
         }
+
     }
 }

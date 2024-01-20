@@ -12,11 +12,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.wordnotes.R
-import com.example.wordnotes.WordNotesApplication
 import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener, BottomNavHideable {
+
+    @Inject
+    lateinit var wordReminder: WordReminder
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.reminder_preference, rootKey)
@@ -28,7 +33,6 @@ class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             entries = (1..100).map { context.resources.getQuantityString(R.plurals.remind_times, it, it) }.toList().toTypedArray()
             entryValues = (1..100).map { it.toString() }.toList().toTypedArray()
         }
-
         findPreference<TimePickerPreference>(KEY_START_TIME)?.setFragmentManager(childFragmentManager)
         findPreference<TimePickerPreference>(KEY_END_TIME)?.setFragmentManager(childFragmentManager)
     }
@@ -60,7 +64,6 @@ class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             KEY_REMIND, KEY_REMIND_TIMES, KEY_START_TIME, KEY_END_TIME -> {
-                val wordReminder = (requireContext().applicationContext as WordNotesApplication).appContainer.wordReminderFactory.create()
                 if (sharedPreferences.getBoolean(KEY_REMIND, false))
                     wordReminder.schedule()
                 else
