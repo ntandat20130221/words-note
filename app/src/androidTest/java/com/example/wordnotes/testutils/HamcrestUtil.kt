@@ -4,12 +4,14 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.Checkable
 import androidx.annotation.AttrRes
+import androidx.core.view.forEach
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.matcher.BoundedMatcher
 import com.example.wordnotes.utils.themeColor
+import com.google.android.material.navigation.NavigationBarView
 import com.google.common.truth.Truth.assertThat
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers
@@ -50,6 +52,23 @@ fun setChecked(checked: Boolean): ViewAction = object : ViewAction {
 
     override fun perform(uiController: UiController?, view: View?) {
         (view as Checkable).isChecked = checked
+    }
+}
+
+fun withCheckedItem(checkedItemId: Int): Matcher<View> {
+    return object : BoundedMatcher<View, NavigationBarView>(NavigationBarView::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("withCheckedItem: ")
+        }
+
+        override fun matchesSafely(view: NavigationBarView): Boolean {
+            view.menu.forEach { menu ->
+                if (menu.isChecked and (menu.itemId == checkedItemId)) {
+                    return true
+                }
+            }
+            return false
+        }
     }
 }
 

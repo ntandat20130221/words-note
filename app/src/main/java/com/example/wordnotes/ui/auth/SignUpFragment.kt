@@ -80,10 +80,12 @@ class SignUpFragment : Fragment(), BottomNavHideable {
     }
 
     private fun navigateToStartDestination() {
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.sign_in_fragment, true)
-            .build()
-        findNavController().navigate(findNavController().graph.startDestinationId, null, navOptions)
+        findNavController().apply {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.sign_in_fragment, true)
+                .build()
+            navigate(graph.startDestinationId, null, navOptions)
+        }
     }
 
     private fun navigateToSignInFragment() {

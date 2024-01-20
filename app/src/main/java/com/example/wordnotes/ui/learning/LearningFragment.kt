@@ -9,7 +9,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.databinding.FragmentLearningBinding
 import com.example.wordnotes.utils.setUpToolbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LearningFragment : Fragment() {
     private var _binding: FragmentLearningBinding? = null
     private val binding get() = _binding!!

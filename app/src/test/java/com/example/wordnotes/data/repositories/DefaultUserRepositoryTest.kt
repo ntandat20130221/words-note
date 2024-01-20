@@ -2,8 +2,8 @@ package com.example.wordnotes.data.repositories
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
-import com.example.wordnotes.fakes.FakeDataStoreRepository
-import com.example.wordnotes.fakes.FakeUserRemoteDataSource
+import com.example.wordnotes.mocks.FakeDataStoreRepository
+import com.example.wordnotes.mocks.FakeUserRemoteDataSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

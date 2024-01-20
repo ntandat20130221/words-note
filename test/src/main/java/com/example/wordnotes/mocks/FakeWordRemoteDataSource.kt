@@ -1,4 +1,4 @@
-package com.example.wordnotes.fakes
+package com.example.wordnotes.mocks
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word

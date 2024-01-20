@@ -1,4 +1,4 @@
-package com.example.wordnotes.fakes
+package com.example.wordnotes.mocks
 
 import android.net.Uri
 import com.example.wordnotes.data.Result
@@ -9,7 +9,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FakeUserRepository(private val testDispatcher: CoroutineDispatcher) : UserRepository {
 
     @Inject
@@ -22,7 +24,7 @@ class FakeUserRepository(private val testDispatcher: CoroutineDispatcher) : User
     )
 
     private val users: MutableMap<String, User> = initialUsers.associateBy { it.id }.toMutableMap()
-    private var currentUser: User? = null
+    var currentUser: User? = null
 
     override suspend fun signUp(user: User): Result<User> = withContext(testDispatcher) {
         if (users.values.any { it.email == user.email }) {

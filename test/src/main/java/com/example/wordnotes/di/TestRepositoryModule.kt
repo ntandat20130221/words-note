@@ -3,9 +3,9 @@ package com.example.wordnotes.di
 import com.example.wordnotes.data.repositories.DataStoreRepository
 import com.example.wordnotes.data.repositories.UserRepository
 import com.example.wordnotes.data.repositories.WordRepository
-import com.example.wordnotes.fakes.FakeDataStoreRepository
-import com.example.wordnotes.fakes.FakeUserRepository
-import com.example.wordnotes.fakes.FakeWordRepository
+import com.example.wordnotes.mocks.FakeDataStoreRepository
+import com.example.wordnotes.mocks.FakeUserRepository
+import com.example.wordnotes.mocks.FakeWordRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent

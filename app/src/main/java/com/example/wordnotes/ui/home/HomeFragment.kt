@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var firebaseAuthWrapper: FirebaseAuthWrapper
 
-    private val wordsViewModel: WordsViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     private lateinit var mainActivity: MainActivity
     private lateinit var wordsAdapter: WordsAdapter
@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private var inSearching = false
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() = wordsViewModel.stopSearching()
+        override fun handleOnBackPressed() = homeViewModel.stopSearching()
     }
     private val voicePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -109,8 +109,8 @@ class HomeFragment : Fragment() {
     private fun setUpRecyclerView() {
         binding.wordsRecyclerView.apply {
             wordsAdapter = WordsAdapter(
-                onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) })
+                onItemClicked = { homeViewModel.itemClicked(wordId = it) },
+                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) })
             adapter = wordsAdapter
             addOnScrollListener(OnScrollListener())
         }
@@ -133,23 +133,23 @@ class HomeFragment : Fragment() {
     private fun setUpSearch() {
         binding.searchRecyclerView.apply {
             searchAdapter = WordsAdapter(
-                onItemClicked = { wordsViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { wordsViewModel.itemLongClicked(wordId = it) })
+                onItemClicked = { homeViewModel.itemClicked(wordId = it) },
+                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) })
             adapter = searchAdapter
         }
 
         binding.searchView.addTransitionListener { _, _, newState ->
             if (newState == MaterialSearchView.TransitionState.SHOWING) {
-                wordsViewModel.startSearching()
+                homeViewModel.startSearching()
             }
             if (newState == MaterialSearchView.TransitionState.HIDING) {
-                wordsViewModel.stopSearching()
+                homeViewModel.stopSearching()
             }
         }
 
         binding.searchView.setOnQueryTextListener { text ->
             if (binding.searchView.isShowing()) {
-                wordsViewModel.search(text)
+                homeViewModel.search(text)
             }
         }
 
@@ -194,14 +194,14 @@ class HomeFragment : Fragment() {
         }
 
         binding.swipeToRefresh.setOnRefreshListener {
-            wordsViewModel.refresh()
+            homeViewModel.refresh()
         }
     }
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                wordsViewModel.uiState.collect { uiState ->
+                homeViewModel.uiState.collect { uiState ->
                     updateRecyclerView(uiState)
                     updateActionMode(uiState)
                     updateSearching(uiState)
@@ -210,26 +210,26 @@ class HomeFragment : Fragment() {
             }
         }
 
-        wordsViewModel.clickItemEvent.observe(viewLifecycleOwner,
+        homeViewModel.clickItemEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver { wordId ->
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWordDetailFragment(wordId))
             }
         )
 
-        wordsViewModel.clickEditItemEvent.observe(viewLifecycleOwner,
+        homeViewModel.clickEditItemEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver { wordId ->
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddEditWordFragment(wordId))
             }
         )
 
-        wordsViewModel.showUndoEvent.observe(viewLifecycleOwner,
+        homeViewModel.showUndoEvent.observe(viewLifecycleOwner,
             OneTimeEventObserver { amount ->
                 Snackbar.make(mainActivity.findViewById(android.R.id.content), getString(R.string.deleted_template, amount), Snackbar.LENGTH_LONG)
-                    .setAction(R.string.undo) { wordsViewModel.undoDeletion() }
+                    .setAction(R.string.undo) { homeViewModel.undoDeletion() }
                     .addCallback(object : Snackbar.Callback() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             if (DISMISS_EVENT_TIMEOUT == event) {
-                                wordsViewModel.undoDismissed()
+                                homeViewModel.undoDismissed()
                             }
                         }
                     })
@@ -285,21 +285,21 @@ class HomeFragment : Fragment() {
 
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
             // User can only edit one item at a time.
-            menu.findItem(R.id.menu_edit)?.isVisible = wordsViewModel.selectedCount < 2
-            mode.title = wordsViewModel.selectedCount.toString()
+            menu.findItem(R.id.menu_edit)?.isVisible = homeViewModel.selectedCount < 2
+            mode.title = homeViewModel.selectedCount.toString()
             return true
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = when (item.itemId) {
-            R.id.menu_edit -> wordsViewModel.onActionModeMenuEdit()
-            R.id.menu_delete -> wordsViewModel.onActionModeMenuDelete()
-            R.id.menu_remind -> wordsViewModel.onActionModeMenuRemind()
-            R.id.menu_select_all -> wordsViewModel.onActionModeMenuSelectAll()
+            R.id.menu_edit -> homeViewModel.onActionModeMenuEdit()
+            R.id.menu_delete -> homeViewModel.onActionModeMenuDelete()
+            R.id.menu_remind -> homeViewModel.onActionModeMenuRemind()
+            R.id.menu_select_all -> homeViewModel.onActionModeMenuSelectAll()
             else -> false
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
-            wordsViewModel.destroyActionMode()
+            homeViewModel.destroyActionMode()
         }
     }
 

@@ -2,11 +2,10 @@ package com.example.wordnotes.data.repositories
 
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.fakes.FakeWordLocalDataSource
-import com.example.wordnotes.fakes.FakeWordRemoteDataSource
+import com.example.wordnotes.mocks.FakeWordLocalDataSource
+import com.example.wordnotes.mocks.FakeWordRemoteDataSource
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest

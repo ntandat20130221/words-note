@@ -6,7 +6,7 @@ import com.example.wordnotes.MainCoroutineRule
 import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
-import com.example.wordnotes.fakes.FakeWordRepository
+import com.example.wordnotes.mocks.FakeWordRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

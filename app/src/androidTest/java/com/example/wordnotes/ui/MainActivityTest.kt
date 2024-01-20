@@ -1,7 +1,6 @@
 package com.example.wordnotes.ui
 
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavController
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.Espresso.pressBackUnconditionally
@@ -11,13 +10,20 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
+import com.example.wordnotes.mocks.TestFirebaseAuthWrapperLogged
+import com.example.wordnotes.data.FirebaseAuthWrapper
+import com.example.wordnotes.di.FirebaseModule
+import com.example.wordnotes.testutils.withCheckedItem
+import com.example.wordnotes.testutils.withNavController
 import com.google.common.truth.Truth.assertThat
+import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.hamcrest.Matchers.not
+import dagger.hilt.android.testing.UninstallModules
 import org.junit.Rule
 import org.junit.Test
 
+@UninstallModules(FirebaseModule::class)
 @HiltAndroidTest
 class MainActivityTest {
 
@@ -27,6 +33,10 @@ class MainActivityTest {
     @get:Rule(order = 1)
     val activityScenarioRule = activityScenarioRule<MainActivity>()
 
+    @BindValue
+    @JvmField
+    val loggedFirebase: FirebaseAuthWrapper = TestFirebaseAuthWrapperLogged()
+
     @Test
     fun pressBackShouldExitApp() {
         pressBackUnconditionally()
@@ -35,69 +45,65 @@ class MainActivityTest {
 
     @Test
     fun testNavigationWithBottomNav() {
+        // Navigate to LearningFragment
         onView(withId(R.id.learning_fragment)).perform(click())
         onView(withId(R.id.learning_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.learning_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.learning_fragment)))
 
-        pressBack()
-        onView(withId(R.id.home_fragment_layout)).check(matches(isDisplayed()))
-
-        onView(withId(R.id.learning_fragment)).perform(click())
+        // Navigate to AccountFragment
         onView(withId(R.id.account_fragment)).perform(click())
+        onView(withId(R.id.account_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.account_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.account_fragment)))
+
+        // Press Back to HomeFragment
         pressBack()
         onView(withId(R.id.home_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.home_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.home_fragment)))
 
-        onView(withId(R.id.learning_fragment)).perform(click())
-        onView(withId(R.id.learning_fragment)).perform(click())
+        // Navigate to AccountFragment
+        onView(withId(R.id.account_fragment)).perform(click())
+        onView(withId(R.id.account_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.account_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.account_fragment)))
+
+        // Simulate configuration change
+        activityScenarioRule.scenario.recreate()
+
+        // Press Back to HomeFragment
         pressBack()
+        onView(withId(R.id.home_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.home_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.home_fragment)))
+
+        // Press Back again then exit app
         pressBackUnconditionally()
         assertThat(activityScenarioRule.scenario.state.isAtLeast(Lifecycle.State.DESTROYED)).isTrue()
     }
 
     @Test
-    fun multiClickSettingBottomNavItem_DestinationDidNotChange() {
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        onView(withId(R.id.reminder_fragment_layout)).check(matches(isDisplayed()))
-        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.reminder_fragment) }
-
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.reminder_fragment) }
-    }
-
-    @Test
-    fun multiClickSettingBottomNavItem_PressBack_ReturnHomeFragment() {
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        pressBack()
-        onView(withId(R.id.home_fragment)).check(matches(isDisplayed()))
-        withNavController { assertThat(it.currentDestination?.id).isEqualTo(R.id.home_fragment) }
-    }
-
-    @Test
-    fun navigateAroundApp_BottomBarDisplayCorrectly() {
-        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
-
-        onView(withId(R.id.fab_add_word)).perform(click())
-        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
-
-        pressBack() // hide soft keyboard
-        pressBack()
-        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
-
-        onView(withId(R.id.reminder_fragment)).perform(click())
-        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
-
+    fun multiClickBottomNavItemShouldNotChangeDestination() {
+        // Double click on home BottomNavItem
         onView(withId(R.id.home_fragment)).perform(click())
-        onView(withId(R.id.bottom_nav)).check(matches(isDisplayed()))
+        onView(withId(R.id.home_fragment)).perform(click())
+        onView(withId(R.id.home_fragment)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.home_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.home_fragment)))
 
-        onView(withId(R.id.fab_add_word)).perform(click())
-        onView(withId(R.id.bottom_nav)).check(matches(not(isDisplayed())))
-    }
+        // Triple click on learning BottomNavItem
+        onView(withId(R.id.learning_fragment)).perform(click())
+        onView(withId(R.id.learning_fragment)).perform(click())
+        onView(withId(R.id.learning_fragment)).perform(click())
+        onView(withId(R.id.learning_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.learning_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.learning_fragment)))
 
-    private fun withNavController(onNavController: (NavController) -> Unit) {
-        activityScenarioRule.scenario.onActivity { mainActivity ->
-            onNavController(mainActivity.navController)
-        }
+        // Press Back to HomeFragment
+        pressBack()
+        onView(withId(R.id.home_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.home_fragment) }
+        onView(withId(R.id.bottom_nav)).check(matches(withCheckedItem(R.id.home_fragment)))
     }
 }

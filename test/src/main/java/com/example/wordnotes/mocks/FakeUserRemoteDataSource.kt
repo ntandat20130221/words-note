@@ -1,4 +1,4 @@
-package com.example.wordnotes.fakes
+package com.example.wordnotes.mocks
 
 import android.net.Uri
 import com.example.wordnotes.data.Result

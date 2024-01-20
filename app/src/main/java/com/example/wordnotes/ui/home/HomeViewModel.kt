@@ -34,7 +34,7 @@ data class WordsUiState(
 )
 
 @HiltViewModel
-class WordsViewModel @Inject constructor(private val wordRepository: WordRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(private val wordRepository: WordRepository) : ViewModel() {
     private val _clickItemEvent: MutableLiveData<Event<String>> = MutableLiveData()
     val clickItemEvent: LiveData<Event<String>> = _clickItemEvent
 

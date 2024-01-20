@@ -1,7 +1,7 @@
 package com.example.wordnotes.ui.account
 
 import com.example.wordnotes.MainCoroutineRule
-import com.example.wordnotes.fakes.FakeUserRepository
+import com.example.wordnotes.mocks.FakeUserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
