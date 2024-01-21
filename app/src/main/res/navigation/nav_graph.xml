@@ -90,13 +90,7 @@
         <fragment
             android:id="@+id/sign_up_fragment"
             android:name="com.example.wordnotes.ui.auth.SignUpFragment"
-            tools:layout="@layout/fragment_sign_up">
-            <action
-                android:id="@+id/action_sign_up_fragment_to_sign_in_fragment"
-                app:destination="@id/sign_in_fragment"
-                app:popUpTo="@id/sign_in_fragment"
-                app:popUpToInclusive="true" />
-        </fragment>
+            tools:layout="@layout/fragment_sign_up" />
         <fragment
             android:id="@+id/forgot_password_fragment"
             android:name="com.example.wordnotes.ui.auth.ForgotPasswordFragment"

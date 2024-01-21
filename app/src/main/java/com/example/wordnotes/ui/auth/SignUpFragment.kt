@@ -10,9 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentSignUpBinding
 import com.example.wordnotes.ui.BottomNavHideable
 import com.google.android.material.snackbar.Snackbar
@@ -53,7 +51,7 @@ class SignUpFragment : Fragment(), BottomNavHideable {
         }
 
         binding.textSignIn.setOnClickListener {
-            navigateToSignInFragment()
+            popBackToSignInFragment()
         }
     }
 
@@ -62,34 +60,35 @@ class SignUpFragment : Fragment(), BottomNavHideable {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 signUpViewModel.uiState.collect { uiState ->
                     if (uiState.isSignUpSuccess) {
-                        navigateToStartDestination()
+                        popBackToSignInFragment()
                     }
                     uiState.message?.let {
                         showSnackBar(it)
                     }
-                    if (uiState.isLoading) {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.buttonSignUp.visibility = View.INVISIBLE
-                    } else {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        binding.buttonSignUp.visibility = View.VISIBLE
-                    }
+                    toggleCircularLoading(uiState.isLoading)
                 }
             }
         }
     }
 
-    private fun navigateToStartDestination() {
+    /**
+     * Pop back to SignInFragment and clear EditTexts
+     */
+    private fun popBackToSignInFragment() {
         findNavController().apply {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.sign_in_fragment, true)
-                .build()
-            navigate(graph.startDestinationId, null, navOptions)
+            previousBackStackEntry?.savedStateHandle?.set(SignInFragment.IS_CLEAR, true)
+            popBackStack()
         }
     }
 
-    private fun navigateToSignInFragment() {
-        findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToSignInFragment())
+    private fun toggleCircularLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.buttonSignUp.visibility = View.INVISIBLE
+        } else {
+            binding.buttonSignUp.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.INVISIBLE
+        }
     }
 
     private fun showSnackBar(@StringRes messageResId: Int) {

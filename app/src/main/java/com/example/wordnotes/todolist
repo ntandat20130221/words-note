@@ -1,10 +1,13 @@
-TODO: Fix bug empty layout flickering when refreshing by keeping sort of a isRefreshing
- variable in ViewModel (uiState.items.isEmpty() && isRefreshing)
-TODO: Fix bug toolbar color not changing when navigate to EditWordFragment when searching
-TODO: Fix bug deleting words when searching (the words not disappear until it actually delete after undo time)
-TODO: Fix bug snack bar show
-TODO: Add undo when deleting word at DetailWordFragment
+TODO    Fix bug empty layout flickering when refreshing by keeping sort of a isRefreshing variable
+        in ViewModel (uiState.items.isEmpty() && isRefreshing)
+TODO    Fix bug toolbar color not changing when navigate to EditWordFragment when searching
+TODO    Fix bug deleting words when searching (the words not disappear until it actually delete after undo time)
+TODO    Fix bug snack bar show
+TODO    Add undo when deleting word at DetailWordFragment
+TODO    Test ForgotPasswordFragment.
+TODO    Refactor the showing SnackBar function for common use.
 
+SignUp to SignIn using NavBackStackEntry
 
 Word ui state, ActionMode ui state, search ui state
 

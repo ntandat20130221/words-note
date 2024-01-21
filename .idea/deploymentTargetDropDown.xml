@@ -2,22 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="NavigationTest">
+      <entry key="DefaultDataStoreRepositoryTest">
         <State />
       </entry>
-      <entry key="SignInFragmentTest">
+      <entry key="MainActivityTest">
         <State />
       </entry>
-      <entry key="SignUpFragmentTest">
+      <entry key="Tests in 'com.example.wordnotes.data'">
+        <State />
+      </entry>
+      <entry key="Tests in 'com.example.wordnotes.ui.auth'">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="enterCorrectInformationShouldNavigateToSignInFragment()">
-        <State />
-      </entry>
-      <entry key="enterIncorrectInformationShouldShowError()">
         <State />
       </entry>
     </value>

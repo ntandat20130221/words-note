@@ -91,4 +91,28 @@ class SignInFragmentTest {
         onView(withId(R.id.button_sign_in)).perform(click())
         onView(withId(com.google.android.material.R.id.snackbar_text)).check(matches(withText(R.string.authentication_failed)))
     }
+
+    @Test
+    fun navigatedFromSignUpFragmentShouldClearText() {
+        // Enter email and password then navigate to SignUpFragment
+        onView(withId(R.id.input_email)).perform(typeText("user1@gmail.com"))
+        onView(withId(R.id.input_password)).perform(typeText("111111"))
+        onView(withId(R.id.text_sign_up)).perform(click())
+
+        // Navigate back to SignInFragment then check inputs
+        onView(withId(R.id.text_sign_in)).perform(click())
+        onView(withId(R.id.input_email)).check(matches(withText("")))
+        onView(withId(R.id.input_password)).check(matches(withText("")))
+
+        // Continue entering email and password then navigate to SignUpFragment
+        onView(withId(R.id.input_email)).perform(typeText("user1@gmail.com"))
+        onView(withId(R.id.input_password)).perform(typeText("111111"))
+        onView(withId(R.id.text_sign_up)).perform(click())
+
+        // Simulate configuration change then navigate back to SignInFragment then check inputs
+        activityScenarioRule.scenario.recreate()
+        onView(withId(R.id.text_sign_in)).perform(click())
+        onView(withId(R.id.input_email)).check(matches(withText("")))
+        onView(withId(R.id.input_password)).check(matches(withText("")))
+    }
 }

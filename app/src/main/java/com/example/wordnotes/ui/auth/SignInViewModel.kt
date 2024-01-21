@@ -29,8 +29,8 @@ class SignInViewModel @Inject constructor(private val userRepository: UserReposi
 
     fun signIn(email: String, password: String) {
         if (checkValidity(email, password)) {
-            _uiState.update { SignInUiState(isRequesting = true) }
             viewModelScope.launch {
+                _uiState.update { SignInUiState(isRequesting = true) }
                 when (userRepository.signIn(User(email = email, password = password))) {
                     is Result.Success -> _uiState.update { SignInUiState(isSignInSuccess = true, isRequesting = false) }
                     is Result.Error -> _uiState.update { SignInUiState(message = R.string.authentication_failed, isRequesting = false) }

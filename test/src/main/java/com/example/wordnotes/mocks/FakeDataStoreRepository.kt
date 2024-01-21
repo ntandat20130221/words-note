@@ -14,4 +14,8 @@ class FakeDataStoreRepository @Inject constructor() : DataStoreRepository {
     override suspend fun getUser(): Result<User> = wrapWithResult { user!! }
 
     override suspend fun clearUser(): Result<Unit> = wrapWithResult { user = null }
+
+    override suspend fun clear(): Result<Unit> = wrapWithResult {
+        user = null
+    }
 }

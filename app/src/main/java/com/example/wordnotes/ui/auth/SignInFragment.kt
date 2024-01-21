@@ -60,7 +60,7 @@ class SignInFragment : Fragment(), BottomNavHideable {
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 signInViewModel.uiState.collect { uiState ->
                     if (uiState.isSignInSuccess) {
                         navigateToHome()
@@ -68,23 +68,31 @@ class SignInFragment : Fragment(), BottomNavHideable {
                     uiState.message?.let { message ->
                         showSnackBar(message)
                     }
-                    if (uiState.isRequesting) {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.buttonSignIn.visibility = View.INVISIBLE
-                    } else {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        binding.buttonSignIn.visibility = View.VISIBLE
-                    }
+                    toggleCircularLoading(uiState.isRequesting)
+                }
+            }
+        }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.apply {
+            getLiveData(IS_CLEAR, false).observe(viewLifecycleOwner) { isClear ->
+                if (isClear) {
+                    binding.inputEmail.text = null
+                    binding.inputPassword.text = null
+                    set(IS_CLEAR, false)
                 }
             }
         }
     }
 
+    /**
+     * Modify the graph to set the start destination to HomeFragment.
+     */
     private fun navigateToHome() {
-        val navController = findNavController()
-        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-        navGraph.setStartDestination(R.id.home_fragment)
-        navController.graph = navGraph
+        findNavController().apply {
+            val navGraph = navInflater.inflate(R.navigation.nav_graph)
+            navGraph.setStartDestination(R.id.home_fragment)
+            graph = navGraph
+        }
     }
 
     private fun navigateToForgotPasswordFragment() {
@@ -95,8 +103,22 @@ class SignInFragment : Fragment(), BottomNavHideable {
         findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
     }
 
+    private fun toggleCircularLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.buttonSignIn.visibility = View.INVISIBLE
+        } else {
+            binding.buttonSignIn.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.INVISIBLE
+        }
+    }
+
     private fun showSnackBar(@StringRes messageResId: Int) {
         Snackbar.make(requireView(), messageResId, Snackbar.LENGTH_SHORT).show()
         signInViewModel.snakeBarShown()
+    }
+
+    companion object {
+        const val IS_CLEAR = "is_clear"
     }
 }

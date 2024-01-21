@@ -27,6 +27,7 @@ class ForgotPasswordViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val _uiState: MutableStateFlow<ForgotPasswordUiState> = MutableStateFlow(ForgotPasswordUiState())
     val uiState: StateFlow<ForgotPasswordUiState> = _uiState.asStateFlow()
 
@@ -51,21 +52,13 @@ class ForgotPasswordViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSending = true) }
             when (userRepository.resetPassword(uiState.value.email)) {
-                is Result.Success -> {
-                    _uiState.update { it.copy(resetPasswordSuccessful = true) }
-                }
-
-                else -> {
-                    _uiState.update { it.copy(message = R.string.something_went_wrong) }
-                }
+                is Result.Success -> _uiState.update { it.copy(resetPasswordSuccessful = true, isSending = false) }
+                else -> _uiState.update { it.copy(message = R.string.something_went_wrong, isSending = false) }
             }
-            _uiState.update { it.copy(isSending = false) }
         }
     }
 
-    fun snackBarShown() {
-        _uiState.update { it.copy(message = null) }
-    }
+    fun snackBarShown() = _uiState.update { it.copy(message = null) }
 }
 
 private const val EMAIL_KEY = "EMAIL_KEY"

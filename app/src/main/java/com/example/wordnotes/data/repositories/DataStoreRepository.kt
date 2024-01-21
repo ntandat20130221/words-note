@@ -10,4 +10,6 @@ interface DataStoreRepository {
     suspend fun getUser(): Result<User>
 
     suspend fun clearUser(): Result<Unit>
+
+    suspend fun clear(): Result<Unit>
 }

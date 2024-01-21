@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -38,6 +39,11 @@ class ForgotPasswordFragment : Fragment(), BottomNavHideable {
         observeUiState()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setUpToolbar() {
         binding.toolbar.toolbar.apply {
             findNavController().setUpToolbar(this)
@@ -58,26 +64,16 @@ class ForgotPasswordFragment : Fragment(), BottomNavHideable {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 forgotPasswordViewModel.uiState.collect { uiState ->
-                    uiState.message?.let {
-                        Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-                        forgotPasswordViewModel.snackBarShown()
+                    uiState.message?.let { message ->
+                        showSnackBar(message)
                     }
-
-                    if (uiState.isSending) {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.buttonSend.visibility = View.INVISIBLE
-                    } else {
-                        binding.buttonSend.visibility = View.VISIBLE
-                        binding.progressBar.visibility = View.INVISIBLE
-                    }
-
+                    toggleCircularLoading(isLoading = uiState.isSending)
                     if (uiState.resetPasswordSuccessful) {
                         binding.buttonSend.apply {
-                            isEnabled = false
                             setText(R.string.sent)
+                            isEnabled = false
                         }
                     }
-
                     if (binding.inputEmail.text.toString() != uiState.email) {
                         binding.inputEmail.setText(uiState.email)
                     }
@@ -86,8 +82,18 @@ class ForgotPasswordFragment : Fragment(), BottomNavHideable {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun toggleCircularLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.buttonSend.visibility = View.INVISIBLE
+        } else {
+            binding.buttonSend.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showSnackBar(@StringRes messageResId: Int) {
+        Snackbar.make(binding.root, messageResId, Snackbar.LENGTH_SHORT).show()
+        forgotPasswordViewModel.snackBarShown()
     }
 }
