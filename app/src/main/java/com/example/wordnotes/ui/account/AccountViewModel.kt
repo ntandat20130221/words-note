@@ -23,7 +23,11 @@ class AccountViewModel @Inject constructor(private val userRepository: UserRepos
     private val _uiState: MutableStateFlow<AccountUiState> = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    fun loadUser() {
+    init {
+        loadUser()
+    }
+
+    private fun loadUser() {
         viewModelScope.launch {
             userRepository.getUser().let { result ->
                 if (result is Result.Success) {
@@ -35,8 +39,9 @@ class AccountViewModel @Inject constructor(private val userRepository: UserRepos
 
     fun logOut() {
         viewModelScope.launch {
-            userRepository.logOut()
-            _uiState.update { it.copy(isLogOut = true) }
+            if (userRepository.logOut() is Result.Success) {
+                _uiState.update { it.copy(isLogOut = true) }
+            }
         }
     }
 }

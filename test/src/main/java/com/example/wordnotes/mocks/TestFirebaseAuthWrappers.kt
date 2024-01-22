@@ -1,7 +1,6 @@
 package com.example.wordnotes.mocks
 
 import com.example.wordnotes.data.FirebaseAuthWrapper
-import com.example.wordnotes.mocks.FakeUserRepository
 import javax.inject.Inject
 
 class TestFirebaseAuthWrapper @Inject constructor(private val fakeUserRepository: FakeUserRepository) : FirebaseAuthWrapper {

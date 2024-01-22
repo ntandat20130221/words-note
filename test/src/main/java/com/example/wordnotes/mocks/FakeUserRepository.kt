@@ -55,10 +55,8 @@ class FakeUserRepository(private val testDispatcher: CoroutineDispatcher) : User
         }
     }
 
-    override suspend fun logOut() {
-        withContext(testDispatcher) {
-            currentUser = null
-        }
+    override suspend fun logOut(): Result<Unit> = withContext(testDispatcher) {
+        wrapWithResult { currentUser = null }
     }
 
     override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(testDispatcher) {

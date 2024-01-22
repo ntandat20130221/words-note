@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.account
+package com.example.wordnotes.ui.account.profile
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
@@ -86,10 +86,10 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun commitChanges() {
-        _uiState.update { it.copy(isCommitting = true) }
         viewModelScope.launch {
+            _uiState.update { it.copy(isCommitting = true) }
             if (userRepository.setUser(uiState.value.user, uiState.value.imageUri) is Result.Success) {
-                _uiState.update { it.copy(isCommitting = false, isCommitSuccessful = true) }
+                _uiState.update { it.copy(isCommitSuccessful = true, isCommitting = false) }
             }
         }
     }

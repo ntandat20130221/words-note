@@ -12,13 +12,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.wordnotes.R
-import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener, BottomNavHideable {
+class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
 
     @Inject
     lateinit var wordReminder: WordReminder

@@ -18,7 +18,6 @@ import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
-import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
 import com.example.wordnotes.utils.showSoftKeyboard
@@ -27,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddEditWordFragment : Fragment(), BottomNavHideable {
+class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
     private val binding get() = _binding!!
 

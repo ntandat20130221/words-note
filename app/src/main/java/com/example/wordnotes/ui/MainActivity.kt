@@ -16,16 +16,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.ActivityMainBinding
+import com.example.wordnotes.ui.account.AccountFragment
+import com.example.wordnotes.ui.home.HomeFragment
+import com.example.wordnotes.ui.learning.LearningFragment
+import com.example.wordnotes.ui.worddetail.WordDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-interface BottomNavHideable
+const val KEY_START_DESTINATION_ID = "start_des_id"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navHostFragment: NavHostFragment
 
     @VisibleForTesting
     lateinit var navController: NavController
@@ -40,8 +45,18 @@ class MainActivity : AppCompatActivity() {
         controlBottomNavVisibility()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_START_DESTINATION_ID, navController.graph.startDestinationId)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        navController.graph.setStartDestination(savedInstanceState.getInt(KEY_START_DESTINATION_ID))
+    }
+
     private fun setUpNavigation() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         binding.bottomNav.apply {
             setupWithNavController(navController)
@@ -64,17 +79,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Hide BottomNavigationView if the current fragment is not HomeFragment, LearningFragment, AccountFragment and
+     * WordDetailFragment.
+     */
     private fun controlBottomNavVisibility() {
-        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+        navHostFragment.childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
-                if (fragment is BottomNavHideable) {
+                if (fragment::class !in listOf(HomeFragment::class, LearningFragment::class, AccountFragment::class, WordDetailFragment::class)) {
                     setBottomNavVisibility(View.GONE)
                     resetBottomNavAnimation()
                 }
             }
 
             override fun onFragmentStopped(fm: FragmentManager, fragment: Fragment) {
-                if (fragment is BottomNavHideable) {
+                if (fragment::class !in listOf(HomeFragment::class, LearningFragment::class, AccountFragment::class, WordDetailFragment::class)) {
                     setBottomNavVisibility(View.VISIBLE)
                 }
             }

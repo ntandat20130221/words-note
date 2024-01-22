@@ -45,9 +45,12 @@ class DefaultUserRepository(
         userRemoteDataSource.resetPassword(email)
     }
 
-    override suspend fun logOut() = withContext<Unit>(dispatcher) {
-        userRemoteDataSource.signOut()
-        scope.launch { dataStoreRepository.clearUser() }
+    override suspend fun logOut(): Result<Unit> = withContext(dispatcher) {
+        userRemoteDataSource.signOut().also { result ->
+            if (result is Result.Success) {
+                scope.launch { dataStoreRepository.clearUser() }
+            }
+        }
     }
 
     override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(dispatcher) {

@@ -6,6 +6,7 @@ TODO    Fix bug snack bar show
 TODO    Add undo when deleting word at DetailWordFragment
 TODO    Test ForgotPasswordFragment.
 TODO    Refactor the showing SnackBar function for common use.
+TODO    Fix bug AccountFragment can not scroll
 
 SignUp to SignIn using NavBackStackEntry
 

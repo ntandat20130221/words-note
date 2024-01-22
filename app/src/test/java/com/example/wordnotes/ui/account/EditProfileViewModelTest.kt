@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.wordnotes.MainCoroutineRule
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.mocks.FakeUserRepository
+import com.example.wordnotes.ui.account.profile.EditProfileViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

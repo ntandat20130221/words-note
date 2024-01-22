@@ -66,20 +66,6 @@ class HomeFragment : Fragment() {
         mainActivity = requireActivity() as MainActivity
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        /**
-         * If the user is not logged in then switch to the login screen by setting the start destination.
-         */
-        if (!firebaseAuthWrapper.isLoggedIn()) {
-            findNavController().apply {
-                val navGraph = navInflater.inflate(R.navigation.nav_graph)
-                navGraph.setStartDestination(R.id.auth_flow)
-                graph = navGraph
-            }
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root

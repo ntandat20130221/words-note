@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.account
+package com.example.wordnotes.ui.account.profile
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
@@ -22,7 +22,6 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentEditProfileBinding
-import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -35,7 +34,7 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class EditProfileFragment : Fragment(), BottomNavHideable {
+class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -128,6 +127,9 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
             }
         }
 
+        /**
+         * Clear EditText focus when clicking other views.
+         */
         binding.touchInterceptor.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val view = requireActivity().currentFocus
@@ -146,7 +148,7 @@ class EditProfileFragment : Fragment(), BottomNavHideable {
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 editProfileViewModel.uiState.collect { uiState ->
                     if (uiState.isCommitSuccessful) {
                         findNavController().popBackStack()

@@ -63,11 +63,6 @@ class AccountFragment : Fragment() {
         observeUiState()
     }
 
-    override fun onStart() {
-        super.onStart()
-        accountViewModel.loadUser()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -126,7 +121,7 @@ class AccountFragment : Fragment() {
                     }
 
                     if (uiState.isLogOut) {
-                        navigateToSignInFragment()
+                        navigateToRoutingFragment()
                     }
                 }
             }
@@ -137,12 +132,12 @@ class AccountFragment : Fragment() {
         findNavController().navigate(AccountFragmentDirections.actionAccountFragmentToEditProfileFragment())
     }
 
-    private fun navigateToSignInFragment() {
+    /**
+     * Navigate to RoutingFragment by reinflating the navigation graph whose start destination is RoutingFragment.
+     */
+    private fun navigateToRoutingFragment() {
         findNavController().apply {
-            val navGraph = navInflater.inflate(R.navigation.nav_graph)
-            navGraph.setStartDestination(R.id.auth_flow)
-            graph = navGraph
+            graph = navInflater.inflate(R.navigation.nav_graph)
         }
-
     }
 }

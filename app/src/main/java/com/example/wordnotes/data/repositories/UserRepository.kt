@@ -12,7 +12,7 @@ interface UserRepository {
 
     suspend fun resetPassword(email: String): Result<Unit>
 
-    suspend fun logOut()
+    suspend fun logOut(): Result<Unit>
 
     suspend fun setUser(user: User, imageUri: Uri): Result<User>
 

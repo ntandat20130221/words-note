@@ -115,4 +115,19 @@ class SignInFragmentTest {
         onView(withId(R.id.input_email)).check(matches(withText("")))
         onView(withId(R.id.input_password)).check(matches(withText("")))
     }
+
+    @Test
+    fun recreateActivityThenSignInShouldNavigateToHomeFragment() {
+        // Recreate activity then sign in
+        activityScenarioRule.scenario.recreate()
+        onView(withId(R.id.input_email)).perform(typeText("user1@gmail.com"))
+        onView(withId(R.id.input_password)).perform(typeText("111111"))
+        onView(withId(R.id.button_sign_in)).perform(click())
+        onView(withId(R.id.home_fragment_layout)).check(matches(isDisplayed()))
+        activityScenarioRule.withNavController { assertThat(currentDestination?.id).isEqualTo(R.id.home_fragment) }
+
+        // Press back should exit app
+        pressBackUnconditionally()
+        assertThat(activityScenarioRule.scenario.state.isAtLeast(Lifecycle.State.DESTROYED)).isTrue()
+    }
 }

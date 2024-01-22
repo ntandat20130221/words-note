@@ -14,14 +14,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentForgotPasswordBinding
-import com.example.wordnotes.ui.BottomNavHideable
 import com.example.wordnotes.utils.setUpToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ForgotPasswordFragment : Fragment(), BottomNavHideable {
+class ForgotPasswordFragment : Fragment() {
     private var _binding: FragmentForgotPasswordBinding? = null
     private val binding get() = _binding!!
 

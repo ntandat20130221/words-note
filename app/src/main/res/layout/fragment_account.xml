@@ -228,6 +228,69 @@
                         app:srcCompat="@drawable/ic_chevron_right"
                         app:tint="?colorOnSurface" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/failure"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#224FC8"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/failure"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#224FC8"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/failure"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#224FC8"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/failure"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#224FC8"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/failure"
+                    android:paddingVertical="32dp"
+                    android:text="FUCK" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

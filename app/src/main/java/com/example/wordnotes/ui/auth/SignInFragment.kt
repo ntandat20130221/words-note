@@ -13,13 +13,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentSignInBinding
-import com.example.wordnotes.ui.BottomNavHideable
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SignInFragment : Fragment(), BottomNavHideable {
+class SignInFragment : Fragment() {
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
 
@@ -63,7 +62,7 @@ class SignInFragment : Fragment(), BottomNavHideable {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 signInViewModel.uiState.collect { uiState ->
                     if (uiState.isSignInSuccess) {
-                        navigateToHome()
+                        navigateToRoutingFragment()
                     }
                     uiState.message?.let { message ->
                         showSnackBar(message)
@@ -85,13 +84,11 @@ class SignInFragment : Fragment(), BottomNavHideable {
     }
 
     /**
-     * Modify the graph to set the start destination to HomeFragment.
+     * Navigate to RoutingFragment by reinflating the navigation graph whose start destination is RoutingFragment.
      */
-    private fun navigateToHome() {
+    private fun navigateToRoutingFragment() {
         findNavController().apply {
-            val navGraph = navInflater.inflate(R.navigation.nav_graph)
-            navGraph.setStartDestination(R.id.home_fragment)
-            graph = navGraph
+            graph = navInflater.inflate(R.navigation.nav_graph)
         }
     }
 
