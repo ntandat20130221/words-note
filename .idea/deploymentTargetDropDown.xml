@@ -2,19 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="MainActivityTest">
-        <State />
-      </entry>
-      <entry key="Tests in 'com.example.wordnotes.data'">
-        <State />
-      </entry>
-      <entry key="Tests in 'com.example.wordnotes.ui.auth'">
+      <entry key="AccountFragmentTest">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="recreateActivityThenSignInShouldNavigateToHomeFragment()">
         <State />
       </entry>
     </value>

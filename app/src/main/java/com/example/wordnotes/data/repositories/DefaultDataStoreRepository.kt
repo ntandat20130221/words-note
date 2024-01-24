@@ -27,7 +27,7 @@ class DefaultDataStoreRepository @Inject constructor(
                 currentUser.toBuilder()
                     .setId(id)
                     .setUsername(username)
-                    .setImageUrl(profileImageUrl)
+                    .setImageUrl(imageUrl)
                     .setEmail(email)
                     .setPassword(password)
                     .setPhone(phone)
@@ -50,7 +50,7 @@ class DefaultDataStoreRepository @Inject constructor(
                 User(
                     id = userProto.id,
                     username = userProto.username,
-                    profileImageUrl = userProto.imageUrl,
+                    imageUrl = userProto.imageUrl,
                     email = userProto.email,
                     password = userProto.password,
                     phone = userProto.phone,
@@ -67,9 +67,7 @@ class DefaultDataStoreRepository @Inject constructor(
     }
 
     override suspend fun clear(): Result<Unit> = wrapWithResult {
-        context.userDataStore.updateData {
-            it.toBuilder().clear().build()
-        }
+        context.userDataStore.updateData { it.toBuilder().clear().build() }
         // Clear others
     }
 }

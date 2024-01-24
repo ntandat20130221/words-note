@@ -54,18 +54,11 @@ class FakeUserRemoteDataSource @Inject constructor() : UserRemoteDataSource {
 
     override suspend fun signOut(): Result<Unit> = wrapWithResult { }
 
-    override suspend fun updateProfile(user: User): Result<User> {
+    override suspend fun updateProfile(user: User, imageUri: Uri): Result<User> {
         return if (users.contains(user.id)) {
-            users[user.id] = user
-            Result.Success(user)
-        } else {
-            Result.Error(Exception("The user doesn't exist."))
-        }
-    }
-
-    override suspend fun updateProfileImage(imageUri: Uri, user: User): Result<User> {
-        return if (users.contains(user.id)) {
-            users[user.id] = user.copy(profileImageUrl = imageUri.toString())
+            users[user.id] = if (imageUri == Uri.EMPTY)
+                user else
+                user.copy(imageUrl = imageUri.toString())
             Result.Success(user)
         } else {
             Result.Error(Exception("The user doesn't exist."))

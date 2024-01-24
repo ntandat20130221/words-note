@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.account
+package com.example.wordnotes.ui.account.reminder
 
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -17,8 +17,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.example.wordnotes.R
 import com.example.wordnotes.testutils.getQuantityString
 import com.example.wordnotes.testutils.getString
-import com.example.wordnotes.ui.account.reminder.ReminderFragment
-import com.example.wordnotes.ui.account.reminder.ReminderPreferences
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.Matchers.allOf
 import org.junit.Before

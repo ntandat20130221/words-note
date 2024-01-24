@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     setBottomNavVisibility(View.VISIBLE)
                 }
             }
-        }, true)
+        }, false)
     }
 
     fun setBottomNavVisibility(visibility: Int) {

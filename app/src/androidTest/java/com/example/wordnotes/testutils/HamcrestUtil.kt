@@ -1,9 +1,15 @@
 package com.example.wordnotes.testutils
 
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.Checkable
+import android.widget.ImageView
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.toColor
 import androidx.core.view.forEach
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
@@ -17,6 +23,7 @@ import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.TypeSafeMatcher
 
 fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> = object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
     override fun describeTo(description: Description) {
@@ -77,3 +84,27 @@ fun hasItemCount(expectedCount: Int): ViewAssertion = ViewAssertion { view, noVi
     val actualCount = (view as RecyclerView).adapter?.itemCount
     assertThat(expectedCount).isEqualTo(actualCount)
 }
+
+fun withDrawable(
+    @DrawableRes id: Int,
+    @ColorRes tint: Int? = null,
+    tintMode: PorterDuff.Mode = PorterDuff.Mode.SRC_IN
+) =
+    object : TypeSafeMatcher<View>() {
+        override fun describeTo(description: Description) {
+            description.appendText("ImageView with drawable same as drawable with id $id")
+            tint?.let { description.appendText(", tint color id: $tint, mode: $tintMode") }
+        }
+
+        override fun matchesSafely(view: View): Boolean {
+            val context = view.context
+            val expectedBitmap = context.getDrawable(id)?.apply {
+                tint?.let {
+                    setTint(tint)
+                    setTintMode(tintMode)
+                }
+            }
+                ?.toBitmap()
+            return view is ImageView && view.drawable.toBitmap().sameAs(expectedBitmap)
+        }
+    }

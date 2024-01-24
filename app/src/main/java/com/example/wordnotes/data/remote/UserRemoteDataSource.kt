@@ -14,7 +14,5 @@ interface UserRemoteDataSource {
 
     suspend fun signOut(): Result<Unit>
 
-    suspend fun updateProfile(user: User): Result<User>
-
-    suspend fun updateProfileImage(imageUri: Uri, user: User): Result<User>
+    suspend fun updateProfile(user: User, imageUri: Uri): Result<User>
 }

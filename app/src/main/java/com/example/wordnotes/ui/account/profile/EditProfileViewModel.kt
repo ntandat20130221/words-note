@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val USER_KEY = "user"
+const val PROFILE_IMAGE_KEY = "profile_image"
+
 data class EditProfileUiState(
     val user: User = User(),
     val imageUri: Uri = Uri.EMPTY,
@@ -31,10 +34,10 @@ class EditProfileViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<EditProfileUiState> = MutableStateFlow(EditProfileUiState())
     val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
-    var genderIndex = -1
-
     init {
-        if (savedStateHandle.contains(USER_SAVED_STATE_KEY) || savedStateHandle.contains(PROFILE_IMAGE_SAVED_STATE_KEY)) {
+        if (savedStateHandle.contains(USER_KEY) ||
+            savedStateHandle.contains(PROFILE_IMAGE_KEY)
+        ) {
             initFromSavedState()
         } else {
             initFromRepository()
@@ -42,15 +45,13 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun initFromSavedState() {
-        savedStateHandle.get<User>(USER_SAVED_STATE_KEY)?.let {
+        savedStateHandle.get<User>(USER_KEY)?.let {
             _uiState.update { currentState ->
-                currentState.copy(user = it).also {
-                    genderIndex = it.user.gender
-                }
+                currentState.copy(user = it)
             }
         }
 
-        savedStateHandle.get<Uri>(PROFILE_IMAGE_SAVED_STATE_KEY)?.let { uri ->
+        savedStateHandle.get<Uri>(PROFILE_IMAGE_KEY)?.let { uri ->
             _uiState.update { it.copy(imageUri = uri) }
         }
     }
@@ -60,9 +61,7 @@ class EditProfileViewModel @Inject constructor(
             userRepository.getUser().let { result ->
                 if (result is Result.Success) {
                     _uiState.update { currentState ->
-                        currentState.copy(user = result.data).also {
-                            genderIndex = it.user.gender
-                        }
+                        currentState.copy(user = result.data)
                     }
                 }
             }
@@ -72,7 +71,7 @@ class EditProfileViewModel @Inject constructor(
     fun updateProfile(onUpdate: (User) -> User) {
         _uiState.update { currentState ->
             currentState.copy(user = onUpdate(currentState.user)).also {
-                savedStateHandle[USER_SAVED_STATE_KEY] = it.user
+                savedStateHandle[USER_KEY] = it.user
             }
         }
     }
@@ -80,7 +79,7 @@ class EditProfileViewModel @Inject constructor(
     fun updateProfileImage(imageUri: Uri) {
         _uiState.update { currentState ->
             currentState.copy(imageUri = imageUri).also {
-                savedStateHandle[PROFILE_IMAGE_SAVED_STATE_KEY] = imageUri
+                savedStateHandle[PROFILE_IMAGE_KEY] = imageUri
             }
         }
     }
@@ -93,7 +92,6 @@ class EditProfileViewModel @Inject constructor(
             }
         }
     }
-}
 
-const val USER_SAVED_STATE_KEY = "USER_SAVED_STATE_KEY"
-const val PROFILE_IMAGE_SAVED_STATE_KEY = "PROFILE_IMAGE_SAVED_STATE_KEY"
+    fun getUserGender() = uiState.value.user.gender
+}

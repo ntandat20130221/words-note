@@ -109,8 +109,8 @@ class AccountFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 accountViewModel.uiState.collect { uiState ->
                     binding.apply {
-                        if (uiState.user.profileImageUrl.isNotBlank()) {
-                            imageProfile.load(uiState.user.profileImageUrl) {
+                        if (uiState.user.imageUrl.isNotBlank()) {
+                            imageProfile.load(uiState.user.imageUrl) {
                                 crossfade(true)
                                 placeholder(R.drawable.profile)
                                 transformations(CircleCropTransformation())

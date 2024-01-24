@@ -2,11 +2,14 @@ package com.example.wordnotes.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class User(
     val id: String = "",
     val username: String = "",
-    val profileImageUrl: String = "",
+    val imageUrl: String = "",
     val email: String = "",
     val password: String = "",
     val phone: String = "",
@@ -17,7 +20,7 @@ data class User(
     constructor(parcel: Parcel) : this(
         id = parcel.readString() ?: "",
         username = parcel.readString() ?: "",
-        profileImageUrl = parcel.readString() ?: "",
+        imageUrl = parcel.readString() ?: "",
         email = parcel.readString() ?: "",
         password = parcel.readString() ?: "",
         phone = parcel.readString() ?: "",
@@ -29,7 +32,7 @@ data class User(
         parcel.apply {
             writeString(id)
             writeString(username)
-            writeString(profileImageUrl)
+            writeString(imageUrl)
             writeString(email)
             writeString(password)
             writeString(phone)
@@ -52,3 +55,5 @@ data class User(
         }
     }
 }
+
+fun User.getFormattedDob(): String = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dob))

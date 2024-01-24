@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
+import com.example.wordnotes.data.model.getFormattedDob
 import com.example.wordnotes.databinding.FragmentEditProfileBinding
 import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
@@ -29,9 +30,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @AndroidEntryPoint
 class EditProfileFragment : Fragment() {
@@ -40,10 +38,8 @@ class EditProfileFragment : Fragment() {
 
     private val editProfileViewModel: EditProfileViewModel by viewModels()
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        uri?.let {
-            editProfileViewModel.updateProfileImage(it)
-        }
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri?.let { editProfileViewModel.updateProfileImage(it) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -73,11 +69,11 @@ class EditProfileFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setListeners() {
         binding.viewImage.setOnClickListener {
-            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.viewAvatarOutline.setOnClickListener {
-            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.inputUsername.doOnTextChanged { text, _, _, _ ->
@@ -93,13 +89,12 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.inputGender.setOnClickListener {
+            var selectedItem = 0
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.choose_gender))
-                .setSingleChoiceItems(R.array.gender, editProfileViewModel.genderIndex) { _, which ->
-                    editProfileViewModel.genderIndex = which
-                }
+                .setSingleChoiceItems(R.array.gender, editProfileViewModel.getUserGender()) { _, which -> selectedItem = which }
                 .setPositiveButton(R.string.ok) { _, _ ->
-                    editProfileViewModel.updateProfile { currentUser -> currentUser.copy(gender = editProfileViewModel.genderIndex) }
+                    editProfileViewModel.updateProfile { currentUser -> currentUser.copy(gender = selectedItem) }
                 }
                 .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.dismiss()
@@ -142,7 +137,7 @@ class EditProfileFragment : Fragment() {
                     }
                 }
             }
-            true
+            false
         }
     }
 
@@ -165,18 +160,18 @@ class EditProfileFragment : Fragment() {
                         if (inputEmail.text.toString() != uiState.user.email) inputEmail.setText(uiState.user.email)
                         if (inputPhone.text.toString() != uiState.user.phone) inputPhone.setText(uiState.user.phone)
 
-                        if (uiState.user.gender > -1) {
+                        if (uiState.user.gender != -1) {
                             inputGender.setText(resources.getStringArray(R.array.gender)[uiState.user.gender])
                         }
 
                         if (uiState.user.dob > 0) {
-                            inputDob.setText(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(uiState.user.dob)))
+                            inputDob.setText(uiState.user.getFormattedDob())
                         }
 
                         if (uiState.imageUri != Uri.EMPTY) {
                             imageProfile.load(uiState.imageUri)
-                        } else if (uiState.user.profileImageUrl.isNotBlank()) {
-                            imageProfile.load(uiState.user.profileImageUrl) {
+                        } else if (uiState.user.imageUrl.isNotBlank()) {
+                            imageProfile.load(uiState.user.imageUrl) {
                                 crossfade(true)
                                 placeholder(R.drawable.profile)
                                 transformations(CircleCropTransformation())

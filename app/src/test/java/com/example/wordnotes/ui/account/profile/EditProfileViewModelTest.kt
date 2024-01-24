@@ -1,4 +1,4 @@
-package com.example.wordnotes.ui.account
+package com.example.wordnotes.ui.account.profile
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.wordnotes.MainCoroutineRule
