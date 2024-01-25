@@ -1,11 +1,11 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.gms)
+    alias(libs.plugins.protobuf)
+    alias(libs.plugins.hilt)
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
-    id("com.google.protobuf")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -45,86 +45,60 @@ android {
 
 dependencies {
     implementation(project(":customviews"))
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.androidx.work.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.datastore.preference)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Navigation Components
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation(libs.material)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.protobuf.java.lite)
+    implementation(libs.gson)
+    implementation(libs.coil.ktx)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
-    // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
 
-    // Room Database
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-
-    // WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
-
-    // Preference
-    implementation("androidx.preference:preference-ktx:1.2.1")
-
-    // SwipeToRefresh
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    // Gson
-    implementation("com.google.code.gson:gson:2.10")
-
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
-
-    // SplashScreen
-    implementation("androidx.core:core-splashscreen:1.0.1")
-
-    // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("com.google.protobuf:protobuf-javalite:3.24.4")
-
-    // Coil
-    implementation("io.coil-kt:coil:2.5.0")
-
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.50")
-    ksp("com.google.dagger:hilt-compiler:2.50")
-
-    // Local tests
     testImplementation(project(":test"))
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.google.truth:truth:1.1.5")
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("com.google.dagger:hilt-android-testing:2.50")
-    testImplementation("io.mockk:mockk-android:1.13.9")
+    testImplementation(libs.junit)
+    testImplementation(libs.hamcrest.all)
+    testImplementation(libs.truth)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.mockk.android)
 
-    // Instrumented tests
     androidTestImplementation(project(":test"))
     androidTestImplementation(project(":customviews"))
-    androidTestImplementation("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestUtil("androidx.test:orchestrator:1.4.2")
-    androidTestImplementation("androidx.test:rules:1.5.0")
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.ext:truth:1.5.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1") {
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.androidx.test.ext.truth)
+    androidTestImplementation(libs.androidx.navigation.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.test.uiautomator)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.contrib) {
         exclude(module = "protobuf-lite")
     }
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
-    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.50")
+    debugImplementation(libs.androidx.fragment.testing)
 }
 
 protobuf {

@@ -1,8 +1,8 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -21,14 +21,14 @@ android {
 
 dependencies {
     implementation(project(":app"))
-    implementation("junit:junit:4.13.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    implementation("androidx.test:core-ktx:1.5.0")
-    implementation("androidx.test:runner:1.5.2")
-    implementation("com.google.dagger:hilt-android:2.50")
-    ksp("com.google.dagger:hilt-compiler:2.50")
-    implementation("com.google.dagger:hilt-android-testing:2.50")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation(libs.junit)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.test)
+    implementation(libs.androidx.test.core.ktx)
+    implementation(libs.androidx.test.runner)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.android.testing)
+    ksp(libs.hilt.compiler)
 }

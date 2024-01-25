@@ -1,0 +1,90 @@
+[versions]
+androidGradlePlugin = "8.2.1"
+kotlin = "1.9.0"
+gmsPlugin = "4.3.15"
+protobufPlugin = "0.9.4"
+ksp = "1.9.0-1.0.12"
+androidxCore = "1.12.0"
+androidxAppCompat = "1.6.1"
+androidxConstraintLayout = "2.1.4"
+androidxSwipeRefreshLayout = "1.1.0"
+androidxCoreSplashScreen = "1.0.1"
+androidxDataStore = "1.0.0"
+androidxNavigation = "2.7.6"
+androidxFragment = "1.6.2"
+androidxLifecycle = "2.7.0"
+androidxRoom = "2.6.1"
+androidxWork = "2.9.0"
+androidxPreference = "1.2.1"
+androidxArchCore = "2.2.0"
+androidxTestCore = "1.5.0"
+androidxTestRunner = "1.5.2"
+androidxTestRules = "1.5.0"
+androidxTestEspresso = "3.5.1"
+androidxTestUiAutomator = "2.2.0"
+androidxTestExtJUnitKtx = "1.1.5"
+androidxTestExtTruth = "1.5.0"
+kotlinxCoroutines = "1.7.3"
+hilt = "2.50"
+firebaseBoom = "32.3.1"
+material = "1.9.0"
+junit = "4.13.2"
+gson = "2.10"
+protobuf = "3.24.4"
+coil = "2.5.0"
+hamcrest = "1.3"
+truth = "1.1.5"
+mockk = "1.13.9"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidxConstraintLayout" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "androidxSwipeRefreshLayout" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashScreen" }
+androidx-datastore-preference = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidxNavigation" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidxNavigation" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
+androidx-fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "androidxFragment" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
+androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidxPreference" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCore" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxTestEspresso" }
+androidx-test-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "androidxTestEspresso" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxTestUiAutomator" }
+androidx-test-ext-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExtJUnitKtx" }
+androidx-test-ext-truth = { group = "androidx.test.ext", name = "truth", version.ref = "androidxTestExtTruth" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBoom" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+protobuf-java-lite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobuf" }
+coil-ktx = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+hamcrest-all = { group = "org.hamcrest", name = "hamcrest-all", version.ref = "hamcrest" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
