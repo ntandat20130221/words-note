@@ -4,9 +4,10 @@ TODO    Fix bug toolbar color not changing when navigate to EditWordFragment whe
 TODO    Fix bug deleting words when searching (the words not disappear until it actually delete after undo time)
 TODO    Fix bug snack bar show
 TODO    Add undo when deleting word at DetailWordFragment
+TODO    Complete forgot password function
 TODO    Test ForgotPasswordFragment.
 TODO    Refactor the showing SnackBar function for common use.
-TODO    Fix bug AccountFragment can not scroll
+TODO    Migrate Reminder preferences to DataStore.
 
 SignUp to SignIn using NavBackStackEntry
 

@@ -66,7 +66,7 @@
     <string name="your_email_address">Your email address</string>
     <string name="edit_your_profile">Edit Your Profile</string>
     <string name="sign_out">Sign Out</string>
-    <string name="cant_change_email_address">Can\'t change email address.</string>
+    <string name="you_cant_change_email_address">You can\'t change email address.</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="forgot_password_question">Forgot password?</string>
     <string name="forgot_password">Forgot password</string>

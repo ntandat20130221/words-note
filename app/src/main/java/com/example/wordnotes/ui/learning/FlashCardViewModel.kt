@@ -50,8 +50,9 @@ class FlashCardViewModel @Inject constructor(
                 when (val result = wordRepository.getWords()) {
                     is Result.Success -> {
                         _uiState.update {
-                            it.copy(words = result.data).also {
-                                savedStateHandle[KEY_WORDS] = result.data
+                            val data = result.data.shuffled()
+                            it.copy(words = data).also {
+                                savedStateHandle[KEY_WORDS] = data
                             }
                         }
                     }

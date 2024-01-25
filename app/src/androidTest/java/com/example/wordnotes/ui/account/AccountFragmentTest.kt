@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
 import com.example.wordnotes.data.FirebaseAuthWrapper
@@ -65,8 +66,10 @@ class AccountFragmentTest {
     }
 
     @Test
-    fun testProfileImage() {
+    fun testUserInfo() {
         onView(withId(R.id.image_profile)).check(matches(withDrawable(R.drawable.profile)))
+        onView(withId(R.id.text_name)).check(matches(withText("user1")))
+        onView(withId(R.id.text_email)).check(matches(withText("user1@gmail.com")))
     }
 
     @Test

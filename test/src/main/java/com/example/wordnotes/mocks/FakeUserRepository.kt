@@ -59,8 +59,8 @@ class FakeUserRepository(private val testDispatcher: CoroutineDispatcher) : User
         wrapWithResult { currentUser = null }
     }
 
-    override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(testDispatcher) {
-        currentUser = user
+    override suspend fun setUser(user: User, imageUri: Uri?): Result<User> = withContext(testDispatcher) {
+        currentUser = user.copy(imageUrl = imageUri?.toString() ?: "")
         Result.Success(user)
     }
 

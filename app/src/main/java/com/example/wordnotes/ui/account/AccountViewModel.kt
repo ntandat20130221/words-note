@@ -23,11 +23,7 @@ class AccountViewModel @Inject constructor(private val userRepository: UserRepos
     private val _uiState: MutableStateFlow<AccountUiState> = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    init {
-        loadUser()
-    }
-
-    private fun loadUser() {
+    fun loadUser() {
         viewModelScope.launch {
             userRepository.getUser().let { result ->
                 if (result is Result.Success) {

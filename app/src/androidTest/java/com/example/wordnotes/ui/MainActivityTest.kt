@@ -10,9 +10,9 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.example.wordnotes.mocks.TestFirebaseAuthWrapperLogged
 import com.example.wordnotes.data.FirebaseAuthWrapper
 import com.example.wordnotes.di.FirebaseModule
+import com.example.wordnotes.mocks.TestFirebaseAuthWrapperLogged
 import com.example.wordnotes.testutils.withCheckedItem
 import com.example.wordnotes.testutils.withNavController
 import com.google.common.truth.Truth.assertThat

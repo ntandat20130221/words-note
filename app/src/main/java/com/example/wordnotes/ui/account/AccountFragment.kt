@@ -63,6 +63,14 @@ class AccountFragment : Fragment() {
         observeUiState()
     }
 
+    /**
+     * Load user after returned from EditProfileFragment
+     */
+    override fun onStart() {
+        super.onStart()
+        accountViewModel.loadUser()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

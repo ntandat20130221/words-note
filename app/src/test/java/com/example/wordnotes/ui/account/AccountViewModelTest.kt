@@ -27,14 +27,15 @@ class AccountViewModelTest {
 
     @Test
     fun `test initial state`() = runTest {
-        assertThat(accountViewModel.uiState.value.user).isEqualTo(
-            User(
-                id = "1",
-                username = "user1",
-                email = "user1@gmail.com",
-                password = "111111"
-            )
-        )
+        assertThat(accountViewModel.uiState.value.user).isEqualTo(User())
+        assertThat(accountViewModel.uiState.value.isLogOut).isFalse()
+    }
+
+    @Test
+    fun `load user then check ui state`() = runTest {
+        accountViewModel.loadUser()
+        assertThat(accountViewModel.uiState.value.user)
+            .isEqualTo(User(id = "1", username = "user1", email = "user1@gmail.com", password = "111111"))
         assertThat(accountViewModel.uiState.value.isLogOut).isFalse()
     }
 

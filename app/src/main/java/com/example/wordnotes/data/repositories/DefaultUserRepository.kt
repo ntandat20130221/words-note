@@ -53,7 +53,7 @@ class DefaultUserRepository(
         }
     }
 
-    override suspend fun setUser(user: User, imageUri: Uri): Result<User> = withContext(dispatcher) {
+    override suspend fun setUser(user: User, imageUri: Uri?): Result<User> = withContext(dispatcher) {
         userRemoteDataSource.updateProfile(user, imageUri).also { result ->
             if (result is Result.Success) {
                 dataStoreRepository.setUser(result.data)

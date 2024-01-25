@@ -54,9 +54,9 @@ class FakeUserRemoteDataSource @Inject constructor() : UserRemoteDataSource {
 
     override suspend fun signOut(): Result<Unit> = wrapWithResult { }
 
-    override suspend fun updateProfile(user: User, imageUri: Uri): Result<User> {
+    override suspend fun updateProfile(user: User, imageUri: Uri?): Result<User> {
         return if (users.contains(user.id)) {
-            users[user.id] = if (imageUri == Uri.EMPTY)
+            users[user.id] = if (imageUri == null)
                 user else
                 user.copy(imageUrl = imageUri.toString())
             Result.Success(user)

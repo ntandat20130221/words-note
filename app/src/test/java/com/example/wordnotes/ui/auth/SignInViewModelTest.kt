@@ -33,29 +33,29 @@ class SignInViewModelTest {
 
     @Test
     fun `enter correct email and password then signing in successfully`() = runTest {
-        signInViewModel.signIn(email = "user1@gmail.com", password = "123456")
+        signInViewModel.signIn(email = "user1@gmail.com", password = "111111")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isTrue()
     }
 
     @Test
     fun `enter wrong email then signing in failed`() = runTest {
-        signInViewModel.signIn(email = "user12@gmail.com", password = "123456")
+        signInViewModel.signIn(email = "user12@gmail.com", password = "111111")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
     }
 
     @Test
     fun `enter wrong password then signing in failed`() = runTest {
-        signInViewModel.signIn(email = "user1@gmail.com", password = "1234567")
+        signInViewModel.signIn(email = "user1@gmail.com", password = "222222")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
     }
 
     @Test
     fun `enter incomplete information then signing in failed and showing error message`() = runTest {
-        signInViewModel.signIn(email = "", password = "123456")
+        signInViewModel.signIn(email = "", password = "111111")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
         assertThat(signInViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
 
-        signInViewModel.signIn(email = "john@", password = "")
+        signInViewModel.signIn(email = "user1@", password = "")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
         assertThat(signInViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
 
@@ -66,7 +66,7 @@ class SignInViewModelTest {
 
     @Test
     fun `enter wrong email format then signing in failed and showing error message`() = runTest {
-        signInViewModel.signIn(email = "john@", password = "123456")
+        signInViewModel.signIn(email = "user1@", password = "111111")
         assertThat(signInViewModel.uiState.value.isSignInSuccess).isFalse()
         assertThat(signInViewModel.uiState.value.message).isEqualTo(R.string.the_email_address_isnt_in_the_correct_format)
     }

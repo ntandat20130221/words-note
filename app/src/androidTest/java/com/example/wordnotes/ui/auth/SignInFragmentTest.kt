@@ -12,9 +12,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import com.example.wordnotes.R
-import com.example.wordnotes.mocks.TestFirebaseAuthWrapper
 import com.example.wordnotes.data.FirebaseAuthWrapper
 import com.example.wordnotes.di.FirebaseModule
+import com.example.wordnotes.mocks.TestFirebaseAuthWrapper
 import com.example.wordnotes.testutils.withNavController
 import com.example.wordnotes.ui.MainActivity
 import com.google.common.truth.Truth.assertThat

@@ -14,7 +14,7 @@ interface UserRepository {
 
     suspend fun logOut(): Result<Unit>
 
-    suspend fun setUser(user: User, imageUri: Uri): Result<User>
+    suspend fun setUser(user: User, imageUri: Uri?): Result<User>
 
     suspend fun getUser(): Result<User>
 }

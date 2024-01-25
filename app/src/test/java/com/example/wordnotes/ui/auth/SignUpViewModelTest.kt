@@ -33,52 +33,52 @@ class SignUpViewModelTest {
 
     @Test
     fun `enter correct information then signing up successfully`() {
-        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "123456", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "444444", confirmedPassword = "444444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isTrue()
     }
 
     @Test
     fun `sign up with an existing user then signing up failed`() {
-        signUpViewModel.signUp(username = "user1", email = "user1@gmail.com", password = "123456", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "user1", email = "user1@gmail.com", password = "111111", confirmedPassword = "111111")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
     }
 
     @Test
     fun `enter incomplete information then signing up failed and showing error message`() = runTest {
-        signUpViewModel.signUp(username = "", email = "user4@gmail.com", password = "123456", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "", email = "user4@gmail.com", password = "444444", confirmedPassword = "444444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
 
-        signUpViewModel.signUp(username = "user4", email = "", password = "123456", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "user4", email = "", password = "444444", confirmedPassword = "444444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
 
-        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "", confirmedPassword = "444444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
 
-        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "123456", confirmedPassword = "")
+        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "444444", confirmedPassword = "")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.please_complete_all_information)
     }
 
     @Test
     fun `enter wrong email format then signing up failed and showing error message`() = runTest {
-        signUpViewModel.signUp(username = "user4", email = "user4@", password = "123456", confirmedPassword = "123456")
+        signUpViewModel.signUp(username = "user4", email = "user4@", password = "444444", confirmedPassword = "444444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.the_email_address_isnt_in_the_correct_format)
     }
 
     @Test
     fun `enter password with length less than 6 then signing up failed and showing error message`() {
-        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "12345", confirmedPassword = "12345")
+        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "44444", confirmedPassword = "44444")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.password_must_be_at_least_6_characters)
     }
 
     @Test
     fun `enter password and confirm password don't matches then signing up failed and showing error message`() {
-        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "123456", confirmedPassword = "1234567")
+        signUpViewModel.signUp(username = "user4", email = "user4@gmail.com", password = "444444", confirmedPassword = "4444445")
         assertThat(signUpViewModel.uiState.value.isSignUpSuccess).isFalse()
         assertThat(signUpViewModel.uiState.value.message).isEqualTo(R.string.confirm_password_didnt_match)
     }

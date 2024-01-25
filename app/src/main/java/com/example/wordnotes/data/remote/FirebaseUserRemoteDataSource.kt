@@ -32,8 +32,8 @@ class FirebaseUserRemoteDataSource @Inject constructor() : UserRemoteDataSource 
 
     override suspend fun signOut(): Result<Unit> = wrapWithResult { Firebase.auth.signOut() }
 
-    override suspend fun updateProfile(user: User, imageUri: Uri): Result<User> = wrapWithResult {
-        if (imageUri != Uri.EMPTY) {
+    override suspend fun updateProfile(user: User, imageUri: Uri?): Result<User> = wrapWithResult {
+        if (imageUri != null) {
             val uploadTask = Firebase.storage.reference.child("$PROFILE_IMAGES_PATH/${user.id}").putFile(imageUri).await()
             val url = uploadTask.storage.downloadUrl.await().toString()
             with(user.copy(imageUrl = url)) {

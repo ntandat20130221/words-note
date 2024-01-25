@@ -9,7 +9,6 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.toColor
 import androidx.core.view.forEach
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
@@ -24,6 +23,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
+
 
 fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> = object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
     override fun describeTo(description: Description) {

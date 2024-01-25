@@ -2,7 +2,6 @@ package com.example.wordnotes.ui.account.profile
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -81,7 +80,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.inputEmail.setOnClickListener {
-            Snackbar.make(binding.root, R.string.cant_change_email_address, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, R.string.you_cant_change_email_address, Snackbar.LENGTH_SHORT).show()
         }
 
         binding.inputPhone.doOnTextChanged { text, _, _, _ ->
@@ -89,17 +88,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.inputGender.setOnClickListener {
-            var selectedItem = 0
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.choose_gender))
-                .setSingleChoiceItems(R.array.gender, editProfileViewModel.getUserGender()) { _, which -> selectedItem = which }
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    editProfileViewModel.updateProfile { currentUser -> currentUser.copy(gender = selectedItem) }
-                }
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+            editProfileViewModel.toggleGenderDialog(true)
         }
 
         binding.inputDob.setOnClickListener {
@@ -168,7 +157,7 @@ class EditProfileFragment : Fragment() {
                             inputDob.setText(uiState.user.getFormattedDob())
                         }
 
-                        if (uiState.imageUri != Uri.EMPTY) {
+                        if (uiState.imageUri != null) {
                             imageProfile.load(uiState.imageUri)
                         } else if (uiState.user.imageUrl.isNotBlank()) {
                             imageProfile.load(uiState.user.imageUrl) {
@@ -181,5 +170,26 @@ class EditProfileFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            editProfileViewModel.genderDialogEvent.collect {
+                if (it.getContent() == true) showGenderDialog()
+            }
+        }
+    }
+
+    private fun showGenderDialog() {
+        var selectedItem = 0
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.choose_gender))
+            .setSingleChoiceItems(R.array.gender, editProfileViewModel.getUserGender()) { _, which -> selectedItem = which }
+            .setPositiveButton(R.string.ok) { _, _ ->
+                editProfileViewModel.updateProfile { currentUser -> currentUser.copy(gender = selectedItem) }
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+                editProfileViewModel.toggleGenderDialog(false)
+            }
+            .show()
     }
 }

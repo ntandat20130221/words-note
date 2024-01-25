@@ -105,6 +105,7 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("com.google.dagger:hilt-android-testing:2.50")
+    testImplementation("io.mockk:mockk-android:1.13.9")
 
     // Instrumented tests
     androidTestImplementation(project(":test"))
