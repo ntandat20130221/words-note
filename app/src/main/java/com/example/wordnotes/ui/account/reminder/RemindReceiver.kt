@@ -26,7 +26,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RemindReceiver(private val wordReminder: WordReminder) : BroadcastReceiver() {
+class RemindReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var wordReminder: WordReminder
 
     override fun onReceive(context: Context, intent: Intent) {
         if (wordReminder.isTimeOut()) {

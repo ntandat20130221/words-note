@@ -11,7 +11,6 @@ import androidx.work.WorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.WORDS_PATH
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.data.wrapWithResult
 import com.google.firebase.auth.FirebaseAuth

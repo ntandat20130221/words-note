@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 abstract class FirebaseModule {
 
     @Binds
-    abstract fun provideFirebaseAuthWrapper(impl: FirebaseAuthWrapperImpl): FirebaseAuthWrapper
+    abstract fun bindsFirebaseAuthWrapper(impl: FirebaseAuthWrapperImpl): FirebaseAuthWrapper
 }

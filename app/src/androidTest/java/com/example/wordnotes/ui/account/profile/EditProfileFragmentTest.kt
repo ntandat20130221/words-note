@@ -22,6 +22,7 @@ import com.example.wordnotes.R
 import com.example.wordnotes.data.FirebaseAuthWrapper
 import com.example.wordnotes.di.FirebaseModule
 import com.example.wordnotes.mocks.TestFirebaseAuthWrapper
+import com.example.wordnotes.testutils.getString
 import com.example.wordnotes.testutils.withDrawable
 import com.example.wordnotes.testutils.withNavController
 import com.example.wordnotes.ui.MainActivity
@@ -117,13 +118,15 @@ class EditProfileFragmentTest {
 
     @Test
     fun updateProfileThenRecreateActivityThenCheckUiStateShouldUnchanged() {
+        val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
         // Fill information, open gender dialog then recreate activity
-        val uiDevice = fillInformation()
+        fillInformation()
         onView(withId(R.id.input_gender)).perform(click())
         activityScenarioRule.scenario.recreate()
 
         // Check if gender dialog is still display
-        onView(withText("Choose gender")).check(matches(isDisplayed()))
+        onView(withText(getString(R.string.choose_gender))).check(matches(isDisplayed()))
         onData(allOf(instanceOf(String::class.java), `is`("Male"))).check(matches(isChecked()))
         uiDevice.wait(Until.hasObject(By.res("android:id/button1")), 1000)
         onView(withId(android.R.id.button1)).perform(click())
@@ -137,12 +140,12 @@ class EditProfileFragmentTest {
         onView(withId(R.id.input_dob)).check(matches(withText("24/01/2024")))
     }
 
-    private fun fillInformation(): UiDevice {
+    private fun fillInformation() {
         val uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         // Choose profile image
         onView(withId(R.id.view_avatar_outline)).perform(click())
-        uiDevice.findObject(By.res("com.google.android.gms.optional_photopicker:id/icon_thumbnail")).click()
+        uiDevice.findObject(By.descContains("profile_01.jpg")).click()
 
         // Change user info
         onView(withId(R.id.input_username)).perform(replaceText("updated_username"))
@@ -167,7 +170,5 @@ class EditProfileFragmentTest {
         uiDevice.findObject(By.res("com.example.wordnotes:id/confirm_button")).click()
         uiDevice.wait(Until.hasObject(By.res("com.example.wordnotes:id/input_dob")), 1000)
         onView(withId(R.id.input_dob)).check(matches(withText("24/01/2024")))
-
-        return uiDevice
     }
 }

@@ -11,14 +11,25 @@ import com.example.wordnotes.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(context, attrs) {
 
-    @Inject
-    lateinit var wordPreferences: ReminderPreferences
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface TimePickerPreferenceEntryPoint {
+        fun wordPreference(): ReminderPreferences
+    }
+
+    private val wordPreferences: ReminderPreferences
+        get() = EntryPointAccessors
+            .fromApplication(context.applicationContext, TimePickerPreferenceEntryPoint::class.java)
+            .wordPreference()
 
     private var fragmentManager: FragmentManager? = null
     private var initialValue: String? = null
@@ -65,12 +76,12 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         val time = LocalTime.of(hour, minute)
 
         return when (key) {
-            ReminderFragment.KEY_START_TIME -> {
+            ReminderPreferenceFragment.KEY_START_TIME -> {
                 val endTime = Formatter.parse(wordPreferences.getEndTime() ?: DEFAULT_END_TIME)
                 time.isBefore(endTime) && (time.compareTo(endTime) != 0)
             }
 
-            ReminderFragment.KEY_END_TIME -> {
+            ReminderPreferenceFragment.KEY_END_TIME -> {
                 val startTime = Formatter.parse(wordPreferences.getStartTime() ?: DEFAULT_START_TIME)
                 time.isAfter(startTime) && (time.compareTo(startTime) != 0)
             }
@@ -87,7 +98,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.error)
             .setMessage(
-                if (key == ReminderFragment.KEY_START_TIME) R.string.start_time_must_be_sooner_than_end_time
+                if (key == ReminderPreferenceFragment.KEY_START_TIME) R.string.start_time_must_be_sooner_than_end_time
                 else R.string.end_time_must_be_later_than_start_time
             )
             .setPositiveButton(R.string.ok, null)

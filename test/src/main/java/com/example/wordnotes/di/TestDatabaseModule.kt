@@ -18,7 +18,7 @@ object TestDatabaseModule {
 
     @Singleton
     @Provides
-    fun provideTestWordDatabase(): WordDatabase =
+    fun providesTestWordDatabase(): WordDatabase =
         Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             WordDatabase::class.java

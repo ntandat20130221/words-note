@@ -13,11 +13,14 @@ import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * This class is used to schedule reminders for words in the application.
+ */
 class WordReminder @Inject constructor(
     @ApplicationContext private val context: Context,
     private val reminderPreferences: ReminderPreferences
 ) {
-    private val alarmManager = context.applicationContext.getSystemService(AlarmManager::class.java)
+    private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     fun schedule(next: Boolean = false) {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, getTriggerTime(next = next), getInterval(), getPendingIntent()!!)
@@ -66,7 +69,7 @@ class WordReminder @Inject constructor(
     private fun getPendingIntent(forCanceling: Boolean = false): PendingIntent? {
         val intent = Intent(context, RemindReceiver::class.java)
         val flags = if (forCanceling) PendingIntent.FLAG_NO_CREATE else PendingIntent.FLAG_IMMUTABLE
-        return PendingIntent.getBroadcast(context.applicationContext, 0, intent, flags)
+        return PendingIntent.getBroadcast(context, 0, intent, flags)
     }
 
     fun isTimeOut(): Boolean {

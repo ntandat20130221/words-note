@@ -35,7 +35,7 @@ class MainActivityTest {
 
     @BindValue
     @JvmField
-    val loggedFirebase: FirebaseAuthWrapper = TestFirebaseAuthWrapperLogged()
+    val loggedFirebaseAuth: FirebaseAuthWrapper = TestFirebaseAuthWrapperLogged()
 
     @Test
     fun pressBackShouldExitApp() {

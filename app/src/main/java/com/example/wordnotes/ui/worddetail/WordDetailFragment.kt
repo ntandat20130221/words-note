@@ -14,7 +14,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
-import com.example.wordnotes.ui.TextToSpeechService
+import com.example.wordnotes.data.TextToSpeechService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

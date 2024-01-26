@@ -35,7 +35,7 @@ class NavigationTest {
 
     @BindValue
     @JvmField
-    val firebaseAuth: FirebaseAuthWrapper = TestFirebaseAuthWrapperNotLogged()
+    val notLoggedFirebaseAuth: FirebaseAuthWrapper = TestFirebaseAuthWrapperNotLogged()
 
     @Test
     fun test() {

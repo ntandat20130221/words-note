@@ -2,13 +2,22 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="MainActivityTest">
+      <entry key="EditProfileFragmentTest">
         <State />
       </entry>
-      <entry key="Tests in 'com.example.wordnotes.ui.auth'">
+      <entry key="ReminderFragmentTest">
         <State />
       </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="changePreferencesThenCheckSharedPreferencesShouldInSync()">
+        <State />
+      </entry>
+      <entry key="checkIfPreferenceScreenAndSharePreferencesIsInSync()">
+        <State />
+      </entry>
+      <entry key="testDefaultValueInPreferenceScreenShouldSyncWithSharePreferences()">
         <State />
       </entry>
     </value>

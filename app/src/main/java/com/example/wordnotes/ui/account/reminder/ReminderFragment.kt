@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
@@ -16,8 +16,25 @@ import com.example.wordnotes.utils.setUpToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+class ReminderFragment : Fragment(R.layout.fragment_reminder) {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_reminder, container, false).also {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.container, ReminderPreferenceFragment())
+                .commit()
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar).findViewById<Toolbar>(R.id.toolbar)
+        findNavController().setUpToolbar(toolbar)
+    }
+}
+
 @AndroidEntryPoint
-class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
+class ReminderPreferenceFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
 
     @Inject
     lateinit var wordReminder: WordReminder
@@ -34,20 +51,6 @@ class ReminderFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         }
         findPreference<TimePickerPreference>(KEY_START_TIME)?.setFragmentManager(childFragmentManager)
         findPreference<TimePickerPreference>(KEY_END_TIME)?.setFragmentManager(childFragmentManager)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_reminder, container, false).also {
-            it.findViewById<FrameLayout>(R.id.container).apply {
-                addView(super.onCreateView(inflater, this, savedInstanceState))
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbar).findViewById<Toolbar>(R.id.toolbar)
-        findNavController().setUpToolbar(toolbar)
     }
 
     override fun onResume() {

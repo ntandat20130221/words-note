@@ -15,8 +15,8 @@ import dagger.hilt.components.SingletonComponent
 object ProvideModule {
 
     @Provides
-    fun provideWordDao(wordDatabase: WordDatabase): WordDao = wordDatabase.wordDao()
+    fun providesWordDao(wordDatabase: WordDatabase): WordDao = wordDatabase.wordDao()
 
     @Provides
-    fun provideWordManager(@ApplicationContext context: Context) = WorkManager.getInstance(context)
+    fun providesWordManager(@ApplicationContext context: Context) = WorkManager.getInstance(context)
 }

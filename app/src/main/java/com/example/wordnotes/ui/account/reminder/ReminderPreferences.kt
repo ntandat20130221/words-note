@@ -9,11 +9,11 @@ import javax.inject.Inject
 class ReminderPreferences @Inject constructor(@ApplicationContext context: Context) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    fun isRemind(default: Boolean = false) = sharedPreferences.getBoolean(ReminderFragment.KEY_REMIND, default)
+    fun isRemind(default: Boolean = false) = sharedPreferences.getBoolean(ReminderPreferenceFragment.KEY_REMIND, default)
 
-    fun getRemindTimes(default: Int = 0): Int = sharedPreferences.getString(ReminderFragment.KEY_REMIND_TIMES, default.toString())!!.toInt()
+    fun getRemindTimes(default: Int = 0): Int = sharedPreferences.getString(ReminderPreferenceFragment.KEY_REMIND_TIMES, default.toString())!!.toInt()
 
-    fun getStartTime(default: String? = null) = sharedPreferences.getString(ReminderFragment.KEY_START_TIME, default)
+    fun getStartTime(default: String? = null) = sharedPreferences.getString(ReminderPreferenceFragment.KEY_START_TIME, default)
 
-    fun getEndTime(default: String? = null) = sharedPreferences.getString(ReminderFragment.KEY_END_TIME, default)
+    fun getEndTime(default: String? = null) = sharedPreferences.getString(ReminderPreferenceFragment.KEY_END_TIME, default)
 }

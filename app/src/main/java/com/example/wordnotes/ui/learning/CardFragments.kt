@@ -13,7 +13,7 @@ import com.example.wordnotes.R
 import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.TypeOneCardBinding
 import com.example.wordnotes.databinding.TypeTwoCardBinding
-import com.example.wordnotes.ui.TextToSpeechService
+import com.example.wordnotes.data.TextToSpeechService
 
 const val KEY_WORD = "com.example.wordnotes.ui.learning.key_word"
 const val KEY_OK = "com.example.wordnotes.ui.learning.key_ok"

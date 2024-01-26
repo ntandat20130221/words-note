@@ -16,15 +16,12 @@ import javax.inject.Singleton
 @Module
 abstract class RepositoryModule {
 
-    @Singleton
     @Binds
-    abstract fun provideWordRepository(impl: DefaultWordRepository): WordRepository
+    abstract fun bindsWordRepository(impl: DefaultWordRepository): WordRepository
 
-    @Singleton
     @Binds
-    abstract fun provideUserRepository(impl: DefaultUserRepository): UserRepository
+    abstract fun bindsUserRepository(impl: DefaultUserRepository): UserRepository
 
-    @Singleton
     @Binds
-    abstract fun provideDataStoreRepository(impl: DefaultDataStoreRepository): DataStoreRepository
+    abstract fun bindsDataStoreRepository(impl: DefaultDataStoreRepository): DataStoreRepository
 }

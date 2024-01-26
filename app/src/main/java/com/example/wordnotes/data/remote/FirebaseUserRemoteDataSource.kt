@@ -1,9 +1,7 @@
 package com.example.wordnotes.data.remote
 
 import android.net.Uri
-import com.example.wordnotes.data.PROFILE_IMAGES_PATH
 import com.example.wordnotes.data.Result
-import com.example.wordnotes.data.USERS_PATH
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.data.wrapWithResult
 import com.google.firebase.auth.ktx.auth
