@@ -5,11 +5,10 @@ TODO    Fix bug deleting words when searching (the words not disappear until it 
 TODO    Fix bug snack bar show
 TODO    Add undo when deleting word at DetailWordFragment
 TODO    Complete forgot password function
-TODO    Test ForgotPasswordFragment.
 TODO    Refactor the showing SnackBar function for common use.
 TODO    Migrate Reminder preferences to DataStore.
-
-SignUp to SignIn using NavBackStackEntry
+TODO    Test WordReminder
+TODO    Refactor showInternetMessage() in AccountFragment (it uses the view in MainActivity)
 
 Word ui state, ActionMode ui state, search ui state
 

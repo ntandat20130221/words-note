@@ -1,15 +1,12 @@
 package com.example.wordnotes.ui
 
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -21,9 +18,6 @@ import com.example.wordnotes.ui.home.HomeFragment
 import com.example.wordnotes.ui.learning.LearningFragment
 import com.example.wordnotes.ui.worddetail.WordDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 const val KEY_START_DESTINATION_ID = "start_des_id"
 
@@ -34,8 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     @VisibleForTesting
     lateinit var navController: NavController
-
-    private var noInternetMessageJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -87,80 +79,17 @@ class MainActivity : AppCompatActivity() {
         navHostFragment.childFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentStarted(fm: FragmentManager, fragment: Fragment) {
                 if (fragment::class !in listOf(HomeFragment::class, LearningFragment::class, AccountFragment::class, WordDetailFragment::class)) {
-                    setBottomNavVisibility(View.GONE)
-                    resetBottomNavAnimation()
+                    binding.bottomNav.visibility = View.GONE
+                    binding.bottomNav.animate().translationX(0f).translationY(0f)
                 }
             }
 
             override fun onFragmentStopped(fm: FragmentManager, fragment: Fragment) {
                 if (fragment::class !in listOf(HomeFragment::class, LearningFragment::class, AccountFragment::class, WordDetailFragment::class)) {
-                    setBottomNavVisibility(View.VISIBLE)
+                    binding.bottomNav.visibility = View.VISIBLE
+                    binding.bottomNav.animate().translationX(0f).translationY(0f)
                 }
             }
         }, false)
-    }
-
-    fun setBottomNavVisibility(visibility: Int) {
-        binding.bottomNav.visibility = visibility
-    }
-
-    fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {
-        ValueAnimator.ofInt(binding.bottomNav.height, 0).apply {
-            setDuration(duration)
-            addUpdateListener { updatedAnimation ->
-                val translationAmount = binding.bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
-                binding.bottomNav.translationY = translationAmount
-                relatedView.forEach { it.translationY = translationAmount }
-            }
-            start()
-        }
-    }
-
-    fun slideInBottomNav(duration: Long = 200, vararg relatedView: View) {
-        ValueAnimator.ofInt(0, binding.bottomNav.height).apply {
-            setDuration(duration)
-            addUpdateListener { updatedAnimation ->
-                val translationAmount = binding.bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
-                binding.bottomNav.translationY = translationAmount
-                relatedView.forEach { it.translationY = translationAmount }
-            }
-            start()
-        }
-    }
-
-    fun resetBottomNavAnimation(vararg relatedView: View) {
-        binding.bottomNav.translationY = 0f
-        relatedView.forEach { it.translationY = 0f }
-    }
-
-
-    fun showNoInternetMessage() {
-        noInternetMessageJob?.cancel()
-        if (binding.textNoInternet.visibility == View.VISIBLE) {
-            noInternetMessageJob = lifecycleScope.launch {
-                delay(2000)
-                binding.textNoInternet.visibility = View.INVISIBLE
-            }
-        } else {
-            binding.textNoInternet.apply {
-                alpha = 0f
-                scaleX = 0.8f
-                scaleY = 0.8f
-                visibility = View.VISIBLE
-            }
-            binding.textNoInternet.animate()
-                .setInterpolator(AccelerateDecelerateInterpolator())
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(150)
-                .withEndAction {
-                    noInternetMessageJob = lifecycleScope.launch {
-                        delay(2000)
-                        binding.textNoInternet.visibility = View.INVISIBLE
-                    }
-                }
-                .start()
-        }
     }
 }

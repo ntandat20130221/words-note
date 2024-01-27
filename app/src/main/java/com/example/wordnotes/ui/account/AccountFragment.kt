@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,10 +19,11 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentAccountBinding
-import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.isNetworkAvailable
 import com.example.wordnotes.utils.setUpToolbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -29,6 +32,7 @@ class AccountFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val accountViewModel: AccountViewModel by viewModels()
+    private var noInternetMessageJob: Job? = null
 
     private object OnTouchListener : View.OnTouchListener {
         @SuppressLint("ClickableViewAccessibility")
@@ -95,7 +99,7 @@ class AccountFragment : Fragment() {
             if (requireContext().isNetworkAvailable()) {
                 navigateToEditProfileFragment()
             } else {
-                (requireActivity() as MainActivity).showNoInternetMessage()
+                showNoInternetMessage()
             }
         }
 
@@ -107,7 +111,7 @@ class AccountFragment : Fragment() {
             if (requireContext().isNetworkAvailable()) {
                 accountViewModel.logOut()
             } else {
-                (requireActivity() as MainActivity).showNoInternetMessage()
+                showNoInternetMessage()
             }
         }
     }
@@ -146,6 +150,37 @@ class AccountFragment : Fragment() {
     private fun navigateToRoutingFragment() {
         findNavController().apply {
             graph = navInflater.inflate(R.navigation.nav_graph)
+        }
+    }
+
+    private fun showNoInternetMessage() {
+        noInternetMessageJob?.cancel()
+        val textNoInternet = requireActivity().findViewById<TextView>(R.id.text_no_internet)
+        if (textNoInternet.visibility == View.VISIBLE) {
+            noInternetMessageJob = lifecycleScope.launch {
+                delay(2000)
+                textNoInternet.visibility = View.INVISIBLE
+            }
+        } else {
+            textNoInternet.apply {
+                alpha = 0f
+                scaleX = 0.8f
+                scaleY = 0.8f
+                visibility = View.VISIBLE
+            }
+            textNoInternet.animate()
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(150)
+                .withEndAction {
+                    noInternetMessageJob = lifecycleScope.launch {
+                        delay(2000)
+                        textNoInternet.visibility = View.INVISIBLE
+                    }
+                }
+                .start()
         }
     }
 }

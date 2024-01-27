@@ -6,45 +6,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.wordnotes.R
+import com.example.wordnotes.data.model.Word
 import com.example.wordnotes.databinding.WordItemBinding
 import com.example.wordnotes.utils.themeColor
 import com.example.wordnotes.utils.timeAgo
 
 class WordsAdapter(
-    private var words: List<WordItem> = emptyList(),
     private val onItemClicked: (String) -> Unit,
     private val onItemLongClicked: (String) -> Boolean
-) : Adapter<WordsViewHolder>() {
+) : ListAdapter<WordItem, WordsViewHolder>(WordDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         WordsViewHolder(WordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-    override fun getItemCount() = words.size
-
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
-        holder.bind(words[position], onItemClicked, onItemLongClicked)
+        holder.bind(getItem(position), onItemClicked, onItemLongClicked)
     }
 
-    /**
-     * This implementation is only intended to explain how DiffUtil.Callback.getChangePayload() method works.
-     * Without it, the logic code still works properly.
-     */
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
-        else holder.bind(words[position].copy(isSelected = payloads[0] as Boolean), onItemClicked, onItemLongClicked)
+        payloads.lastOrNull()?.let { holder.bindSelected(it as Boolean) } ?: onBindViewHolder(holder, position)
     }
 
     override fun onViewRecycled(holder: WordsViewHolder) {
         holder.cancelAvatarFlipAnimation()
-    }
-
-    fun setData(words: List<WordItem>) {
-        val diffResult = DiffUtil.calculateDiff(WordDiffUtilCallback(this.words, words))
-        diffResult.dispatchUpdatesTo(this)
-        this.words = words
     }
 }
 
@@ -72,53 +59,67 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
     }
 
     fun bind(wordItem: WordItem, onItemClicked: (String) -> Unit, onItemLongClicked: (String) -> Boolean) {
-        val word = wordItem.word
         binding.apply {
-            if (wordItem.isSelected && !isShowingBack) {
-                flipRightAnimator.start()
-                if (flipLeftAnimator.isRunning) {
-                    flipRightAnimator.currentPlayTime = flipRightAnimator.totalDuration - flipLeftAnimator.currentPlayTime
-                    flipLeftAnimator.cancel()
-                }
-                binding.textAvatar.setHasTransientState(true)
-                binding.imageAvatar.setHasTransientState(true)
-                isShowingBack = true
-            } else if (isShowingBack) {
-                flipLeftAnimator.start()
-                if (flipRightAnimator.isRunning) {
-                    flipLeftAnimator.currentPlayTime = flipLeftAnimator.totalDuration - flipRightAnimator.currentPlayTime
-                    flipRightAnimator.cancel()
-                }
-                binding.textAvatar.setHasTransientState(true)
-                binding.imageAvatar.setHasTransientState(true)
-                isShowingBack = false
+            bindSelected(wordItem.isSelected)
+            bindWord(wordItem.word)
+            root.apply {
+                setOnClickListener { onItemClicked(wordItem.word.id) }
+                setOnLongClickListener { onItemLongClicked(wordItem.word.id) }
             }
+        }
+    }
 
+    private fun bindWord(word: Word) {
+        binding.apply {
             textAvatar.text = word.word[0].uppercase()
             textWord.text = word.word
             textIpa.text = word.ipa
-            textTimestamp.text = timeAgo(root.context, word.timestamp)
-            textMeaning.text = word.meaning
-            imageRemind.visibility = if (word.isRemind) View.VISIBLE else View.GONE
-            root.apply {
-                setBackgroundColor(
-                    if (wordItem.isSelected) context.themeColor(R.attr.color_selected_item_background)
-                    else context.themeColor(com.google.android.material.R.attr.colorSurface)
-                )
-                setOnClickListener { onItemClicked(word.id) }
-                setOnLongClickListener { onItemLongClicked(word.id) }
-            }
-
             textIpa.visibility = if (word.ipa.isNotEmpty()) View.VISIBLE else View.GONE
+            textMeaning.text = word.meaning
             textMeaning.visibility = if (word.meaning.isNotEmpty()) View.VISIBLE else View.GONE
+            textTimestamp.text = timeAgo(root.context, word.timestamp)
+            imageRemind.visibility = if (word.isRemind) View.VISIBLE else View.GONE
+        }
+    }
+
+    fun bindSelected(isSelected: Boolean) {
+        if (isSelected && !isShowingBack) {
+            flipRightAnimator.start()
+            if (flipLeftAnimator.isRunning) {
+                flipRightAnimator.currentPlayTime = flipRightAnimator.totalDuration - flipLeftAnimator.currentPlayTime
+                flipLeftAnimator.cancel()
+            }
+            binding.textAvatar.setHasTransientState(true)
+            binding.imageAvatar.setHasTransientState(true)
+            isShowingBack = true
+        } else if (isShowingBack) {
+            flipLeftAnimator.start()
+            if (flipRightAnimator.isRunning) {
+                flipLeftAnimator.currentPlayTime = flipLeftAnimator.totalDuration - flipRightAnimator.currentPlayTime
+                flipRightAnimator.cancel()
+            }
+            binding.textAvatar.setHasTransientState(true)
+            binding.imageAvatar.setHasTransientState(true)
+            isShowingBack = false
+        }
+        binding.root.apply {
+            setBackgroundColor(
+                if (isSelected) context.themeColor(R.attr.color_selected_item_background)
+                else context.themeColor(com.google.android.material.R.attr.colorSurface)
+            )
         }
     }
 }
 
-class WordDiffUtilCallback(private val oldList: List<WordItem>, private val newList: List<WordItem>) : DiffUtil.Callback() {
-    override fun getOldListSize() = oldList.size
-    override fun getNewListSize() = newList.size
-    override fun areItemsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition].word.id == newList[newPosition].word.id
-    override fun areContentsTheSame(oldPosition: Int, newPosition: Int) = oldList[oldPosition] == newList[newPosition]
-    override fun getChangePayload(oldPosition: Int, newPosition: Int) = newList[newPosition].isSelected
+class WordDiffUtilCallback : DiffUtil.ItemCallback<WordItem>() {
+    override fun areItemsTheSame(oldItem: WordItem, newItem: WordItem) = oldItem.word.id == newItem.word.id
+
+    override fun areContentsTheSame(oldItem: WordItem, newItem: WordItem) = oldItem == newItem
+
+    override fun getChangePayload(oldItem: WordItem, newItem: WordItem): Any? {
+        return when {
+            oldItem.isSelected != newItem.isSelected -> newItem.isSelected
+            else -> super.getChangePayload(oldItem, newItem)
+        }
+    }
 }

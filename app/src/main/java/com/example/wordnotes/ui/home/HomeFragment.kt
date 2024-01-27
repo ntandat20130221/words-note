@@ -1,6 +1,7 @@
 package com.example.wordnotes.ui.home
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -24,37 +25,31 @@ import com.example.customviews.materialsearchview.MaterialSearchView
 import com.example.customviews.materialsearchview.SearchViewAnimationHelper
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
-import com.example.wordnotes.data.FirebaseAuthWrapper
 import com.example.wordnotes.databinding.FragmentHomeBinding
 import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.fadeInStatusBar
 import com.example.wordnotes.utils.fadeOutStatusBar
 import com.example.wordnotes.utils.setUpToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var firebaseAuthWrapper: FirebaseAuthWrapper
-
     private val homeViewModel: HomeViewModel by viewModels()
-
     private lateinit var mainActivity: MainActivity
-    private lateinit var wordsAdapter: WordsAdapter
-    private lateinit var searchAdapter: WordsAdapter
-
     private var actionMode: ActionMode? = null
     private var inSearching = false
+
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = homeViewModel.stopSearching()
     }
+
     private val voicePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             binding.searchView.listenInput()
@@ -93,11 +88,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
+        (binding.wordsRecyclerView.adapter as? WordsAdapter)?.submitList(emptyList())
         binding.wordsRecyclerView.apply {
-            wordsAdapter = WordsAdapter(
+            adapter = WordsAdapter(
                 onItemClicked = { homeViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) })
-            adapter = wordsAdapter
+                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) }
+            )
             addOnScrollListener(OnScrollListener())
         }
     }
@@ -107,10 +103,10 @@ class HomeFragment : Fragment() {
             if (actionMode == null) {
                 if (dy > SCROLLING_THRESHOLD && binding.fabAddWord.isExtended) {
                     binding.fabAddWord.shrink()
-                    mainActivity.slideOutBottomNav(relatedView = arrayOf(binding.fabAddWord))
+                    slideOutBottomNav(relatedView = arrayOf(binding.fabAddWord))
                 } else if (dy < -SCROLLING_THRESHOLD && !binding.fabAddWord.isExtended) {
                     binding.fabAddWord.extend()
-                    mainActivity.slideInBottomNav(relatedView = arrayOf(binding.fabAddWord))
+                    slideInBottomNav(relatedView = arrayOf(binding.fabAddWord))
                 }
             }
         }
@@ -118,10 +114,10 @@ class HomeFragment : Fragment() {
 
     private fun setUpSearch() {
         binding.searchRecyclerView.apply {
-            searchAdapter = WordsAdapter(
+            adapter = WordsAdapter(
                 onItemClicked = { homeViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) })
-            adapter = searchAdapter
+                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) }
+            )
         }
 
         binding.searchView.addTransitionListener { _, _, newState ->
@@ -231,7 +227,7 @@ class HomeFragment : Fragment() {
         } else {
             binding.emptyListLayout.root.visibility = View.GONE
             binding.wordsRecyclerView.visibility = View.VISIBLE
-            wordsAdapter.setData(uiState.items)
+            (binding.wordsRecyclerView.adapter as WordsAdapter).submitList(uiState.items)
         }
     }
 
@@ -248,8 +244,10 @@ class HomeFragment : Fragment() {
         actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
         binding.fabAddWord.visibility = View.GONE
         if (!inSearching) {
-            mainActivity.setBottomNavVisibility(View.GONE)
-            requireActivity().window.fadeInStatusBar()
+            requireActivity().run {
+                findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+                window.fadeInStatusBar()
+            }
         }
     }
 
@@ -258,8 +256,10 @@ class HomeFragment : Fragment() {
         actionMode = null
         binding.fabAddWord.visibility = View.VISIBLE
         if (!inSearching) {
-            mainActivity.setBottomNavVisibility(View.VISIBLE)
-            requireActivity().window.fadeOutStatusBar()
+            requireActivity().run {
+                findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+                window.fadeOutStatusBar()
+            }
         }
     }
 
@@ -292,7 +292,7 @@ class HomeFragment : Fragment() {
     private fun updateSearching(uiState: WordsUiState) {
         if (uiState.isSearching) {
             if (!inSearching) startSearching()
-            searchAdapter.setData(uiState.searchResult)
+            (binding.searchRecyclerView.adapter as WordsAdapter).submitList(uiState.searchResult)
             backPressedCallback.isEnabled = true
         } else if (inSearching) {
             stopSearching()
@@ -302,16 +302,46 @@ class HomeFragment : Fragment() {
 
     private fun startSearching() {
         binding.searchView.show()
-        requireActivity().window.fadeInStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
-        mainActivity.setBottomNavVisibility(View.GONE)
+        requireActivity().run {
+            window.fadeInStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
+            findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+        }
         inSearching = true
     }
 
     private fun stopSearching() {
         binding.searchView.hide()
-        requireActivity().window.fadeOutStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
-        mainActivity.setBottomNavVisibility(View.VISIBLE)
+        requireActivity().run {
+            window.fadeOutStatusBar(duration = SearchViewAnimationHelper.CIRCLE_REVEAL_DURATION_MS)
+            findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
+        }
         inSearching = false
+    }
+
+    fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
+        ValueAnimator.ofInt(bottomNav.height, 0).apply {
+            setDuration(duration)
+            addUpdateListener { updatedAnimation ->
+                val translationAmount = bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
+                bottomNav.translationY = translationAmount
+                relatedView.forEach { it.translationY = translationAmount }
+            }
+            start()
+        }
+    }
+
+    fun slideInBottomNav(duration: Long = 200, vararg relatedView: View) {
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
+        ValueAnimator.ofInt(0, bottomNav.height).apply {
+            setDuration(duration)
+            addUpdateListener { updatedAnimation ->
+                val translationAmount = bottomNav.height.toFloat() - updatedAnimation.animatedValue as Int
+                bottomNav.translationY = translationAmount
+                relatedView.forEach { it.translationY = translationAmount }
+            }
+            start()
+        }
     }
 
     companion object {

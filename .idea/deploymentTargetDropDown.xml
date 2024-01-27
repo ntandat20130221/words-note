@@ -2,22 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="EditProfileFragmentTest">
-        <State />
-      </entry>
-      <entry key="ReminderFragmentTest">
-        <State />
-      </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="changePreferencesThenCheckSharedPreferencesShouldInSync()">
-        <State />
-      </entry>
-      <entry key="checkIfPreferenceScreenAndSharePreferencesIsInSync()">
-        <State />
-      </entry>
-      <entry key="testDefaultValueInPreferenceScreenShouldSyncWithSharePreferences()">
         <State />
       </entry>
     </value>
