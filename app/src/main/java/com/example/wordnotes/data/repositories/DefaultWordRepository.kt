@@ -7,6 +7,7 @@ import com.example.wordnotes.data.remote.WordRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -25,13 +26,12 @@ class DefaultWordRepository(
 
     override fun getWordsFlow(): Flow<List<Word>> = wordLocalDataSource.getWordsFlow()
 
-    override fun getWordFlow(wordId: String): Flow<Word> = wordLocalDataSource.getWordFlow(wordId)
+    override fun getWordFlow(wordId: String): Flow<Word> = wordLocalDataSource.getWordFlow(wordId).filterNotNull()
 
     override suspend fun refresh() = withContext(dispatcher) {
         val result = wordRemoteDataSource.loadWords()
         if (result is Result.Success) {
-            wordLocalDataSource.clearWords()
-            wordLocalDataSource.saveWords(result.data)
+            wordLocalDataSource.clearAndSaveWords(result.data)
         }
     }
 
@@ -47,9 +47,9 @@ class DefaultWordRepository(
         wordLocalDataSource.getRemindingWords()
     }
 
-    override suspend fun saveWord(word: Word) = withContext<Unit>(dispatcher) {
-        launch { wordLocalDataSource.saveWord(word) }
-        launch { wordRemoteDataSource.saveWord(word) }
+    override suspend fun saveWords(words: List<Word>) = withContext<Unit>(dispatcher) {
+        launch { wordLocalDataSource.saveWords(words) }
+        launch { wordRemoteDataSource.saveWords(words) }
     }
 
     override suspend fun updateWords(words: List<Word>) = withContext<Unit>(dispatcher) {

@@ -145,7 +145,7 @@ class EditProfileFragmentTest {
 
         // Choose profile image
         onView(withId(R.id.view_avatar_outline)).perform(click())
-        uiDevice.findObject(By.descContains("profile_01.jpg")).click()
+        uiDevice.findObject(By.res("com.google.android.gms.optional_photopicker:id/icon_thumbnail")).click()
 
         // Change user info
         onView(withId(R.id.input_username)).perform(replaceText("updated_username"))

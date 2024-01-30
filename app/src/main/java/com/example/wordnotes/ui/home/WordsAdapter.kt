@@ -26,10 +26,6 @@ class WordsAdapter(
         holder.bind(getItem(position), onItemClicked, onItemLongClicked)
     }
 
-    override fun onBindViewHolder(holder: WordsViewHolder, position: Int, payloads: MutableList<Any>) {
-        payloads.lastOrNull()?.let { holder.bindSelected(it as Boolean) } ?: onBindViewHolder(holder, position)
-    }
-
     override fun onViewRecycled(holder: WordsViewHolder) {
         holder.cancelAvatarFlipAnimation()
     }
@@ -82,7 +78,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
         }
     }
 
-    fun bindSelected(isSelected: Boolean) {
+    private fun bindSelected(isSelected: Boolean) {
         if (isSelected && !isShowingBack) {
             flipRightAnimator.start()
             if (flipLeftAnimator.isRunning) {
@@ -111,15 +107,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
     }
 }
 
-class WordDiffUtilCallback : DiffUtil.ItemCallback<WordItem>() {
+private class WordDiffUtilCallback : DiffUtil.ItemCallback<WordItem>() {
     override fun areItemsTheSame(oldItem: WordItem, newItem: WordItem) = oldItem.word.id == newItem.word.id
-
     override fun areContentsTheSame(oldItem: WordItem, newItem: WordItem) = oldItem == newItem
-
-    override fun getChangePayload(oldItem: WordItem, newItem: WordItem): Any? {
-        return when {
-            oldItem.isSelected != newItem.isSelected -> newItem.isSelected
-            else -> super.getChangePayload(oldItem, newItem)
-        }
-    }
 }

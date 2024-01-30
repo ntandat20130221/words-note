@@ -18,6 +18,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providesWordDatabase(@ApplicationContext context: Context): WordDatabase {
-        return Room.databaseBuilder(context, WordDatabase::class.java, DATABASE_NAME).build()
+        return Room
+            .databaseBuilder(context, WordDatabase::class.java, DATABASE_NAME)
+            .build()
     }
 }

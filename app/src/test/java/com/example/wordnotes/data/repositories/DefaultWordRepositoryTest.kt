@@ -106,7 +106,7 @@ class DefaultWordRepositoryTest {
     @Test
     fun `save new word then check data should successful`() = runTest(testDispatcher) {
         val newWord = Word(id = "4", word = "word4", pos = "pos4", ipa = "ipa4", meaning = "meaning4")
-        wordRepository.saveWord(newWord)
+        wordRepository.saveWords(listOf(newWord))
         val word = (wordRepository.getWord(newWord.id) as Result.Success).data
         assertThat(word).isEqualTo(newWord)
     }
@@ -114,7 +114,7 @@ class DefaultWordRepositoryTest {
     @Test
     fun `save new word with existing id should replaces the new one and the size remains unchanged`() = runTest(testDispatcher) {
         val newWord = Word(id = "1", word = "word", pos = "pos", ipa = "ipa", meaning = "meaning")
-        wordRepository.saveWord(newWord)
+        wordRepository.saveWords(listOf(newWord))
 
         val words = (wordRepository.getWords() as Result.Success).data
         assertThat(words).hasSize(3)

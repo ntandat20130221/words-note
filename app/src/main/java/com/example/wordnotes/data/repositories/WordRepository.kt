@@ -18,7 +18,7 @@ interface WordRepository {
 
     suspend fun getRemindingWords(): Result<List<Word>>
 
-    suspend fun saveWord(word: Word)
+    suspend fun saveWords(words: List<Word>)
 
     suspend fun updateWords(words: List<Word>)
 

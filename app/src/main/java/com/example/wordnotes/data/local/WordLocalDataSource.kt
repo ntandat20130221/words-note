@@ -16,8 +16,6 @@ interface WordLocalDataSource {
 
     suspend fun getRemindingWords(): Result<List<Word>>
 
-    suspend fun saveWord(word: Word): Result<Unit>
-
     suspend fun saveWords(words: List<Word>): Result<Unit>
 
     suspend fun updateWords(words: List<Word>): Result<Unit>
@@ -25,4 +23,6 @@ interface WordLocalDataSource {
     suspend fun deleteWords(ids: List<String>): Result<Unit>
 
     suspend fun clearWords(): Result<Unit>
+
+    suspend fun clearAndSaveWords(words: List<Word>): Result<Unit>
 }

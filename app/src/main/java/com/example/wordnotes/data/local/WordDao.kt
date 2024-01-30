@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.wordnotes.data.model.Word
 import kotlinx.coroutines.flow.Flow
@@ -27,9 +28,6 @@ interface WordDao {
     suspend fun getRemindWords(): List<Word>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWord(word: Word)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWords(words: List<Word>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
@@ -40,4 +38,10 @@ interface WordDao {
 
     @Query("DELETE FROM words")
     suspend fun clearWords()
+
+    @Transaction
+    suspend fun clearAndInsert(words: List<Word>) {
+        clearWords()
+        insertWords(words)
+    }
 }

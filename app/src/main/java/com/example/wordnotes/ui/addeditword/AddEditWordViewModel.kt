@@ -118,7 +118,7 @@ class AddEditWordViewModel @Inject constructor(
     }
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
-        wordRepository.saveWord(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis()))
+        wordRepository.saveWords(listOf(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis())))
         _wordSavedEvent.value = Event(Unit)
     }
 

@@ -16,9 +16,3 @@ class OneTimeEventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) 
         }
     }
 }
-
-class EventObserver<T>(private val callback: (T) -> Unit) : Observer<Event<T>> {
-    override fun onChanged(value: Event<T>) {
-        value.getContent()?.let { callback(it) }
-    }
-}

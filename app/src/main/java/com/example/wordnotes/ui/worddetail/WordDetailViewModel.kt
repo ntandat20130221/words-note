@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +30,7 @@ class WordDetailViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<Word> = _wordId.flatMapLatest { wordId ->
-        wordId?.let { wordRepository.getWordFlow(wordId) } ?: flow { emit(Word()) }
+        wordId?.let { wordRepository.getWordFlow(wordId) } ?: flowOf(Word())
     }
         .stateIn(
             scope = viewModelScope,

@@ -30,8 +30,6 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 
-
-
 class AddEditWordFragmentTest {
 
     @get:Rule

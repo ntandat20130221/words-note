@@ -18,8 +18,6 @@ class RoomWordLocalDataSource @Inject constructor(private val wordDao: WordDao) 
 
     override suspend fun getRemindingWords(): Result<List<Word>> = wrapWithResult { wordDao.getRemindWords() }
 
-    override suspend fun saveWord(word: Word): Result<Unit> = wrapWithResult { wordDao.insertWord(word) }
-
     override suspend fun saveWords(words: List<Word>): Result<Unit> = wrapWithResult { wordDao.insertWords(words) }
 
     override suspend fun updateWords(words: List<Word>): Result<Unit> = wrapWithResult { wordDao.updateWords(words) }
@@ -27,4 +25,6 @@ class RoomWordLocalDataSource @Inject constructor(private val wordDao: WordDao) 
     override suspend fun deleteWords(ids: List<String>): Result<Unit> = wrapWithResult { wordDao.deleteWords(ids) }
 
     override suspend fun clearWords(): Result<Unit> = wrapWithResult { wordDao.clearWords() }
+
+    override suspend fun clearAndSaveWords(words: List<Word>) = wrapWithResult { wordDao.clearAndInsert(words) }
 }

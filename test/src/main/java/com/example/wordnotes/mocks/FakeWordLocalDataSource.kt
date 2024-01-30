@@ -68,11 +68,6 @@ class FakeWordLocalDataSource(initialWords: List<Word> = emptyList()) : WordLoca
         savedWords.value.values.filter { it.isRemind }
     }
 
-    override suspend fun saveWord(word: Word): Result<Unit> = wrapWithResult {
-        if (shouldThrowError) throw Exception("Test exception")
-        addWords(word)
-    }
-
     override suspend fun saveWords(words: List<Word>): Result<Unit> = wrapWithResult {
         if (shouldThrowError) throw Exception("Test exception")
         addWords(*words.toTypedArray())
@@ -95,5 +90,10 @@ class FakeWordLocalDataSource(initialWords: List<Word> = emptyList()) : WordLoca
     override suspend fun clearWords(): Result<Unit> = wrapWithResult {
         if (shouldThrowError) throw Exception("Test exception")
         savedWords.update { LinkedHashMap() }
+    }
+
+    override suspend fun clearAndSaveWords(words: List<Word>): Result<Unit> = wrapWithResult {
+        clearWords()
+        saveWords(words)
     }
 }

@@ -7,7 +7,7 @@ interface WordRemoteDataSource {
 
     suspend fun loadWords(): Result<List<Word>>
 
-    suspend fun saveWord(word: Word): Result<Unit>
+    suspend fun saveWords(words: List<Word>): Result<Unit>
 
     suspend fun updateWords(words: List<Word>): Result<Unit>
 

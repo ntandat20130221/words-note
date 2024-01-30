@@ -2,7 +2,6 @@ package com.example.wordnotes.ui.home
 
 import android.Manifest
 import android.animation.ValueAnimator
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +9,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,13 +24,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customviews.materialsearchview.MaterialSearchView
 import com.example.customviews.materialsearchview.SearchViewAnimationHelper
-import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentHomeBinding
-import com.example.wordnotes.ui.MainActivity
 import com.example.wordnotes.utils.fadeInStatusBar
 import com.example.wordnotes.utils.fadeOutStatusBar
+import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
+import com.example.wordnotes.utils.themeColor
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -42,9 +43,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val homeViewModel: HomeViewModel by viewModels()
-    private lateinit var mainActivity: MainActivity
     private var actionMode: ActionMode? = null
     private var inSearching = false
+    private var selectedCount = 0
 
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = homeViewModel.stopSearching()
@@ -54,11 +55,6 @@ class HomeFragment : Fragment() {
         if (isGranted) {
             binding.searchView.listenInput()
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mainActivity = requireActivity() as MainActivity
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -72,7 +68,16 @@ class HomeFragment : Fragment() {
         setUpRecyclerView()
         setUpSearch()
         setUpViewListeners()
-        observeUiState()
+        observeUiStates()
+        listenEvents()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (inSearching) {
+            // If onStart() is called after returning from AddEditWordFragment, hide bottom nav.
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {
@@ -138,25 +143,23 @@ class HomeFragment : Fragment() {
         binding.searchView.setOnVoiceClickedListener {
             when {
                 isVoicePermissionAllowed() -> binding.searchView.listenInput()
-                shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) -> showInContextUI()
+                shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) -> showRequestPermissionRationale()
                 else -> voicePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(backPressedCallback)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     private fun isVoicePermissionAllowed(): Boolean {
         return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun showInContextUI() {
+    private fun showRequestPermissionRationale() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.request_permission))
             .setMessage(getString(R.string.permission_rationale))
-            .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                voicePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-            }
+            .setPositiveButton(getString(R.string.ok)) { _, _ -> voicePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO) }
             .show()
     }
 
@@ -180,68 +183,94 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun observeUiState() {
+    private fun observeUiStates() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.uiState.collect { uiState ->
-                    updateRecyclerView(uiState)
-                    updateActionMode(uiState)
-                    updateSearching(uiState)
-                    binding.swipeToRefresh.isRefreshing = uiState.isLoading
+                homeViewModel.wordsUiState.collect { wordsUiState ->
+                    binding.swipeToRefresh.isRefreshing = wordsUiState.isLoading
+                    binding.emptyListLayout.root.visibility = if (wordsUiState.isShowEmptyScreen) View.VISIBLE else View.GONE
+                    binding.wordsRecyclerView.visibility = if (wordsUiState.isShowEmptyScreen) View.GONE else View.VISIBLE
+                    (binding.wordsRecyclerView.adapter as WordsAdapter).submitList(wordsUiState.wordItems)
                 }
             }
         }
 
-        homeViewModel.clickItemEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver { wordId ->
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWordDetailFragment(wordId))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.actionModeUiState.collect { actionModeUiState ->
+                    if (actionModeUiState.isActionMode) {
+                        if (actionMode == null) startActionMode()
+                        selectedCount = actionModeUiState.selectedCount
+                        actionMode?.invalidate()
+                    } else if (actionMode != null) {
+                        stopActionMode()
+                    }
+                }
             }
-        )
+        }
 
-        homeViewModel.clickEditItemEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver { wordId ->
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddEditWordFragment(wordId))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.searchUiState.collect { searchUiState ->
+                    if (searchUiState.isSearching) {
+                        if (!inSearching) startSearching()
+                        (binding.searchRecyclerView.adapter as WordsAdapter).submitList(searchUiState.searchResult)
+                        backPressedCallback.isEnabled = true
+                        // After returning from AddEditWordFragment, change status color to match the search view.
+                        requireActivity().window.statusBarColor =
+                            requireContext().themeColor(com.google.android.material.R.attr.colorSurfaceContainer)
+                    } else if (inSearching) {
+                        stopSearching()
+                        backPressedCallback.isEnabled = false
+                    }
+                }
             }
-        )
-
-        homeViewModel.showUndoEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver { amount ->
-                Snackbar.make(mainActivity.findViewById(android.R.id.content), getString(R.string.deleted_template, amount), Snackbar.LENGTH_LONG)
-                    .setAction(R.string.undo) { homeViewModel.undoDeletion() }
-                    .addCallback(object : Snackbar.Callback() {
-                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                            if (DISMISS_EVENT_TIMEOUT == event) {
-                                homeViewModel.undoDismissed()
-                            }
-                        }
-                    })
-                    .show()
-            }
-        )
-    }
-
-    private fun updateRecyclerView(uiState: WordsUiState) {
-        if (uiState.items.isEmpty() && !uiState.firstEmit && !uiState.isLoading) {
-            binding.emptyListLayout.root.visibility = View.VISIBLE
-            binding.wordsRecyclerView.visibility = View.GONE
-        } else {
-            binding.emptyListLayout.root.visibility = View.GONE
-            binding.wordsRecyclerView.visibility = View.VISIBLE
-            (binding.wordsRecyclerView.adapter as WordsAdapter).submitList(uiState.items)
         }
     }
 
-    private fun updateActionMode(uiState: WordsUiState) {
-        if (uiState.isActionMode) {
-            if (actionMode == null) startActionMode()
-            actionMode?.invalidate()
-        } else if (actionMode != null) {
-            stopActionMode()
+    private fun listenEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.clickItemEvent.collect { wordId ->
+                wordId?.let { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWordDetailFragment(it)) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.clickEditItemEvent.collect { wordId ->
+                wordId?.let {
+                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddEditWordFragment(it))
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.undoEvent.collect { amountItems ->
+                amountItems?.let {
+                    Snackbar.make(
+                        requireActivity().findViewById(android.R.id.content),
+                        getString(R.string.deleted_template, amountItems),
+                        Snackbar.LENGTH_LONG
+                    )
+                        .setAction(R.string.undo) { homeViewModel.undoDeletion() }
+                        .addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                if (DISMISS_EVENT_TIMEOUT == event) {
+                                    homeViewModel.onUndoDismissed()
+                                }
+                            }
+                        })
+                        .show()
+                }
+            }
         }
     }
 
     private fun startActionMode() {
-        actionMode = mainActivity.startSupportActionMode(WordsActionModeCallback())
+        // Hide soft keyboard and disable focus on search input when start ActionMode while searching.
+        requireContext().hideSoftKeyboard(binding.searchView)
+        binding.searchView.findViewById<EditText>(com.example.customviews.R.id.input_search).isFocusable = false
+
+        actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(WordsActionModeCallback())
         binding.fabAddWord.visibility = View.GONE
         if (!inSearching) {
             requireActivity().run {
@@ -252,6 +281,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun stopActionMode() {
+        // Restore focus on search input when top ActionMode while searching.
+        binding.searchView.findViewById<EditText>(com.example.customviews.R.id.input_search).isFocusableInTouchMode = true
+
         actionMode?.finish()
         actionMode = null
         binding.fabAddWord.visibility = View.VISIBLE
@@ -270,9 +302,9 @@ class HomeFragment : Fragment() {
         }
 
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-            // User can only edit one item at a time.
-            menu.findItem(R.id.menu_edit)?.isVisible = homeViewModel.selectedCount < 2
-            mode.title = homeViewModel.selectedCount.toString()
+            // User can only edit one item at a time, so hide edit button when there are more than one item are selected.
+            menu.findItem(R.id.menu_edit)?.isVisible = selectedCount < 2
+            mode.title = selectedCount.toString()
             return true
         }
 
@@ -286,17 +318,6 @@ class HomeFragment : Fragment() {
 
         override fun onDestroyActionMode(mode: ActionMode) {
             homeViewModel.destroyActionMode()
-        }
-    }
-
-    private fun updateSearching(uiState: WordsUiState) {
-        if (uiState.isSearching) {
-            if (!inSearching) startSearching()
-            (binding.searchRecyclerView.adapter as WordsAdapter).submitList(uiState.searchResult)
-            backPressedCallback.isEnabled = true
-        } else if (inSearching) {
-            stopSearching()
-            backPressedCallback.isEnabled = false
         }
     }
 
@@ -318,7 +339,7 @@ class HomeFragment : Fragment() {
         inSearching = false
     }
 
-    fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {
+    private fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
         ValueAnimator.ofInt(bottomNav.height, 0).apply {
             setDuration(duration)
@@ -331,7 +352,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun slideInBottomNav(duration: Long = 200, vararg relatedView: View) {
+    private fun slideInBottomNav(duration: Long = 200, vararg relatedView: View) {
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
         ValueAnimator.ofInt(0, bottomNav.height).apply {
             setDuration(duration)

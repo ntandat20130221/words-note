@@ -38,8 +38,8 @@ class FirebaseWordRemoteDataSource @Inject constructor(private val workManager: 
         words.sortedBy { it.timestamp }
     }
 
-    override suspend fun saveWord(word: Word): Result<Unit> = wrapWithResult {
-        val wordRequest = createOneTimeWorkRequest(NetworkSyncWorker::class, workType = WorkType.SAVE, workData = word)
+    override suspend fun saveWords(words: List<Word>): Result<Unit> = wrapWithResult {
+        val wordRequest = createOneTimeWorkRequest(NetworkSyncWorker::class, workType = WorkType.SAVE, workData = words)
         workManager.enqueue(wordRequest)
     }
 
@@ -74,17 +74,18 @@ class NetworkSyncWorker(context: Context, private val workerParams: WorkerParame
 
     override fun doWork(): Result {
         when (workerParams.inputData.getString(WORK_KEY)) {
-            WorkType.SAVE.name -> saveWord()
+            WorkType.SAVE.name -> saveWords()
             WorkType.UPDATE.name -> updateWords()
             WorkType.DELETE.name -> deleteWords()
         }
         return Result.success()
     }
 
-    private fun saveWord() {
-        val type: Type = object : TypeToken<Word>() {}.type
-        val word = Gson().fromJson<Word>(workerParams.inputData.getString(DATA_KEY), type)
-        Firebase.database.reference.child("$WORDS_PATH/${FirebaseAuth.getInstance().uid}/${word.id}").setValue(word)
+    private fun saveWords() {
+        val type: Type = object : TypeToken<List<Word>>() {}.type
+        val words = Gson().fromJson<List<Word>>(workerParams.inputData.getString(DATA_KEY), type)
+        Firebase.database.reference.child("$WORDS_PATH/${FirebaseAuth.getInstance().uid}")
+            .updateChildren(words.associateBy { it.id })
     }
 
     private fun updateWords() {

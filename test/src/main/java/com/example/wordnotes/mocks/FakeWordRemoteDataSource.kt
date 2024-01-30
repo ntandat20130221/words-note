@@ -30,7 +30,7 @@ class FakeWordRemoteDataSource(initialWords: List<Word>?) : WordRemoteDataSource
 
     override suspend fun loadWords(): Result<List<Word>> = wrapWithResult { words ?: throw Exception("Words not found") }
 
-    override suspend fun saveWord(word: Word): Result<Unit> = wrapWithResult { _words?.put(word.id, word) }
+    override suspend fun saveWords(words: List<Word>): Result<Unit> = wrapWithResult { _words?.putAll(words.associateBy { it.id }) }
 
     override suspend fun updateWords(words: List<Word>): Result<Unit> = wrapWithResult { _words?.putAll(words.associateBy { it.id }) }
 

@@ -21,6 +21,7 @@ import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.example.wordnotes.utils.hideSoftKeyboard
 import com.example.wordnotes.utils.setUpToolbar
 import com.example.wordnotes.utils.showSoftKeyboard
+import com.example.wordnotes.utils.themeColor
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -61,6 +62,8 @@ class AddEditWordFragment : Fragment() {
         setUpToolbar()
         setUpPartsOfSpeechRecyclerView()
         binding.inputIpa.showSoftInputOnFocus = false
+        // Change the status bar color to default if this fragment is navigated while searching.
+        requireActivity().window.statusBarColor = requireContext().themeColor(com.google.android.material.R.attr.colorSurface)
     }
 
     private fun setUpToolbar() {

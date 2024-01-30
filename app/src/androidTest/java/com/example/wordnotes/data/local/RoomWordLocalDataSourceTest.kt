@@ -43,8 +43,7 @@ class RoomWordLocalDataSourceTest {
     fun saveWords_getWords() = runTest {
         val word1 = Word(word = "word1", pos = "pos1", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2")
-        wordLocalDataSource.saveWord(word1)
-        wordLocalDataSource.saveWord(word2)
+        wordLocalDataSource.saveWords(listOf(word1, word2))
 
         val words = (wordLocalDataSource.getWords() as Result.Success).data
         assertThat(words).hasSize(2)
@@ -55,9 +54,7 @@ class RoomWordLocalDataSourceTest {
         val word1 = Word(word = "word1", pos = "pos1", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2")
         val word3 = Word(word = "word3", pos = "pos3", isRemind = true)
-        wordLocalDataSource.saveWord(word1)
-        wordLocalDataSource.saveWord(word2)
-        wordLocalDataSource.saveWord(word3)
+        wordLocalDataSource.saveWords(listOf(word1, word2, word3))
 
         val words = (wordLocalDataSource.getRemindingWords() as Result.Success).data
         assertThat(words[0].id).isEqualTo(word1.id)
@@ -67,7 +64,7 @@ class RoomWordLocalDataSourceTest {
     @Test
     fun saveWord_GetWord() = runTest {
         val newWord = Word(word = "word", pos = "pos", isRemind = true)
-        wordLocalDataSource.saveWord(newWord)
+        wordLocalDataSource.saveWords(listOf(newWord))
 
         val word = (wordLocalDataSource.getWord(newWord.id) as Result.Success).data
         assertThat(word.id).isEqualTo(word.id)
@@ -82,7 +79,7 @@ class RoomWordLocalDataSourceTest {
     @Test
     fun updateWord_GetWord() = runTest {
         val newWord = Word(word = "word", pos = "pos")
-        wordLocalDataSource.saveWord(newWord)
+        wordLocalDataSource.saveWords(listOf(newWord))
 
         val updatingWord = Word(id = newWord.id, word = "word2", pos = "pos2", isRemind = true)
         wordLocalDataSource.updateWords(listOf(updatingWord))
@@ -99,16 +96,14 @@ class RoomWordLocalDataSourceTest {
 
     @Test
     fun remindWords_GetWords() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
+        val word1 = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2")
         val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3")
-        wordLocalDataSource.saveWord(word)
-        wordLocalDataSource.saveWord(word2)
-        wordLocalDataSource.saveWord(word3)
+        wordLocalDataSource.saveWords(listOf(word1, word2, word3))
 
         wordLocalDataSource.updateWords(
             listOf(
-                word.copy(isRemind = true),
+                word1.copy(isRemind = true),
                 word2.copy(isRemind = true),
                 word3.copy(isRemind = true),
             )
@@ -122,19 +117,17 @@ class RoomWordLocalDataSourceTest {
 
     @Test
     fun deleteWords_GetWords() = runTest {
-        val word = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
+        val word1 = Word(word = "word", pos = "pos", meaning = "meaning", isRemind = true)
         val word2 = Word(word = "word2", pos = "pos2", meaning = "meaning2", isRemind = true)
         val word3 = Word(word = "word3", pos = "pos3", meaning = "meaning3", isRemind = true)
-        wordLocalDataSource.saveWord(word)
-        wordLocalDataSource.saveWord(word2)
-        wordLocalDataSource.saveWord(word3)
+        wordLocalDataSource.saveWords(listOf(word1, word2, word3))
 
-        wordLocalDataSource.deleteWords(listOf(word.id, word3.id))
+        wordLocalDataSource.deleteWords(listOf(word1.id, word3.id))
 
         val words = (wordLocalDataSource.getWords() as Result.Success).data
         assertThat(words).hasSize(1)
 
-        val nullWord = (wordLocalDataSource.getWord(word.id) as Result.Success).data
+        val nullWord = (wordLocalDataSource.getWord(word1.id) as Result.Success).data
         assertThat(nullWord).isNull()
 
         val loaded = (wordLocalDataSource.getWord(word2.id) as Result.Success).data

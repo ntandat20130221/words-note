@@ -13,8 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
-import com.example.wordnotes.databinding.FragmentWordDetailBinding
 import com.example.wordnotes.data.TextToSpeechService
+import com.example.wordnotes.databinding.FragmentWordDetailBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ class WordDetailFragment : BottomSheetDialogFragment() {
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordDetailViewModel.uiState.collect { uiState ->
                     binding.apply {
                         textWord.text = uiState.word

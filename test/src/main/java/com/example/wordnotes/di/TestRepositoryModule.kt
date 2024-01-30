@@ -10,6 +10,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import javax.inject.Singleton
 
 @TestInstallIn(
     components = [SingletonComponent::class],
@@ -18,12 +19,15 @@ import dagger.hilt.testing.TestInstallIn
 @Module
 abstract class TestRepositoryModule {
 
+    @Singleton
     @Binds
     abstract fun bindsWordRepository(impl: FakeWordRepository): WordRepository
 
+    @Singleton
     @Binds
     abstract fun bindsUserRepository(impl: FakeUserRepository): UserRepository
 
+    @Singleton
     @Binds
     abstract fun bindsDataStoreRepository(impl: FakeDataStoreRepository): DataStoreRepository
 }
