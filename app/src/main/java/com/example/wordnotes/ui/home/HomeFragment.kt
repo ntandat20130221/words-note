@@ -45,7 +45,7 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
     private var actionMode: ActionMode? = null
     private var inSearching = false
-    private var selectedCount = 0
+    private var selectedIds = emptySet<String>()
 
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = homeViewModel.stopSearching()
@@ -69,7 +69,6 @@ class HomeFragment : Fragment() {
         setUpSearch()
         setUpViewListeners()
         observeUiStates()
-        listenEvents()
     }
 
     override fun onStart() {
@@ -96,8 +95,8 @@ class HomeFragment : Fragment() {
         (binding.wordsRecyclerView.adapter as? WordsAdapter)?.submitList(emptyList())
         binding.wordsRecyclerView.apply {
             adapter = WordsAdapter(
-                onItemClicked = { homeViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) }
+                onItemClicked = { if (actionMode != null) homeViewModel.selectItem(wordId = it) else navigateToWordDetailFragment(it) },
+                onItemLongClicked = { homeViewModel.onItemLongClicked(wordId = it) }
             )
             addOnScrollListener(OnScrollListener())
         }
@@ -120,8 +119,8 @@ class HomeFragment : Fragment() {
     private fun setUpSearch() {
         binding.searchRecyclerView.apply {
             adapter = WordsAdapter(
-                onItemClicked = { homeViewModel.itemClicked(wordId = it) },
-                onItemLongClicked = { homeViewModel.itemLongClicked(wordId = it) }
+                onItemClicked = { if (actionMode != null) homeViewModel.selectItem(wordId = it) else navigateToWordDetailFragment(it) },
+                onItemLongClicked = { homeViewModel.onItemLongClicked(wordId = it) }
             )
         }
 
@@ -185,7 +184,7 @@ class HomeFragment : Fragment() {
 
     private fun observeUiStates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.wordsUiState.collect { wordsUiState ->
                     binding.swipeToRefresh.isRefreshing = wordsUiState.isLoading
                     binding.emptyListLayout.root.visibility = if (wordsUiState.isShowEmptyScreen) View.VISIBLE else View.GONE
@@ -196,11 +195,14 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.actionModeUiState.collect { actionModeUiState ->
+                    actionModeUiState.undoingItemCount?.let {
+                        showUndoSnakeBar(it)
+                    }
                     if (actionModeUiState.isActionMode) {
                         if (actionMode == null) startActionMode()
-                        selectedCount = actionModeUiState.selectedCount
+                        selectedIds = actionModeUiState.selectedIds
                         actionMode?.invalidate()
                     } else if (actionMode != null) {
                         stopActionMode()
@@ -210,7 +212,7 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.searchUiState.collect { searchUiState ->
                     if (searchUiState.isSearching) {
                         if (!inSearching) startSearching()
@@ -228,41 +230,21 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun listenEvents() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.clickItemEvent.collect { wordId ->
-                wordId?.let { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWordDetailFragment(it)) }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.clickEditItemEvent.collect { wordId ->
-                wordId?.let {
-                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddEditWordFragment(it))
+    private fun showUndoSnakeBar(deleteItemCount: Int) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            getString(R.string.deleted_template, deleteItemCount),
+            Snackbar.LENGTH_LONG
+        )
+            .setAction(R.string.undo) { homeViewModel.undoDeletion() }
+            .addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    if (DISMISS_EVENT_TIMEOUT == event) {
+                        homeViewModel.onUndoDismissed()
+                    }
                 }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.undoEvent.collect { amountItems ->
-                amountItems?.let {
-                    Snackbar.make(
-                        requireActivity().findViewById(android.R.id.content),
-                        getString(R.string.deleted_template, amountItems),
-                        Snackbar.LENGTH_LONG
-                    )
-                        .setAction(R.string.undo) { homeViewModel.undoDeletion() }
-                        .addCallback(object : Snackbar.Callback() {
-                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                if (DISMISS_EVENT_TIMEOUT == event) {
-                                    homeViewModel.onUndoDismissed()
-                                }
-                            }
-                        })
-                        .show()
-                }
-            }
-        }
+            })
+            .show()
     }
 
     private fun startActionMode() {
@@ -303,13 +285,18 @@ class HomeFragment : Fragment() {
 
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
             // User can only edit one item at a time, so hide edit button when there are more than one item are selected.
-            menu.findItem(R.id.menu_edit)?.isVisible = selectedCount < 2
-            mode.title = selectedCount.toString()
+            menu.findItem(R.id.menu_edit)?.isVisible = selectedIds.size < 2
+            mode.title = selectedIds.size.toString()
             return true
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = when (item.itemId) {
-            R.id.menu_edit -> homeViewModel.onActionModeMenuEdit()
+            R.id.menu_edit -> {
+                selectedIds.singleOrNull()?.let { navigateToAddEditWordFragment(it) }
+                mode.finish()
+                true
+            }
+
             R.id.menu_delete -> homeViewModel.onActionModeMenuDelete()
             R.id.menu_remind -> homeViewModel.onActionModeMenuRemind()
             R.id.menu_select_all -> homeViewModel.onActionModeMenuSelectAll()
@@ -337,6 +324,14 @@ class HomeFragment : Fragment() {
             findViewById<BottomNavigationView>(R.id.bottom_nav).visibility = View.VISIBLE
         }
         inSearching = false
+    }
+
+    private fun navigateToWordDetailFragment(wordId: String) {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWordDetailFragment(wordId))
+    }
+
+    private fun navigateToAddEditWordFragment(wordId: String) {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddEditWordFragment(wordId))
     }
 
     private fun slideOutBottomNav(duration: Long = 200, vararg relatedView: View) {

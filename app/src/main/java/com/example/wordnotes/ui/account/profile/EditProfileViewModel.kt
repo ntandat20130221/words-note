@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wordnotes.Event
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.User
 import com.example.wordnotes.data.repositories.UserRepository
@@ -31,12 +30,6 @@ class EditProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    /**
-     * We need to store the gender dialog state in ViewModel because it will disappear when screen orientation is changed.
-     */
-    private val _genderDialogEvent: MutableStateFlow<Event<Boolean>> = MutableStateFlow(Event(false))
-    val genderDialogEvent: StateFlow<Event<Boolean>> = _genderDialogEvent.asStateFlow()
 
     private val _uiState: MutableStateFlow<EditProfileUiState> = MutableStateFlow(EditProfileUiState())
     val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
@@ -101,6 +94,4 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun getUserGender() = uiState.value.user.gender
-
-    fun toggleGenderDialog(isShow: Boolean = false) = _genderDialogEvent.update { Event(isShow) }
 }

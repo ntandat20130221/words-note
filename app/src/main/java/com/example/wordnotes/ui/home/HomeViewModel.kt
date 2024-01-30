@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -28,7 +27,8 @@ data class WordsUiState(
 
 data class ActionModeUiState(
     val isActionMode: Boolean = false,
-    val selectedCount: Int = 0
+    val selectedIds: Set<String> = emptySet(),
+    val undoingItemCount: Int? = null
 )
 
 data class SearchUiState(
@@ -39,15 +39,8 @@ data class SearchUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val wordRepository: WordRepository) : ViewModel() {
-    private val _clickItemEvent: MutableStateFlow<String?> = MutableStateFlow(null)
-    val clickItemEvent: StateFlow<String?> = _clickItemEvent.asStateFlow()
 
-    private val _clickEditItemEvent: MutableStateFlow<String?> = MutableStateFlow(null)
-    val clickEditItemEvent: StateFlow<String?> = _clickEditItemEvent.asStateFlow()
-
-    private val _undoEvent: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val undoEvent: StateFlow<Int?> = _undoEvent.asStateFlow()
-
+    private val _undoingItemCount = MutableStateFlow<Int?>(null)
     private val _selectedIds = MutableStateFlow(emptySet<String>())
     private val _temporalDeletedIds = MutableStateFlow(emptySet<String>())
     private val _isLoading = MutableStateFlow(false)
@@ -79,10 +72,15 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
             initialValue = SearchUiState()
         )
 
-    val actionModeUiState: StateFlow<ActionModeUiState> = combine(_isActionMode, _selectedIds) { isActionMode, selectedId ->
+    val actionModeUiState: StateFlow<ActionModeUiState> = combine(
+        _isActionMode,
+        _selectedIds,
+        _undoingItemCount
+    ) { isActionMode, selectedIds, undoingItemCount ->
         ActionModeUiState(
             isActionMode = isActionMode,
-            selectedCount = selectedId.size
+            selectedIds = selectedIds,
+            undoingItemCount = undoingItemCount
         )
     }
         .stateIn(
@@ -95,7 +93,7 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         wordRepository.getWordsFlow(),
         _selectedIds,
         _isLoading,
-        _temporalDeletedIds
+        _temporalDeletedIds,
     ) { words, selectedIds, isLoading, temporalDeletedIds ->
         WordsUiState(
             wordItems = words
@@ -121,24 +119,7 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         _isLoading.update { false }
     }
 
-    fun itemClicked(wordId: String) {
-        if (_isActionMode.value.not()) {
-            _clickItemEvent.update { wordId }
-            _clickItemEvent.update { null }
-            return
-        }
-        selectItem(wordId)
-    }
-
-    fun itemLongClicked(wordId: String): Boolean {
-        if (_isActionMode.value.not()) {
-            _isActionMode.update { true }
-        }
-        selectItem(wordId)
-        return true
-    }
-
-    private fun selectItem(wordId: String) {
+    fun selectItem(wordId: String) {
         val updatedWordIds = _selectedIds.value.toMutableSet()
         if (!updatedWordIds.add(wordId)) {
             updatedWordIds.remove(wordId)
@@ -150,10 +131,11 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         _selectedIds.update { updatedWordIds }
     }
 
-    fun onActionModeMenuEdit(): Boolean {
-        _clickEditItemEvent.update { _selectedIds.value.firstOrNull() }
-        _clickEditItemEvent.update { null }
-        destroyActionMode()
+    fun onItemLongClicked(wordId: String): Boolean {
+        if (_isActionMode.value.not()) {
+            _isActionMode.update { true }
+        }
+        selectItem(wordId)
         return true
     }
 
@@ -161,8 +143,7 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         _temporalDeletedIds.update { _selectedIds.value }
         val selectedCount = _selectedIds.value.size
         destroyActionMode()
-        _undoEvent.update { selectedCount }
-        _undoEvent.update { null }
+        _undoingItemCount.update { selectedCount }
         return true
     }
 
@@ -170,11 +151,13 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         viewModelScope.launch {
             wordRepository.deleteWords(_temporalDeletedIds.value.toList())
             _temporalDeletedIds.update { emptySet() }
+            _undoingItemCount.update { null }
         }
     }
 
     fun undoDeletion() {
         _temporalDeletedIds.update { emptySet() }
+        _undoingItemCount.update { null }
     }
 
     fun onActionModeMenuRemind(): Boolean {

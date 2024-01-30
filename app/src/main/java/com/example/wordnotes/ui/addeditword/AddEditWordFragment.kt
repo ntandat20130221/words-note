@@ -25,8 +25,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-private const val SAVE_KEY = "save_key"
-
 @AndroidEntryPoint
 class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
@@ -36,7 +34,6 @@ class AddEditWordFragment : Fragment() {
     private val args: AddEditWordFragmentArgs by navArgs()
     private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
     private var originalSoftInputMode: Int? = null
-    private var saveInProgress: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +47,6 @@ class AddEditWordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        saveInProgress = savedInstanceState?.getBoolean(SAVE_KEY) ?: false
         setUpViews()
         setViewListeners()
         observeUiState()
@@ -63,11 +59,6 @@ class AddEditWordFragment : Fragment() {
             binding.inputWord.requestFocus()
             requireContext().showSoftKeyboard(binding.inputWord)
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(SAVE_KEY, saveInProgress)
     }
 
     override fun onDestroyView() {
@@ -146,7 +137,6 @@ class AddEditWordFragment : Fragment() {
         binding.toolbar.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_save -> {
-                    saveInProgress = true
                     addEditWordViewModel.saveWord()
                     return@setOnMenuItemClickListener true
                 }
@@ -159,11 +149,10 @@ class AddEditWordFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 addEditWordViewModel.uiState.collect { uiState ->
-                    updateUi(uiState)
-                    if (uiState.isSaved && saveInProgress) {
-                        saveInProgress = false
+                    if (uiState.isSaved) {
                         findNavController().navigateUp()
                     }
+                    updateUi(uiState)
                 }
             }
         }

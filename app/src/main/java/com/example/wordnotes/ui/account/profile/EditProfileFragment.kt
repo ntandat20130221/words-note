@@ -30,12 +30,17 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+private const val GENDER_DIALOG_STATE_KEY = "gender_dialog_state_key"
+
 @AndroidEntryPoint
 class EditProfileFragment : Fragment() {
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
 
     private val editProfileViewModel: EditProfileViewModel by viewModels()
+
+    // We need to store the gender dialog state because it will disappear when screen orientation is changed.
+    private var isShowingGenderDialog: Boolean = false
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { editProfileViewModel.updateProfileImage(it) }
@@ -48,9 +53,15 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isShowingGenderDialog = savedInstanceState?.getBoolean(GENDER_DIALOG_STATE_KEY) ?: false
         setUpToolbar()
         setListeners()
         observeUiState()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(GENDER_DIALOG_STATE_KEY, isShowingGenderDialog)
     }
 
     override fun onDestroyView() {
@@ -88,7 +99,8 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.inputGender.setOnClickListener {
-            editProfileViewModel.toggleGenderDialog(true)
+            showGenderDialog()
+            isShowingGenderDialog = true
         }
 
         binding.inputDob.setOnClickListener {
@@ -137,43 +149,45 @@ class EditProfileFragment : Fragment() {
                     if (uiState.isCommitSuccessful) {
                         findNavController().popBackStack()
                     }
-
-                    binding.apply {
-                        if (uiState.isCommitting) {
-                            toolbar.toolbar.menu.getItem(0).setActionView(R.layout.layout_commit)
-                        } else {
-                            toolbar.toolbar.menu.getItem(0).actionView = null
-                        }
-
-                        if (inputUsername.text.toString() != uiState.user.username) inputUsername.setText(uiState.user.username)
-                        if (inputEmail.text.toString() != uiState.user.email) inputEmail.setText(uiState.user.email)
-                        if (inputPhone.text.toString() != uiState.user.phone) inputPhone.setText(uiState.user.phone)
-
-                        if (uiState.user.gender != -1) {
-                            inputGender.setText(resources.getStringArray(R.array.gender)[uiState.user.gender])
-                        }
-
-                        if (uiState.user.dob > 0) {
-                            inputDob.setText(uiState.user.getFormattedDob())
-                        }
-
-                        if (uiState.imageUri != null) {
-                            imageProfile.load(uiState.imageUri)
-                        } else if (uiState.user.imageUrl.isNotBlank()) {
-                            imageProfile.load(uiState.user.imageUrl) {
-                                crossfade(true)
-                                placeholder(R.drawable.profile)
-                                transformations(CircleCropTransformation())
-                            }
-                        }
-                    }
+                    updateUi(uiState)
                 }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            editProfileViewModel.genderDialogEvent.collect {
-                if (it.getContent() == true) showGenderDialog()
+        // Re-show gender dialog after configuration changed.
+        if (isShowingGenderDialog) {
+            showGenderDialog()
+        }
+    }
+
+    private fun updateUi(uiState: EditProfileUiState) {
+        binding.apply {
+            if (uiState.isCommitting) {
+                toolbar.toolbar.menu.getItem(0).setActionView(R.layout.layout_commit)
+            } else {
+                toolbar.toolbar.menu.getItem(0).actionView = null
+            }
+
+            if (inputUsername.text.toString() != uiState.user.username) inputUsername.setText(uiState.user.username)
+            if (inputEmail.text.toString() != uiState.user.email) inputEmail.setText(uiState.user.email)
+            if (inputPhone.text.toString() != uiState.user.phone) inputPhone.setText(uiState.user.phone)
+
+            if (uiState.user.gender != -1) {
+                inputGender.setText(resources.getStringArray(R.array.gender)[uiState.user.gender])
+            }
+
+            if (uiState.user.dob > 0) {
+                inputDob.setText(uiState.user.getFormattedDob())
+            }
+
+            if (uiState.imageUri != null) {
+                imageProfile.load(uiState.imageUri)
+            } else if (uiState.user.imageUrl.isNotBlank()) {
+                imageProfile.load(uiState.user.imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.profile)
+                    transformations(CircleCropTransformation())
+                }
             }
         }
     }
@@ -188,7 +202,7 @@ class EditProfileFragment : Fragment() {
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
-                editProfileViewModel.toggleGenderDialog(false)
+                isShowingGenderDialog = false
             }
             .show()
     }

@@ -67,14 +67,14 @@ class HomeViewModelTest {
         var actionModeUiState = ActionModeUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(0)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(0)
     }
 
     @Test
     fun `click any item should not start action mode`() = runTest {
         var actionModeUiState = ActionModeUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
-        homeViewModel.itemClicked("1")
+        homeViewModel.selectItem("1")
         assertThat(actionModeUiState.isActionMode).isFalse()
     }
 
@@ -85,9 +85,9 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(1)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(1)
         assertThat(wordsUiState.wordItems.find { it.word.id == "1" }?.isSelected).isTrue()
     }
 
@@ -98,15 +98,15 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
         assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(2)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(2)
         assertThat(wordsUiState.wordItems.filter { it.isSelected }).hasSize(2)
 
-        homeViewModel.itemLongClicked("2")
+        homeViewModel.onItemLongClicked("2")
         assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(1)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(1)
         assertThat(wordsUiState.wordItems.filter { it.isSelected }).hasSize(1)
     }
 
@@ -117,17 +117,17 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
-        homeViewModel.itemClicked("3")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
+        homeViewModel.selectItem("3")
         assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(3)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(3)
 
-        homeViewModel.itemClicked("1")
-        homeViewModel.itemClicked("2")
-        homeViewModel.itemClicked("3")
+        homeViewModel.selectItem("1")
+        homeViewModel.selectItem("2")
+        homeViewModel.selectItem("3")
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(0)
+        assertThat(actionModeUiState.selectedIds.size).isEqualTo(0)
         assertThat(wordsUiState.wordItems.any { it.isSelected }).isFalse()
     }
 
@@ -138,8 +138,8 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
         homeViewModel.destroyActionMode()
         assertThat(actionModeUiState.isActionMode).isFalse()
         assertThat(wordsUiState.wordItems.any { it.isSelected }).isFalse()
@@ -150,20 +150,10 @@ class HomeViewModelTest {
         var wordsUiState = WordsUiState()
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         val updatedWord = Word(id = "2", word = "updated", pos = "prep", ipa = "ipa", meaning = "meaning", isRemind = false)
         wordRepository.updateWords(listOf(updatedWord))
         assertThat(wordsUiState.wordItems.find { it.word.id == "2" }?.word).isEqualTo(updatedWord)
-    }
-
-    @Test
-    fun `start action mode then click edit menu should stop action mode`() = runTest {
-        var actionModeUiState = ActionModeUiState()
-        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.onActionModeMenuEdit()
-        assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(actionModeUiState.selectedCount).isEqualTo(0)
     }
 
     @Test
@@ -173,8 +163,8 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
         homeViewModel.onActionModeMenuDelete()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
@@ -189,8 +179,8 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
         homeViewModel.onActionModeMenuDelete()
         homeViewModel.onUndoDismissed()
 
@@ -206,8 +196,8 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("2")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
         homeViewModel.onActionModeMenuDelete()
         homeViewModel.undoDeletion()
 
@@ -223,7 +213,7 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         homeViewModel.onActionModeMenuSelectAll()
 
         assertThat(actionModeUiState.isActionMode).isTrue()
@@ -237,8 +227,8 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("3")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("3")
         homeViewModel.onActionModeMenuRemind()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
@@ -307,7 +297,7 @@ class HomeViewModelTest {
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.startSearching()
         homeViewModel.search("word")
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         assertThat(actionModeUiState.isActionMode).isTrue()
     }
 
@@ -320,7 +310,7 @@ class HomeViewModelTest {
         homeViewModel.startSearching()
         homeViewModel.search("word")
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         homeViewModel.destroyActionMode()
         assertThat(actionModeUiState.isActionMode).isFalse()
         assertThat(searchUiState.isSearching).isTrue()
@@ -337,8 +327,8 @@ class HomeViewModelTest {
         homeViewModel.startSearching()
         homeViewModel.search("word")
 
-        homeViewModel.itemLongClicked("1")
-        homeViewModel.itemClicked("3")
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("3")
         homeViewModel.onActionModeMenuRemind()
         assertThat(actionModeUiState.isActionMode).isFalse()
         assertThat(searchUiState.searchResult).hasSize(3)
@@ -354,7 +344,7 @@ class HomeViewModelTest {
         homeViewModel.startSearching()
         homeViewModel.search("word")
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         homeViewModel.onActionModeMenuDelete()
         assertThat(actionModeUiState.isActionMode).isFalse()
         assertThat(searchUiState.searchResult).hasSize(2)
@@ -363,7 +353,7 @@ class HomeViewModelTest {
         homeViewModel.undoDeletion()
         assertThat(searchUiState.searchResult).hasSize(3)
 
-        homeViewModel.itemLongClicked("1")
+        homeViewModel.onItemLongClicked("1")
         homeViewModel.onActionModeMenuDelete()
         homeViewModel.onUndoDismissed()
         assertThat(actionModeUiState.isActionMode).isFalse()
