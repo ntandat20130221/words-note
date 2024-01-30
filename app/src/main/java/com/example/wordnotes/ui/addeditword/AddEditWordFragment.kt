@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.databinding.FragmentAddEditWordBinding
 import com.example.wordnotes.utils.hideSoftKeyboard
@@ -26,6 +25,8 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+private const val SAVE_KEY = "save_key"
+
 @AndroidEntryPoint
 class AddEditWordFragment : Fragment() {
     private var _binding: FragmentAddEditWordBinding? = null
@@ -35,6 +36,7 @@ class AddEditWordFragment : Fragment() {
     private val args: AddEditWordFragmentArgs by navArgs()
     private lateinit var partsOfSpeechAdapter: PartsOfSpeechAdapter
     private var originalSoftInputMode: Int? = null
+    private var saveInProgress: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +50,24 @@ class AddEditWordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        saveInProgress = savedInstanceState?.getBoolean(SAVE_KEY) ?: false
         setUpViews()
         setViewListeners()
         observeUiState()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (args.wordId == null) {
+            // If this fragment is for adding word, open soft keyboard.
+            binding.inputWord.requestFocus()
+            requireContext().showSoftKeyboard(binding.inputWord)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(SAVE_KEY, saveInProgress)
     }
 
     override fun onDestroyView() {
@@ -89,7 +106,7 @@ class AddEditWordFragment : Fragment() {
             if (hasFocus) {
                 // Connect to IPAKeyboard.
                 binding.ipaKeyboard.setInputConnection(binding.inputIpa.onCreateInputConnection(EditorInfo()))
-                // Prevent flickering effect when hiding system soft keyboard then showing IPAKeyboard.
+                // Prevent flickering effect when hiding system soft keyboard for showing IPAKeyboard.
                 originalSoftInputMode = requireActivity().window.attributes.softInputMode
                 requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
                 // Hide the system soft keyboard if it is showing.
@@ -104,7 +121,7 @@ class AddEditWordFragment : Fragment() {
             }
         }
 
-        // For fixing bug where soft keyboard was not showed after pressing the 'done' key on IPA keyboard.
+        // Show soft keyboard after pressing the 'done' key on IPA keyboard.
         binding.inputMeaning.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 requireContext().showSoftKeyboard(view)
@@ -129,6 +146,7 @@ class AddEditWordFragment : Fragment() {
         binding.toolbar.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_save -> {
+                    saveInProgress = true
                     addEditWordViewModel.saveWord()
                     return@setOnMenuItemClickListener true
                 }
@@ -139,18 +157,16 @@ class AddEditWordFragment : Fragment() {
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 addEditWordViewModel.uiState.collect { uiState ->
                     updateUi(uiState)
+                    if (uiState.isSaved && saveInProgress) {
+                        saveInProgress = false
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }
-
-        addEditWordViewModel.wordSavedEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver {
-                findNavController().navigateUp()
-            }
-        )
     }
 
     private fun updateUi(uiState: AddEditWordUiState) {
@@ -163,16 +179,8 @@ class AddEditWordFragment : Fragment() {
                 jumpDrawablesToCurrentState()
             }
         }
-
         partsOfSpeechAdapter.setSelectedIndex(uiState.currentPosIndex)
-
         uiState.snackBarMessage?.let { showSnackBar(it) }
-
-        if (uiState.isInputFocus) {
-            binding.inputWord.requestFocus()
-            requireContext().showSoftKeyboard(binding.inputWord)
-            addEditWordViewModel.gainedFocus()
-        }
     }
 
     private fun showSnackBar(@StringRes messageResId: Int) {

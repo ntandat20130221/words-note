@@ -5,39 +5,4 @@ TODO    Refactor the showing SnackBar function for common use.
 TODO    Migrate Reminder preferences to DataStore.
 TODO    Test WordReminder
 TODO    Refactor showInternetMessage() in AccountFragment (it uses the view in MainActivity)
-
-Word ui state, ActionMode ui state, search ui state
-
-WordUiState(
-    val wordItems: List<WordItem> = emptyList(),
-    val isLoading: Boolean = false,
-    val isShowEmptyScreen: Boolean = false
-)
-
-ActionModeUiState(
-    val isActive: Boolean,
-)
-
-private val _wordUiState: MutableStatedFlow<WordUiState> = MutableStatedFlow(WordUiState())
-val wordUiState: StatedFlow<WordUiState> = _wordUiState.asStatedFlow()
-
-val selectedWordIds = mutableListOf<String>()
-
-init {
-    viewModelScope.launch {
-        _wordUiState.update { it.copy(isLoading = true) }
-        wordRepository.getWordsStream().collect { words ->
-            if (words.isEmpty()) {
-                _wordUiState.update {
-                    it.copy(isShowEmptyScreen = true)
-                }
-            } else {
-                val wordItems = words.map { WordItem(word = it, isSelected = selectedWordIds.contains(it.id)) }
-                _wordUiState.update {
-                    it.copy(wordItems = words)
-                }
-            }
-            wordUiState.update { it.copy(isLoading = false) }
-        }
-    }
-}
+TODO    Fix bug IPA keyboard in landscape orientation.

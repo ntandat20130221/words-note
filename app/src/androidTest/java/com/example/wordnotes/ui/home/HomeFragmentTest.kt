@@ -32,6 +32,7 @@ import com.example.wordnotes.testutils.atPosition
 import com.example.wordnotes.testutils.getString
 import com.example.wordnotes.testutils.hasItemCount
 import com.example.wordnotes.testutils.isFabExtended
+import com.example.wordnotes.testutils.isKeyboardOpened
 import com.example.wordnotes.testutils.withBackgroundColor
 import com.example.wordnotes.testutils.withCheckedItem
 import com.example.wordnotes.testutils.withNavController
@@ -600,8 +601,4 @@ class HomeFragmentTest {
         assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word10" }!!.isRemind).isTrue()
         assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word11" }!!.isRemind).isTrue()
     }
-
-    private fun isKeyboardOpened(): Boolean = UiDevice
-        .getInstance(InstrumentationRegistry.getInstrumentation())
-        .executeShellCommand("dumpsys input_method | grep mInputShown").contains("mInputShown=true")
 }

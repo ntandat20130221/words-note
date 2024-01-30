@@ -1,11 +1,8 @@
 package com.example.wordnotes.ui.addeditword
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wordnotes.Event
 import com.example.wordnotes.R
 import com.example.wordnotes.data.Result
 import com.example.wordnotes.data.model.Word
@@ -21,9 +18,9 @@ import javax.inject.Inject
 data class AddEditWordUiState(
     val word: Word = Word(),
     val currentPosIndex: Int = 0,
-    val isInputFocus: Boolean = false,
     val isLoading: Boolean = false,
-    val snackBarMessage: Int? = null
+    val snackBarMessage: Int? = null,
+    val isSaved: Boolean = false
 )
 
 @HiltViewModel
@@ -37,20 +34,22 @@ class AddEditWordViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<AddEditWordUiState> = MutableStateFlow(AddEditWordUiState(isLoading = true))
     val uiState: StateFlow<AddEditWordUiState> = _uiState.asStateFlow()
 
-    private val _wordSavedEvent: MutableLiveData<Event<Unit>> = MutableLiveData<Event<Unit>>()
-    val wordSavedEvent: LiveData<Event<Unit>> = _wordSavedEvent
-
     private var isForAddingWord = false
 
     fun initializeWithWordId(wordId: String?) {
-        if (wordId == null) prepareForAddingWord()
-        else if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateFromSavedState()
+        if (savedStateHandle.get<Word>(WORDS_SAVED_STATE_KEY) != null) updateFromSavedState()
+        else if (wordId == null) prepareForAddingWord()
         else loadWord(wordId)
     }
 
     private fun prepareForAddingWord() {
         isForAddingWord = true
-        _uiState.update { it.copy(word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase(), isRemind = true), isInputFocus = true) }
+        _uiState.update {
+            it.copy(
+                word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase(), isRemind = true),
+                isLoading = false
+            )
+        }
     }
 
     private fun updateFromSavedState() {
@@ -68,35 +67,31 @@ class AddEditWordViewModel @Inject constructor(
         }
     }
 
-    private fun loadWord(wordId: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            wordRepository.getWord(wordId).let { result ->
-                when (result) {
-                    is Result.Success -> {
-                        val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
-                        _uiState.update {
-                            it.copy(
-                                word = transformWordBeforeLoad(result.data),
-                                currentPosIndex = currentPartOfSpeechIndex,
-                                isLoading = false
-                            )
-                        }
-                        savedStateHandle[WORDS_SAVED_STATE_KEY] = result.data
-                        savedStateHandle[CURRENT_POS_INDEX_SAVED_STATE_KEY] = currentPartOfSpeechIndex
+    private fun loadWord(wordId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        wordRepository.getWord(wordId).let { result ->
+            when (result) {
+                is Result.Success -> {
+                    val currentPartOfSpeechIndex = englishPartsOfSpeech.indexOfFirst { it.equals(result.data.pos, ignoreCase = true) }
+                    _uiState.update {
+                        it.copy(
+                            word = transformWordBeforeLoad(result.data),
+                            currentPosIndex = currentPartOfSpeechIndex,
+                            isLoading = false
+                        )
                     }
-
-                    is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
+                    savedStateHandle[WORDS_SAVED_STATE_KEY] = result.data
+                    savedStateHandle[CURRENT_POS_INDEX_SAVED_STATE_KEY] = currentPartOfSpeechIndex
                 }
+
+                is Result.Error -> _uiState.update { it.copy(isLoading = false, snackBarMessage = R.string.error_while_loading_word) }
             }
         }
     }
 
-    fun onUpdateWord(onUpdate: (Word) -> Word) {
-        _uiState.update { currentWord ->
-            currentWord.copy(word = onUpdate(currentWord.word)).also {
-                savedStateHandle[WORDS_SAVED_STATE_KEY] = it.word
-            }
+    fun onUpdateWord(onUpdate: (Word) -> Word) = _uiState.update { currentWord ->
+        currentWord.copy(word = onUpdate(currentWord.word)).also {
+            savedStateHandle[WORDS_SAVED_STATE_KEY] = it.word
         }
     }
 
@@ -119,19 +114,15 @@ class AddEditWordViewModel @Inject constructor(
 
     private fun createWord(newWord: Word) = viewModelScope.launch {
         wordRepository.saveWords(listOf(transformWordBeforeSave(newWord).copy(timestamp = System.currentTimeMillis())))
-        _wordSavedEvent.value = Event(Unit)
+        _uiState.update { it.copy(isSaved = true) }
     }
 
     private fun updateWord(word: Word) = viewModelScope.launch {
         wordRepository.updateWords(listOf(transformWordBeforeSave(word)))
-        _wordSavedEvent.value = Event(Unit)
+        _uiState.update { it.copy(isSaved = true) }
     }
 
-    private fun transformWordBeforeLoad(word: Word): Word {
-        return word.copy(
-            ipa = if (word.ipa.isBlank()) "" else word.ipa.trim('/', ' '),
-        )
-    }
+    private fun transformWordBeforeLoad(word: Word) = word.copy(ipa = if (word.ipa.isBlank()) "" else word.ipa.trim('/', ' '))
 
     private fun transformWordBeforeSave(word: Word): Word {
         return word.copy(
@@ -142,10 +133,6 @@ class AddEditWordViewModel @Inject constructor(
 
     fun snakeBarShown() {
         _uiState.update { it.copy(snackBarMessage = null) }
-    }
-
-    fun gainedFocus() {
-        _uiState.update { it.copy(isInputFocus = false) }
     }
 
     fun onPosItemClicked(selectedIndex: Int) {

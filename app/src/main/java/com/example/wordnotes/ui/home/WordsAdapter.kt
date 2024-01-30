@@ -99,6 +99,7 @@ class WordsViewHolder(private val binding: WordItemBinding) : ViewHolder(binding
             isShowingBack = false
         }
         binding.root.apply {
+            this.isSelected = isSelected
             setBackgroundColor(
                 if (isSelected) context.themeColor(R.attr.color_selected_item_background)
                 else context.themeColor(com.google.android.material.R.attr.colorSurface)
