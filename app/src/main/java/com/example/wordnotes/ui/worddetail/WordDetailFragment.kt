@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.wordnotes.OneTimeEventObserver
 import com.example.wordnotes.R
 import com.example.wordnotes.data.TextToSpeechService
 import com.example.wordnotes.databinding.FragmentWordDetailBinding
@@ -57,31 +56,28 @@ class WordDetailFragment : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 wordDetailViewModel.uiState.collect { uiState ->
-                    binding.apply {
-                        textWord.text = uiState.word
-                        textIpa.text = uiState.ipa
-                        textPos.text = uiState.pos
-                        textMeaning.text = uiState.meaning
-
-                        uiState.ipa.ifEmpty { textIpa.visibility = View.GONE }
-
-                        imageRemind.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                requireContext(),
-                                if (uiState.isRemind) R.drawable.ic_alarm_off else R.drawable.ic_alarm
-                            )
-                        )
-                        textRemind.setText(if (uiState.isRemind) R.string.stop_remind else R.string.pref_title_remind)
-                    }
+                    if (uiState.isDismissed) dismiss()
+                    updateUi(uiState)
                 }
             }
         }
+    }
 
-        wordDetailViewModel.dismissEvent.observe(viewLifecycleOwner,
-            OneTimeEventObserver {
-                dismiss()
-            }
-        )
+    private fun updateUi(uiState: WordDetailUiState) {
+        binding.apply {
+            textWord.text = uiState.word.word
+            textIpa.text = uiState.word.ipa
+            textIpa.visibility = if (uiState.word.ipa.isEmpty()) View.GONE else View.VISIBLE
+            textPos.text = uiState.word.pos
+            textMeaning.text = uiState.word.meaning
+            textRemind.setText(if (uiState.word.isRemind) R.string.stop_remind else R.string.pref_title_remind)
+            imageRemind.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    if (uiState.word.isRemind) R.drawable.ic_alarm_off else R.drawable.ic_alarm
+                )
+            )
+        }
     }
 
     private fun setActionListeners() {

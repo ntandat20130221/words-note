@@ -45,7 +45,7 @@ class FakeWordRepository(initialWords: List<Word>?) : WordRepository {
 
     override fun getWordFlow(wordId: String): Flow<Word> = flow {
         if (shouldThrowError) throw Exception("Test exception")
-        savedWords.collect { emit(it[wordId]!!) }
+        savedWords.collect { words -> words[wordId]?.let { emit(it) } }
     }
 
     override suspend fun refresh() = if (shouldThrowError)
