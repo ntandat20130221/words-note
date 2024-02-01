@@ -39,16 +39,16 @@ class LearningFragment : Fragment() {
     }
 
     private fun setUpViewListeners() {
-        binding.button.setOnClickListener {
+        binding.buttonWord.setOnClickListener {
             findNavController().navigate(LearningFragmentDirections.actionLearningFragmentToFlashCardFragment(FlashCardFragment.TYPE_WORD))
         }
 
-        binding.button2.setOnClickListener {
+        binding.buttonMeaning.setOnClickListener {
             findNavController().navigate(LearningFragmentDirections.actionLearningFragmentToFlashCardFragment(FlashCardFragment.TYPE_MEANING))
         }
 
-        binding.button3.setOnClickListener {
-            findNavController().navigate(LearningFragmentDirections.actionLearningFragmentToFlashCardFragment(FlashCardFragment.TYPE_MIXED))
+        binding.buttonMix.setOnClickListener {
+            findNavController().navigate(LearningFragmentDirections.actionLearningFragmentToFlashCardFragment(FlashCardFragment.TYPE_MIX))
         }
     }
 }

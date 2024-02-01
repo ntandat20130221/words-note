@@ -26,7 +26,7 @@ class CardPagerAdapter(
         val fragment: Fragment = when (type) {
             FlashCardFragment.TYPE_WORD -> TypeOneCardFragment()
             FlashCardFragment.TYPE_MEANING -> TypeTwoCardFragment()
-            FlashCardFragment.TYPE_MIXED -> if (Random.nextInt() % 2 == 0) TypeOneCardFragment() else TypeTwoCardFragment()
+            FlashCardFragment.TYPE_MIX -> if (Random.nextInt() % 2 == 0) TypeOneCardFragment() else TypeTwoCardFragment()
             else -> TypeOneCardFragment()
         }
 

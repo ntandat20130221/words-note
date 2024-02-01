@@ -33,31 +33,33 @@ class FlashCardViewModel @Inject constructor(
     val uiState: StateFlow<FlashCardUiState> = _uiState.asStateFlow()
 
     init {
-        val words = savedStateHandle.get<List<Word>>(KEY_WORDS)
-        val cardPosition = savedStateHandle.get<Int>(KEY_POSITION)
-        val okPositions = savedStateHandle.get<List<Int>>(KEY_OK_POSITIONS)
-
-        if (words != null) {
-            _uiState.update {
-                it.copy(
-                    words = words,
-                    cardPosition = cardPosition ?: 0,
-                    okPositions = okPositions?.toSet() ?: emptySet()
-                )
-            }
+        if (savedStateHandle.get<List<Word>>(KEY_WORDS) != null) {
+            loadFromSavedStateHandle()
         } else {
-            viewModelScope.launch {
-                when (val result = wordRepository.getWords()) {
-                    is Result.Success -> {
-                        _uiState.update {
-                            val data = result.data.shuffled()
-                            it.copy(words = data).also {
-                                savedStateHandle[KEY_WORDS] = data
-                            }
-                        }
-                    }
+            loadWordsFromRepository()
+        }
+    }
 
-                    else -> {}
+    private fun loadFromSavedStateHandle() {
+        val words = savedStateHandle.get<List<Word>>(KEY_WORDS) ?: emptyList()
+        val cardPosition = savedStateHandle.get<Int>(KEY_POSITION) ?: 0
+        val okPositions = savedStateHandle.get<List<Int>>(KEY_OK_POSITIONS) ?: emptyList()
+        _uiState.update {
+            it.copy(
+                words = words,
+                cardPosition = cardPosition,
+                okPositions = okPositions.toSet()
+            )
+        }
+    }
+
+    private fun loadWordsFromRepository() = viewModelScope.launch {
+        val result = wordRepository.getWords()
+        if (result is Result.Success) {
+            _uiState.update {
+                val data = result.data.shuffled()
+                it.copy(words = data).also {
+                    savedStateHandle[KEY_WORDS] = data
                 }
             }
         }

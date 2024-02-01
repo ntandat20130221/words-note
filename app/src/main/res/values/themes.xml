@@ -55,9 +55,8 @@
     </style>
 
     <!-- ActionMode -->
-    <style name="ActionModeCloseButtonStyle">
+    <style name="ActionModeCloseButtonStyle" parent="Widget.AppCompat.ActionButton.CloseMode">
         <item name="tint">?colorOnSurfaceVariant</item>
-        <item name="background">@color/design_default_color_primary_dark</item>
     </style>
 
     <style name="ActionModeStyle" parent="@style/Widget.MaterialComponents.ActionMode">

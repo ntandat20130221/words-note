@@ -76,6 +76,10 @@
     <string name="something_went_wrong">Something went wrong.</string>
     <string name="sent">Sent</string>
     <string name="learning">Learning</string>
+    <string name="choose_a_mode">Choose a mode</string>
+    <string name="select_one_of_the_modes_below_to_start">Select one of the modes below to start</string>
+    <string name="mix">Mix</string>
+    <string name="word">Word</string>
 
     <string-array name="gender">
         <item>Male</item>

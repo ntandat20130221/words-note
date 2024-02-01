@@ -98,6 +98,6 @@ class FlashCardFragment : Fragment() {
     companion object {
         const val TYPE_WORD = 0
         const val TYPE_MEANING = 1
-        const val TYPE_MIXED = 2
+        const val TYPE_MIX = 2
     }
 }
