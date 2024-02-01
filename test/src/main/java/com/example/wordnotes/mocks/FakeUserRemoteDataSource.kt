@@ -8,20 +8,35 @@ import com.example.wordnotes.data.wrapWithResult
 import java.util.UUID
 import javax.inject.Inject
 
-class FakeUserRemoteDataSource @Inject constructor() : UserRemoteDataSource {
+class FakeUserRemoteDataSource(initialUsers: List<User>?) : UserRemoteDataSource {
 
-    private val initialUsers = listOf(
-        User(
-            id = UUID.randomUUID().toString(), "user1", "image1", "user1@gmail.com",
-            "111111", "0123456789", 1, 942220588000
-        ),
-        User(
-            id = UUID.randomUUID().toString(), "user2", "image2", "user2@gmail.com",
-            "222222", "0123456789", 0, 900384131000
+    @Inject
+    constructor() : this(
+        listOf(
+            User(
+                id = "id_user1",
+                username = "user1",
+                imageUrl = "image1",
+                email = "user1@gmail.com",
+                password = "111111",
+                phone = "0123456789",
+                gender = 1,
+                dob = 942220588000
+            ),
+            User(
+                id = "id_user2",
+                username = "user2",
+                imageUrl = "image2",
+                email = "user2@gmail.com",
+                password = "222222",
+                phone = "0123456789",
+                gender = 0,
+                dob = 900384131000
+            )
         )
     )
 
-    private val users: MutableMap<String, User> = initialUsers.associateBy { it.id }.toMutableMap()
+    val users: MutableMap<String, User> = initialUsers?.associateBy { it.id }?.toMutableMap() ?: mutableMapOf()
 
     override suspend fun signUp(user: User): Result<User> {
         return if (users.values.any { it.email == user.email }) {
@@ -56,10 +71,11 @@ class FakeUserRemoteDataSource @Inject constructor() : UserRemoteDataSource {
 
     override suspend fun updateProfile(user: User, imageUri: Uri?): Result<User> {
         return if (users.contains(user.id)) {
-            users[user.id] = if (imageUri == null)
+            val updatedUser = if (imageUri == null)
                 user else
-                user.copy(imageUrl = imageUri.toString())
-            Result.Success(user)
+                user.copy(imageUrl = "network_$imageUri")
+            users[user.id] = updatedUser
+            Result.Success(updatedUser)
         } else {
             Result.Error(Exception("The user doesn't exist."))
         }

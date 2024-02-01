@@ -2,19 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="Tests in 'com.example.wordnotes'">
+      <entry key="HomeFragmentTest">
         <State />
       </entry>
-      <entry key="WordDetailFragmentTest">
+      <entry key="Tests in 'com.example.wordnotes'">
         <State />
       </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="clickDeleteActionShouldDismissAndUpdateRepository()">
+      <entry key="deleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly()">
         <State />
       </entry>
-      <entry key="updateProfileThenRecreateActivityThenCheckUiStateShouldUnchanged()">
+      <entry key="openSearchThenDeleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly()">
         <State />
       </entry>
     </value>

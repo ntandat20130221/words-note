@@ -39,26 +39,29 @@ class HomeViewModelTest {
         var wordsUiState = WordsUiState()
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
         assertThat(wordsUiState.wordItems).hasSize(3)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(words)
         assertThat(wordsUiState.isShowEmptyScreen).isFalse()
         assertThat(wordsUiState.isLoading).isFalse()
     }
 
     @Test
-    fun `update word repository then ui state should update correctly`() = runTest {
+    fun `update repository should update ui state correctly`() = runTest {
         var wordsUiState = WordsUiState()
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
-        wordRepository.addWords(Word(id = "4", word = "new word", ipa = "ipa"))
-        assertThat(wordsUiState.wordItems).hasSize(4)
+        val newWord = Word(id = "4", word = "new word", ipa = "ipa")
+        wordRepository.addWords(newWord)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(arrayOf(newWord, *words.toTypedArray()))
 
         wordRepository.deleteWords(listOf("1", "3"))
-        assertThat(wordsUiState.wordItems).hasSize(2)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[1], newWord)
 
         val updatedWord = Word(id = "2", word = "updated", pos = "prep", ipa = "ipa", meaning = "meaning", isRemind = false)
         wordRepository.updateWords(listOf(updatedWord))
-        assertThat(wordsUiState.wordItems.find { it.word.id == "2" }!!.word).isEqualTo(updatedWord)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(updatedWord, newWord)
 
         wordRepository.deleteWords(listOf("2", "4"))
+        assertThat(wordsUiState.wordItems).isEmpty()
         assertThat(wordsUiState.isShowEmptyScreen).isTrue()
     }
 
@@ -67,72 +70,100 @@ class HomeViewModelTest {
         var actionModeUiState = ActionModeUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(0)
+        assertThat(actionModeUiState.selectedIds).isEmpty()
     }
 
     @Test
-    fun `click any item should not start action mode`() = runTest {
+    fun `select same items should remove duplicates`() = runTest {
         var actionModeUiState = ActionModeUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.selectItem("1")
-        assertThat(actionModeUiState.isActionMode).isFalse()
-    }
-
-    @Test
-    fun `start action mode then ui state should update correctly`() = runTest {
-        var actionModeUiState = ActionModeUiState()
-        var wordsUiState = WordsUiState()
-        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
-        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
-
-        homeViewModel.onItemLongClicked("1")
-        assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(1)
-        assertThat(wordsUiState.wordItems.find { it.word.id == "1" }?.isSelected).isTrue()
-    }
-
-    @Test
-    fun `start action mode then click items then ui state should update correctly`() = runTest {
-        var actionModeUiState = ActionModeUiState()
-        var wordsUiState = WordsUiState()
-        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
-        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
-
-        homeViewModel.onItemLongClicked("1")
         homeViewModel.selectItem("2")
-        assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(2)
-        assertThat(wordsUiState.wordItems.filter { it.isSelected }).hasSize(2)
+        homeViewModel.selectItem("1")
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).containsExactly("2")
+    }
 
+    @Test
+    fun `start action mode should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1")
+        assertThat(wordsUiState.wordItems.single { it.isSelected }.word).isEqualTo(words[0])
+    }
+
+    @Test
+    fun `select items using long click should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
         homeViewModel.onItemLongClicked("2")
         assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(1)
-        assertThat(wordsUiState.wordItems.filter { it.isSelected }).hasSize(1)
+        assertThat(actionModeUiState.selectedIds).containsExactly("1", "2")
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(words)
+        assertThat(wordsUiState.wordItems.filter { it.isSelected }.map { it.word }).containsExactly(words[0], words[1])
     }
 
     @Test
-    fun `start action mode then click items until stop action mode then ui state should update correctly`() = runTest {
+    fun `click last item should stop action mode`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
         homeViewModel.onItemLongClicked("1")
-        homeViewModel.selectItem("2")
-        homeViewModel.selectItem("3")
-        assertThat(actionModeUiState.isActionMode).isTrue()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(3)
-
         homeViewModel.selectItem("1")
-        homeViewModel.selectItem("2")
-        homeViewModel.selectItem("3")
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(actionModeUiState.selectedIds.size).isEqualTo(0)
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(words)
         assertThat(wordsUiState.wordItems.any { it.isSelected }).isFalse()
     }
 
     @Test
-    fun `start action mode then click items then stop action mode then ui state should update correctly`() = runTest {
+    fun `select items in action mode should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
+        assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1", "2")
+        assertThat(wordsUiState.wordItems.filter { it.isSelected }.map { it.word }).containsExactly(words[0], words[1])
+
+        homeViewModel.onItemLongClicked("2")
+        assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1")
+        assertThat(wordsUiState.wordItems.single { it.isSelected }.word).isEqualTo(words[0])
+    }
+
+    @Test
+    fun `start action mode then click items until stop should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
+        homeViewModel.selectItem("1")
+        homeViewModel.selectItem("2")
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(wordsUiState.wordItems.any { it.isSelected }).isFalse()
+    }
+
+    @Test
+    fun `start and stop action mode should update ui state correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -146,18 +177,24 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `start action mode then update repository then ui should update correctly`() = runTest {
+    fun `start action mode then update repository should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
         homeViewModel.onItemLongClicked("1")
         val updatedWord = Word(id = "2", word = "updated", pos = "prep", ipa = "ipa", meaning = "meaning", isRemind = false)
         wordRepository.updateWords(listOf(updatedWord))
+
+        assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1")
+        assertThat(wordsUiState.wordItems.single { it.isSelected }.word).isEqualTo(words[0])
         assertThat(wordsUiState.wordItems.find { it.word.id == "2" }?.word).isEqualTo(updatedWord)
     }
 
     @Test
-    fun `click delete menu in action mode then ui state and repository should update correctly`() = runTest {
+    fun `delete items in action mode should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -168,12 +205,13 @@ class HomeViewModelTest {
         homeViewModel.onActionModeMenuDelete()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(wordsUiState.wordItems).hasSize(1)
-        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(3)
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactlyElementsIn(words)
     }
 
     @Test
-    fun `click delete menu in action and dismiss undoing then ui state and repository should update correctly`() = runTest {
+    fun `delete items in action mode then dismiss undo should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -185,12 +223,12 @@ class HomeViewModelTest {
         homeViewModel.onUndoDismissed()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(wordsUiState.wordItems).hasSize(1)
-        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(1)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[2])
     }
 
     @Test
-    fun `click delete menu in action and undo deletion then ui state and repository should update correctly`() = runTest {
+    fun `delete items in action mode then undo deletion should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -202,12 +240,71 @@ class HomeViewModelTest {
         homeViewModel.undoDeletion()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(wordsUiState.wordItems).hasSize(3)
-        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(3)
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(words)
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactlyElementsIn(words)
     }
 
     @Test
-    fun `click select all menu in action mode then ui state should update correctly`() = runTest {
+    fun `delete items continuously then dismiss undo should update ui state and repository correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.onActionModeMenuDelete()
+        homeViewModel.onItemLongClicked("2")
+        homeViewModel.onActionModeMenuDelete()
+        homeViewModel.onUndoDismissed()
+
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[2])
+    }
+
+    @Test
+    fun `delete items continuously then undo deletion should update ui state and repository correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.onActionModeMenuDelete()
+        homeViewModel.onItemLongClicked("2")
+        homeViewModel.onActionModeMenuDelete()
+        homeViewModel.undoDeletion()
+
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[1], words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[1], words[2])
+    }
+
+    @Test
+    fun `delete all items should show empty screen then undo should update ui state correctly`() = runTest {
+        var actionModeUiState = ActionModeUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.onActionModeMenuSelectAll()
+        homeViewModel.onActionModeMenuDelete()
+
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(wordsUiState.isShowEmptyScreen).isTrue()
+
+        homeViewModel.undoDeletion()
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(wordsUiState.isShowEmptyScreen).isFalse()
+        assertThat(wordsUiState.wordItems.any { it.isSelected }).isFalse()
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactlyElementsIn(words)
+    }
+
+    @Test
+    fun `select all in action mode should update ui state correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -217,11 +314,17 @@ class HomeViewModelTest {
         homeViewModel.onActionModeMenuSelectAll()
 
         assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1", "2", "3")
         assertThat(wordsUiState.wordItems.all { it.isSelected }).isTrue()
+
+        homeViewModel.onItemLongClicked("1")
+        assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("2", "3")
+        assertThat(wordsUiState.wordItems.filter { it.isSelected }.map { it.word }).containsExactly(words[1], words[2])
     }
 
     @Test
-    fun `click remind menu in action mode then ui state and repository should update correctly`() = runTest {
+    fun `remind item in action mode should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var wordsUiState = WordsUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -232,12 +335,13 @@ class HomeViewModelTest {
         homeViewModel.onActionModeMenuRemind()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
         assertThat(wordsUiState.wordItems.all { it.word.isRemind }).isTrue()
         assertThat((wordRepository.getWords() as Result.Success).data.all { it.isRemind }).isTrue()
     }
 
     @Test
-    fun `start searching then ui state should update correctly`() = runTest {
+    fun `start searching should update ui state correctly`() = runTest {
         var searchUiState = SearchUiState()
         homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
         homeViewModel.startSearching()
@@ -247,7 +351,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `search items then ui state should update correctly`() = runTest {
+    fun `search items should update ui state correctly`() = runTest {
         var searchUiState = SearchUiState()
         homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
 
@@ -255,21 +359,25 @@ class HomeViewModelTest {
         homeViewModel.search("wo")
         assertThat(searchUiState.isSearching).isTrue()
         assertThat(searchUiState.searchQuery).isEqualTo("wo")
-        assertThat(searchUiState.searchResult).hasSize(3)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactlyElementsIn(words)
 
         homeViewModel.search("word1")
+        assertThat(searchUiState.isSearching).isTrue()
         assertThat(searchUiState.searchQuery).isEqualTo("word1")
-        assertThat(searchUiState.searchResult).hasSize(1)
+        assertThat(searchUiState.searchResult.single { it.word.id == "1" }.word).isEqualTo(words[0])
 
         homeViewModel.search("word4")
+        assertThat(searchUiState.isSearching).isTrue()
         assertThat(searchUiState.searchQuery).isEqualTo("word4")
-        assertThat(searchUiState.searchResult).hasSize(0)
+        assertThat(searchUiState.searchResult).isEmpty()
     }
 
     @Test
-    fun `search items then stop searching then ui state should update correctly`() = runTest {
+    fun `search items then stop searching should update ui state correctly`() = runTest {
         var searchUiState = SearchUiState()
+        var wordsUiState = WordsUiState()
         homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
 
         homeViewModel.startSearching()
         homeViewModel.search("word1")
@@ -277,49 +385,64 @@ class HomeViewModelTest {
         assertThat(searchUiState.isSearching).isFalse()
         assertThat(searchUiState.searchQuery).isEmpty()
         assertThat(searchUiState.searchResult).isEmpty()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactlyElementsIn(words)
     }
 
     @Test
-    fun `search items then update repository then ui state should update correctly`() = runTest {
+    fun `search items then update repository should update ui state correctly`() = runTest {
         var searchUiState = SearchUiState()
+        var wordsUiState = WordsUiState()
         homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+
         homeViewModel.startSearching()
         homeViewModel.search("word")
 
         val updatedWord = Word(id = "2", word = "updated", pos = "prep", ipa = "ipa", meaning = "meaning", isRemind = false)
         wordRepository.updateWords(listOf(updatedWord))
-        assertThat(searchUiState.searchResult).hasSize(2)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactly(words[0], words[2])
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[0], updatedWord, words[2])
     }
 
     @Test
     fun `search items then long click on an item should start action mode`() = runTest {
         var actionModeUiState = ActionModeUiState()
+        var searchUiState = SearchUiState()
+        homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
+
         homeViewModel.startSearching()
         homeViewModel.search("word")
         homeViewModel.onItemLongClicked("1")
         assertThat(actionModeUiState.isActionMode).isTrue()
+        assertThat(actionModeUiState.selectedIds).containsExactly("1")
+        assertThat(searchUiState.isSearching).isTrue()
+        assertThat(searchUiState.searchQuery).isEqualTo("word")
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactlyElementsIn(words)
+        assertThat(searchUiState.searchResult.single { it.isSelected }.word).isEqualTo(words[0])
     }
 
     @Test
-    fun `search items then start action mode then stop action mode then ui state should update correctly`() = runTest {
+    fun `search items then start and stop action mode should update ui state correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var searchUiState = SearchUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
         homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
+
         homeViewModel.startSearching()
         homeViewModel.search("word")
-
         homeViewModel.onItemLongClicked("1")
         homeViewModel.destroyActionMode()
         assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
         assertThat(searchUiState.isSearching).isTrue()
         assertThat(searchUiState.searchQuery).isEqualTo("word")
-        assertThat(searchUiState.searchResult).hasSize(3)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactlyElementsIn(words)
+        assertThat(searchUiState.searchResult.any { it.isSelected }).isFalse()
     }
 
     @Test
-    fun `search items then click remind menu in action mode then ui state and repository should update correctly`() = runTest {
+    fun `search items then click remind menu in action mode should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var searchUiState = SearchUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -331,12 +454,12 @@ class HomeViewModelTest {
         homeViewModel.selectItem("3")
         homeViewModel.onActionModeMenuRemind()
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(searchUiState.searchResult).hasSize(3)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactlyElementsIn(words.map { it.copy(isRemind = true) })
         assertThat((wordRepository.getWords() as Result.Success).data.all { it.isRemind }).isTrue()
     }
 
     @Test
-    fun `search items then click delete menu in action mode then ui state and repository should update correctly`() = runTest {
+    fun `search items then click delete menu in action mode should update ui state and repository correctly`() = runTest {
         var actionModeUiState = ActionModeUiState()
         var searchUiState = SearchUiState()
         homeViewModel.actionModeUiState.collectIn(backgroundScope) { actionModeUiState = it }
@@ -347,18 +470,48 @@ class HomeViewModelTest {
         homeViewModel.onItemLongClicked("1")
         homeViewModel.onActionModeMenuDelete()
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(searchUiState.searchResult).hasSize(2)
-        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(3)
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactly(words[1], words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactlyElementsIn(words)
+
+        homeViewModel.onItemLongClicked("2")
+        homeViewModel.onActionModeMenuDelete()
+        assertThat(actionModeUiState.isActionMode).isFalse()
+        assertThat(actionModeUiState.selectedIds).isEmpty()
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[1], words[2])
 
         homeViewModel.undoDeletion()
-        assertThat(searchUiState.searchResult).hasSize(3)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactly(words[1], words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[1], words[2])
 
-        homeViewModel.onItemLongClicked("1")
+        homeViewModel.onItemLongClicked("2")
         homeViewModel.onActionModeMenuDelete()
         homeViewModel.onUndoDismissed()
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(searchUiState.searchResult).hasSize(2)
-        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(2)
+        assertThat(searchUiState.searchResult.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[2])
+    }
+
+    @Test
+    fun `start searching then delete items then stop searching should update ui state and repository correctly`() = runTest {
+        var searchUiState = SearchUiState()
+        var wordsUiState = WordsUiState()
+        homeViewModel.wordsUiState.collectIn(backgroundScope) { wordsUiState = it }
+        homeViewModel.searchUiState.collectIn(backgroundScope) { searchUiState = it }
+        homeViewModel.startSearching()
+        homeViewModel.search("word")
+
+        homeViewModel.onItemLongClicked("1")
+        homeViewModel.selectItem("2")
+        homeViewModel.onActionModeMenuDelete()
+        homeViewModel.onUndoDismissed()
+        homeViewModel.stopSearching()
+        assertThat(searchUiState.isSearching).isFalse()
+        assertThat(searchUiState.searchResult).isEmpty()
+        assertThat(searchUiState.searchQuery).isEmpty()
+        assertThat(wordsUiState.wordItems.map { it.word }).containsExactly(words[2])
+        assertThat((wordRepository.getWords() as Result.Success).data).containsExactly(words[2])
     }
 
     private fun <T> Flow<T>.collectIn(scope: CoroutineScope, callback: (T) -> Unit) {

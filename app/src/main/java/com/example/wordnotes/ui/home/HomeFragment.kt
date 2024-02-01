@@ -186,6 +186,9 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.wordsUiState.collect { wordsUiState ->
+                    wordsUiState.undoMessage?.let {
+                        showUndoSnakeBar(it)
+                    }
                     binding.swipeToRefresh.isRefreshing = wordsUiState.isLoading
                     binding.emptyListLayout.root.visibility = if (wordsUiState.isShowEmptyScreen) View.VISIBLE else View.GONE
                     binding.wordsRecyclerView.visibility = if (wordsUiState.isShowEmptyScreen) View.GONE else View.VISIBLE
@@ -197,9 +200,6 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.actionModeUiState.collect { actionModeUiState ->
-                    actionModeUiState.undoingItemCount?.let {
-                        showUndoSnakeBar(it)
-                    }
                     if (actionModeUiState.isActionMode) {
                         if (actionMode == null) startActionMode()
                         selectedIds = actionModeUiState.selectedIds
@@ -230,21 +230,22 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun showUndoSnakeBar(deleteItemCount: Int) {
+    private fun showUndoSnakeBar(undoMessage: Pair<Int, Int>) {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
-            getString(R.string.deleted_template, deleteItemCount),
+            getString(undoMessage.second, undoMessage.first),
             Snackbar.LENGTH_LONG
         )
             .setAction(R.string.undo) { homeViewModel.undoDeletion() }
             .addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    if (DISMISS_EVENT_TIMEOUT == event) {
+                    if (event !in arrayOf(DISMISS_EVENT_ACTION, DISMISS_EVENT_CONSECUTIVE)) {
                         homeViewModel.onUndoDismissed()
                     }
                 }
             })
             .show()
+        homeViewModel.undoSnackBarShown()
     }
 
     private fun startActionMode() {

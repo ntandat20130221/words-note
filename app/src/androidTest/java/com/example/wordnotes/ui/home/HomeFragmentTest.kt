@@ -276,6 +276,21 @@ class HomeFragmentTest {
     }
 
     @Test
+    fun deleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly() = runTest {
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItem<WordsViewHolder>(hasDescendant(withText("word1")), longClick()))
+        onView(withId(R.id.menu_delete)).perform(click())
+        onView(withId(R.id.words_recycler_view)).perform(actionOnItem<WordsViewHolder>(hasDescendant(withText("word2")), longClick()))
+        onView(withId(R.id.menu_delete)).perform(click())
+
+        onView(withId(R.id.words_recycler_view)).check(hasItemCount(9))
+        assertThat((wordRepository.getWords() as Result.Success).data).hasSize(10)
+
+        onView(withId(com.google.android.material.R.id.snackbar_action)).perform(click())
+        onView(withId(R.id.words_recycler_view)).check(hasItemCount(10))
+        assertThat((wordRepository.getWords() as Result.Success).data.map { it.id }).containsExactlyElementsIn((2..11).map { it.toString() })
+    }
+
+    @Test
     fun clickRemindMenuInActionModeThenRecyclerViewItemsAndRepositoryShouldUpdateCorrectly() = runTest {
         assumeThat((wordRepository.getWords() as Result.Success).data[0].isRemind, `is`(true))
         assumeThat((wordRepository.getWords() as Result.Success).data[2].isRemind, `is`(false))
@@ -573,6 +588,24 @@ class HomeFragmentTest {
         onView(withId(com.google.android.material.R.id.snackbar_action)).perform(click())
         onView(withId(R.id.search_recycler_view)).check(hasItemCount(3))
         assertThat((wordRepository.getWords() as Result.Success).data).hasSize(11)
+    }
+
+    @Test
+    fun openSearchThenDeleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly() = runTest {
+        onView(withId(R.id.menu_search)).perform(click())
+        onView(withId(com.example.customviews.R.id.input_search)).perform(replaceText("word1"))
+
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItem<WordsViewHolder>(hasDescendant(withText("word1")), longClick()))
+        onView(withId(R.id.menu_delete)).perform(click())
+        onView(withId(R.id.search_recycler_view)).perform(actionOnItem<WordsViewHolder>(hasDescendant(withText("word10")), longClick()))
+        onView(withId(R.id.menu_delete)).perform(click())
+
+        onView(withId(R.id.search_recycler_view)).check(hasItemCount(1))
+        assertThat((wordRepository.getWords() as Result.Success).data.map { it.id }).containsExactlyElementsIn((2..11).map { it.toString() })
+
+        onView(withId(com.google.android.material.R.id.snackbar_action)).perform(click())
+        onView(withId(R.id.search_recycler_view)).check(hasItemCount(2))
+        assertThat((wordRepository.getWords() as Result.Success).data.map { it.id }).containsExactlyElementsIn((2..11).map { it.toString() })
     }
 
     @Test

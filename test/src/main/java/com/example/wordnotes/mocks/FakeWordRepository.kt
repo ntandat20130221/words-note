@@ -32,6 +32,7 @@ class FakeWordRepository(initialWords: List<Word>?) : WordRepository {
 
     private var shouldThrowError = false
 
+    // Using LinkedHashMap make sure the order of keys is maintain.
     private val savedWords: MutableStateFlow<LinkedHashMap<String, Word>> = MutableStateFlow(LinkedHashMap(initialWords?.associateBy { it.id }))
 
     fun setShouldThrowError(value: Boolean) {

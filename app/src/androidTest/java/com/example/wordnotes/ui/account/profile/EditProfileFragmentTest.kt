@@ -158,14 +158,8 @@ class EditProfileFragmentTest {
 
         // Choose date of birth
         onView(withId(R.id.input_dob)).perform(click())
-        val yearMonthButton = uiDevice.findObject(By.res("com.example.wordnotes:id/month_navigation_fragment_toggle"))
-        yearMonthButton.clickAndWait(Until.newWindow(), 500)
-        uiDevice.findObject(By.clazz("android.widget.TextView").text("2024")).click()
-        val nextButton = uiDevice.findObject(By.res("com.example.wordnotes:id/month_navigation_next"))
-        while (!yearMonthButton.text.contains("January")) {
-            nextButton.click()
-        }
-        uiDevice.findObject(By.clazz("android.widget.TextView").text("24")).click()
+        uiDevice.findObject(By.res("com.example.wordnotes:id/mtrl_picker_header_toggle")).clickAndWait(Until.newWindow(), 1000)
+        uiDevice.findObject(By.text("Date, m/d/yy").clazz("android.widget.EditText")).text = "01/24/2024"
         uiDevice.wait(Until.hasObject(By.res("com.example.wordnotes:id/confirm_button").enabled(true)), 1000)
         uiDevice.findObject(By.res("com.example.wordnotes:id/confirm_button")).click()
         uiDevice.wait(Until.hasObject(By.res("com.example.wordnotes:id/input_dob")), 1000)

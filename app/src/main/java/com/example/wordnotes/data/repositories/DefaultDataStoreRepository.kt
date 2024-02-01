@@ -41,7 +41,7 @@ class DefaultDataStoreRepository @Inject constructor(
 
     /**
      * Get the [User] from DataStore. Because the DataStore will return _empty_ User if not set,
-     * so make sure to throw Exception if [User.id] is empty.
+     * so make sure to throw Exception (which will return Result.Error) if [User.id] is empty.
      */
     override suspend fun getUser(): Result<User> = wrapWithResult {
         context.userDataStore.data

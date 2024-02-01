@@ -36,7 +36,7 @@ class RoomWordLocalDataSourceTest {
     @Test
     fun getAllWords_ShouldReturnEmpty() = runTest {
         val words = (wordLocalDataSource.getWords() as Result.Success).data
-        assertThat(words).hasSize(0)
+        assertThat(words).isEmpty()
     }
 
     @Test
