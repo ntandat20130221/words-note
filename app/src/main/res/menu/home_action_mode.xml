@@ -14,9 +14,9 @@
         app:iconTint="?colorOnSurfaceVariant"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_remind"
+        android:id="@+id/menu_toggle_remind"
         android:icon="@drawable/ic_alarm"
-        android:title="@string/pref_title_remind"
+        android:title="@string/toggle_remind"
         app:iconTint="?colorOnSurfaceVariant"
         app:showAsAction="ifRoom" />
     <item

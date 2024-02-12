@@ -160,14 +160,14 @@ class HomeViewModel @Inject constructor(private val wordRepository: WordReposito
         _temporalDeletedIds.update { emptySet() }
     }
 
-    fun onActionModeMenuRemind(): Boolean {
+    fun onActionModeMenuToggleRemind(): Boolean {
         viewModelScope.launch {
             val wordItems = if (_isSearching.value)
                 searchUiState.value.searchResult else
                 wordsUiState.value.wordItems
             val updatedWords = wordItems
                 .filter { _selectedIds.value.contains(it.word.id) }
-                .map { it.word.copy(isRemind = true) }
+                .map { it.word.copy(isRemind = it.word.isRemind.not()) }
             wordRepository.updateWords(updatedWords)
             destroyActionMode()
         }

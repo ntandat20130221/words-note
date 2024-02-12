@@ -11,7 +11,7 @@
       <entry key="app">
         <State />
       </entry>
-      <entry key="deleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly()">
+      <entry key="clickRemindMenuInActionModeThenRecyclerViewItemsAndRepositoryShouldUpdateCorrectly()">
         <State />
       </entry>
       <entry key="openSearchThenDeleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly()">

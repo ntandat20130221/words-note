@@ -332,12 +332,16 @@ class HomeViewModelTest {
 
         homeViewModel.onItemLongClicked("1")
         homeViewModel.selectItem("3")
-        homeViewModel.onActionModeMenuRemind()
+        homeViewModel.onActionModeMenuToggleRemind()
 
         assertThat(actionModeUiState.isActionMode).isFalse()
         assertThat(actionModeUiState.selectedIds).isEmpty()
-        assertThat(wordsUiState.wordItems.all { it.word.isRemind }).isTrue()
-        assertThat((wordRepository.getWords() as Result.Success).data.all { it.isRemind }).isTrue()
+        assertThat(wordsUiState.wordItems.map { it.word }.single { it.id == "1" }.isRemind).isTrue()
+        assertThat(wordsUiState.wordItems.map { it.word }.single { it.id == "2" }.isRemind).isTrue()
+        assertThat(wordsUiState.wordItems.map { it.word }.single { it.id == "3" }.isRemind).isFalse()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "1" }.isRemind).isTrue()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "2" }.isRemind).isTrue()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "3" }.isRemind).isFalse()
     }
 
     @Test
@@ -452,10 +456,14 @@ class HomeViewModelTest {
 
         homeViewModel.onItemLongClicked("1")
         homeViewModel.selectItem("3")
-        homeViewModel.onActionModeMenuRemind()
+        homeViewModel.onActionModeMenuToggleRemind()
         assertThat(actionModeUiState.isActionMode).isFalse()
-        assertThat(searchUiState.searchResult.map { it.word }).containsExactlyElementsIn(words.map { it.copy(isRemind = true) })
-        assertThat((wordRepository.getWords() as Result.Success).data.all { it.isRemind }).isTrue()
+        assertThat(searchUiState.searchResult.map { it.word }.single { it.id == "1" }.isRemind).isTrue()
+        assertThat(searchUiState.searchResult.map { it.word }.single { it.id == "2" }.isRemind).isTrue()
+        assertThat(searchUiState.searchResult.map { it.word }.single { it.id == "3" }.isRemind).isFalse()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "1" }.isRemind).isTrue()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "2" }.isRemind).isTrue()
+        assertThat((wordRepository.getWords() as Result.Success).data.single { it.id == "3" }.isRemind).isFalse()
     }
 
     @Test

@@ -1,8 +1,7 @@
 TODO    Fix bug snack bar show
-TODO    Add undo when deleting word at DetailWordFragment
-TODO    Complete forgot password function
-TODO    Refactor the showing SnackBar function for common use.
-TODO    Migrate Reminder preferences to DataStore.
+TODO    Fix bug IPA keyboard in landscape orientation
 TODO    Test WordReminder
+TODO    Test LearningFragment
+TODO    Test ForgotPasswordFragment
 TODO    Refactor showInternetMessage() in AccountFragment (it uses the view in MainActivity)
-TODO    Fix bug IPA keyboard in landscape orientation.
+TODO    Refactor the showing SnackBar function for common use

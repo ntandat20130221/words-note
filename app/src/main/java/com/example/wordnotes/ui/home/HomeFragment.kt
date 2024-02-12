@@ -299,7 +299,7 @@ class HomeFragment : Fragment() {
             }
 
             R.id.menu_delete -> homeViewModel.onActionModeMenuDelete()
-            R.id.menu_remind -> homeViewModel.onActionModeMenuRemind()
+            R.id.menu_toggle_remind -> homeViewModel.onActionModeMenuToggleRemind()
             R.id.menu_select_all -> homeViewModel.onActionModeMenuSelectAll()
             else -> false
         }

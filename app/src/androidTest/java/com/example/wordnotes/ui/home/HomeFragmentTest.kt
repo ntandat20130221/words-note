@@ -43,6 +43,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assume.assumeThat
@@ -297,14 +298,16 @@ class HomeFragmentTest {
 
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(0, longClick()))
         onView(withId(R.id.words_recycler_view)).perform(actionOnItemAtPosition<WordsViewHolder>(2, click()))
-        onView(withId(R.id.menu_remind)).perform(click())
+        onView(withId(R.id.menu_toggle_remind)).perform(click())
 
         // ActionMode should stop.
         onView(withId(androidx.appcompat.R.id.action_mode_bar)).check(matches(not(isDisplayed())))
 
-        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(0, hasDescendant(withId(R.id.image_remind)))))
-        onView(withId(R.id.words_recycler_view)).check(matches(atPosition(2, hasDescendant(withId(R.id.image_remind)))))
-        assertThat((wordRepository.getWords() as Result.Success).data[0].isRemind).isTrue()
+        onView(withId(R.id.words_recycler_view))
+            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), not(isDisplayed()))))))
+        onView(withId(R.id.words_recycler_view))
+            .check(matches(atPosition(2, hasDescendant(allOf(withId(R.id.image_remind), isDisplayed())))))
+        assertThat((wordRepository.getWords() as Result.Success).data[0].isRemind).isFalse()
         assertThat((wordRepository.getWords() as Result.Success).data[2].isRemind).isTrue()
     }
 
@@ -626,12 +629,15 @@ class HomeFragmentTest {
         onView(withId(R.id.search_recycler_view)).check(matches(atPosition(1, withBackgroundColor(R.attr.color_selected_item_background))))
         onView(withId(R.id.search_recycler_view)).check(matches(atPosition(2, withBackgroundColor(R.attr.color_selected_item_background))))
 
-        onView(withId(R.id.menu_remind)).perform(click())
-        onView(withId(R.id.search_recycler_view)).check(matches(atPosition(0, hasDescendant(withId(R.id.image_remind)))))
-        onView(withId(R.id.search_recycler_view)).check(matches(atPosition(1, hasDescendant(withId(R.id.image_remind)))))
-        onView(withId(R.id.search_recycler_view)).check(matches(atPosition(2, hasDescendant(withId(R.id.image_remind)))))
-        assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word1" }!!.isRemind).isTrue()
-        assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word10" }!!.isRemind).isTrue()
+        onView(withId(R.id.menu_toggle_remind)).perform(click())
+        onView(withId(R.id.search_recycler_view))
+            .check(matches(atPosition(0, hasDescendant(allOf(withId(R.id.image_remind), not(isDisplayed()))))))
+        onView(withId(R.id.search_recycler_view))
+            .check(matches(atPosition(1, hasDescendant(allOf(withId(R.id.image_remind), not(isDisplayed()))))))
+        onView(withId(R.id.search_recycler_view))
+            .check(matches(atPosition(2, hasDescendant(allOf(withId(R.id.image_remind), isDisplayed())))))
+        assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word1" }!!.isRemind).isFalse()
+        assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word10" }!!.isRemind).isFalse()
         assertThat((wordRepository.getWords() as Result.Success).data.find { it.word == "word11" }!!.isRemind).isTrue()
     }
 }
