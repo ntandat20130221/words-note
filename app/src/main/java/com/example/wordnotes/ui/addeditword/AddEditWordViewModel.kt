@@ -46,7 +46,7 @@ class AddEditWordViewModel @Inject constructor(
         isForAddingWord = true
         _uiState.update {
             it.copy(
-                word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase(), isRemind = true),
+                word = it.word.copy(pos = englishPartsOfSpeech[0].lowercase()),
                 isLoading = false
             )
         }
