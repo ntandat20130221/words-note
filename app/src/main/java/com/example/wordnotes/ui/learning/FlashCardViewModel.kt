@@ -54,7 +54,7 @@ class FlashCardViewModel @Inject constructor(
     }
 
     private fun loadWordsFromRepository() = viewModelScope.launch {
-        val result = wordRepository.getWords()
+        val result = wordRepository.getRemindingWords()
         if (result is Result.Success) {
             _uiState.update {
                 val data = result.data.shuffled()
