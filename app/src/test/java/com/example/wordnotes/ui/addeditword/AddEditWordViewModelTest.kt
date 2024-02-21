@@ -81,7 +81,7 @@ class AddEditWordViewModelTest {
         val initialWord = addEditWordViewModel.uiState.value.word
         addEditWordViewModel.initializeWithWordId(null)
         val uiState = addEditWordViewModel.uiState.value
-        assertThat(uiState.word).isEqualTo(initialWord.copy(pos = "verb", isRemind = true))
+        assertThat(uiState.word).isEqualTo(initialWord.copy(pos = "verb"))
     }
 
     @Test

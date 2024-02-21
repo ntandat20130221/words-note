@@ -2,6 +2,12 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AddEditWordFragmentTest">
+        <State />
+      </entry>
+      <entry key="EditProfileFragmentTest">
+        <State />
+      </entry>
       <entry key="HomeFragmentTest">
         <State />
       </entry>
@@ -9,12 +15,6 @@
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="clickRemindMenuInActionModeThenRecyclerViewItemsAndRepositoryShouldUpdateCorrectly()">
-        <State />
-      </entry>
-      <entry key="openSearchThenDeleteItemsContinuouslyShouldUpdateUiStateAndRepositoryCorrectly()">
         <State />
       </entry>
     </value>

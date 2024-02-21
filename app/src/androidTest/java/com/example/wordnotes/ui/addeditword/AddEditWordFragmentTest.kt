@@ -77,7 +77,7 @@ class AddEditWordFragmentTest {
         onView(withId(R.id.input_ipa)).check(matches(withText("")))
         onView(withId(R.id.pos_recycler_view)).check(matches(atPosition(0, isSelected())))
         onView(withId(R.id.input_meaning)).check(matches(withText("")))
-        onView(withId(R.id.check_remind)).check(matches(isChecked()))
+        onView(withId(R.id.check_remind)).check(matches(isNotChecked()))
 
         // Press back should return HomeFragment.
         closeSoftKeyboard()
@@ -124,7 +124,7 @@ class AddEditWordFragmentTest {
         uiDevice.setOrientationLeft()
         onView(withId(R.id.input_word)).check(matches(withText("new word")))
         onView(withId(R.id.pos_recycler_view)).check(matches(atPosition(1, isSelected())))
-        onView(withId(R.id.check_remind)).check(matches(isNotChecked()))
+        onView(withId(R.id.check_remind)).check(matches(isChecked()))
     }
 
     @Test
